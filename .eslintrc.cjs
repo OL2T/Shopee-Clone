@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, es2015: true },
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
@@ -34,6 +34,8 @@ module.exports = {
     node: true
   },
   rules: {
+    // 'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     // Tắt rule yêu cầu import React trong file jsx
     'react/react-in-jsx-scope': 'off',
     // Cảnh báo khi thẻ <a target='_blank'> mà không có rel="noreferrer"
