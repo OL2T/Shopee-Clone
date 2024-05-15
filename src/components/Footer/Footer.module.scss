@@ -1,6 +1,8 @@
 .title {
   font-weight: 700;
   margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.87);
+  text-transform: uppercase;
 }
 .listItem {
   font-size: 12px;
@@ -22,4 +24,14 @@
   overflow: hidden;
   padding: 0.25rem;
   width: 3.75rem;
+}
+
+.footer-vn {
+  &-vn_registered_red-png {
+    background-position: 14.391143911439114% 99.41176470588235%;
+    background-size: 551.6666666666666% 477.77777777777777%;
+  }
+  &-background {
+    background-image: url(https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/9765d68a8945750d.png);
+  }
 }

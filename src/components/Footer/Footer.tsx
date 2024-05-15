@@ -5,7 +5,7 @@ interface Props {
 }
 export default function Footer({ children }: Props) {
   return (
-    <footer className='pt-top50 bg-neutral-100'>
+    <footer className='pt-top50 bg-neutral-100 text-black/54 text-sm'>
       <div className='container max-w-container mx-auto'>
         <FooterAbove />
         <FooterBellow />

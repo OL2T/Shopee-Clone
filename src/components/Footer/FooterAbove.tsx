@@ -4,9 +4,7 @@ export default function FooterAbove() {
   return (
     <div className='grid grid-cols-5'>
       <div className='text-xs '>
-        <div className={styles.title + ' text-gray-950 uppercase'}>
-          CHĂM SÓC KHÁCH HÀNG
-        </div>
+        <div className={styles.title}>CHĂM SÓC KHÁCH HÀNG</div>
         <ul className='text-gray-600'>
           <li className={styles.listItem}>
             <a
@@ -121,9 +119,7 @@ export default function FooterAbove() {
         </ul>
       </div>
       <div className='text-xs '>
-        <div className={styles.title + ' text-gray-950 uppercase'}>
-          VỀ SHOPEE
-        </div>
+        <div className={styles.title}>VỀ SHOPEE</div>
         <ul className='text-gray-600'>
           <li className={styles.listItem}>
             <a

@@ -26,6 +26,17 @@ export default {
       },
       spacing: {
         top50: '50px'
+      },
+      opacity: {
+        54: '.54',
+        9: '0.09'
+      },
+      padding: {
+        5: '5px',
+        6.5: '25px'
+      },
+      borderWidth: {
+        0.5: '0.5px'
       }
     }
   },
