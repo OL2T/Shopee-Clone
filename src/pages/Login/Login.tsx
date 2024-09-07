@@ -1,4 +1,15 @@
+// import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 export default function Login() {
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors }
+  // } = useForm()
+
+  // const onSubmit = handleSubmit((data) => {
+  //   console.log(data)
+  // })
   return (
     <div className='bg-redRegister'>
       <div className='w-1024 bg-register-hero-pattern h-600 mx-auto relative'>
@@ -50,9 +61,9 @@ export default function Login() {
                     <span className='text-gray-400 text-sm'>
                       Bạn mới biết đến Shopee?
                     </span>
-                    <a className='text-sm ml-1 text-red-400' href='/register'>
+                    <Link className='text-sm ml-1 text-red-400' to='/register'>
                       Đăng ký
-                    </a>
+                    </Link>
                   </div>
                 </form>
               </div>
