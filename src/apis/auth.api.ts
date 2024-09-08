@@ -9,5 +9,5 @@ export const registerAccount = (body: {
   // address: string
   // date_of_birth: string
 }) => {
-  return http.post<AuthResponse>('/register', body)
+  return http.post<AuthResponse>('/registerr', body)
 }
