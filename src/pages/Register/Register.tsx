@@ -1,9 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-
+import { useMutation } from '@tanstack/react-query'
+import { omit } from 'lodash'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { registerAccount } from 'src/apis/auth.api'
 import Input from 'src/components/Input'
+import { ResponseAPI } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
+import { isUnprocessableEntityError } from 'src/utils/utils'
 // import * as yup from 'yup'
 
 type FormData = Schema
@@ -11,17 +15,63 @@ type FormData = Schema
 export default function Register() {
   const {
     register,
-    watch,
+    // watch,
+    setError,
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) =>
+      registerAccount(body)
   })
-  console.log(watch())
+
+  const onSubmit = handleSubmit((data) => {
+    // console.log(data)
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log(data)
+      },
+      onError: (error) => {
+        if (
+          isUnprocessableEntityError<
+            ResponseAPI<Omit<FormData, 'confirm_password'>>
+          >(error)
+        ) {
+          const formErrors = error.response?.data.data
+          console.log(formErrors)
+          // Way 2
+          if (formErrors) {
+            Object.keys(formErrors).forEach((key) => {
+              console.log(key)
+              setError(key as keyof Omit<FormData, 'confirm_password'>, {
+                message:
+                  formErrors[key as keyof Omit<FormData, 'confirm_password'>],
+                type: 'Server'
+              })
+            })
+          }
+          // Way 1
+          // if (formErrors?.email) {
+          //   setError('email', {
+          //     message: formErrors.email,
+          //     type: 'Server'
+          //   })
+          // }
+          // if (formErrors?.password) {
+          //   setError('password', {
+          //     message: formErrors.password,
+          //     type: 'Server'
+          //   })
+          // }
+        }
+      }
+    })
+  })
+  // console.log(watch())
 
   return (
     <div className='bg-redRegister'>
