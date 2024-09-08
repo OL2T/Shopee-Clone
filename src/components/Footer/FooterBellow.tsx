@@ -1,10 +1,10 @@
 export default function FooterBellow() {
   return (
     <div>
-      <div className='flex items-center justify-between py-10 border-t border-t-black/10'>
+      <div className='flex items-center flex-wrap xl:flex-nowrap gap-2 justify-between py-10 border-t border-t-black/10'>
         <div>© 2024 ShopeeClone. Tất cả các quyền được bảo lưu.</div>
-        <div className='flex items-center'>
-          <div className='XLZs0K jsGQO7'>Quốc gia &amp; Khu vực:</div>
+        <div className='flex items-center flex-wrap xl:flex-nowrap'>
+          <div className=''>Quốc gia &amp; Khu vực:</div>
           <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.sg' className='jsGQO7 WfURpL'>
               Singapore
