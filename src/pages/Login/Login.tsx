@@ -1,18 +1,59 @@
-// import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-export default function Login() {
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors }
-  // } = useForm()
+import { loginAccount } from 'src/apis/auth.api'
+import Input from 'src/components/Input'
+import { ResponseAPI } from 'src/types/utils.type'
+import { Schema, schema } from 'src/utils/rules'
+import { isUnprocessableEntityError } from 'src/utils/utils'
 
-  // const onSubmit = handleSubmit((data) => {
-  //   console.log(data)
-  // })
+type FormData = Omit<Schema, 'confirm_password'>
+const loginSchema = schema.omit(['confirm_password'])
+export default function Login() {
+  const {
+    register,
+    setError,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormData>({
+    resolver: yupResolver<FormData>(loginSchema)
+  })
+
+  const loginAccountMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => loginAccount(body)
+  })
+
+  const onSubmit = handleSubmit((data) => {
+    console.log(data)
+    loginAccountMutation.mutate(data, {
+      onSuccess: (data) => {
+        console.log(data)
+      },
+      onError: (error) => {
+        if (isUnprocessableEntityError<ResponseAPI<FormData>>(error)) {
+          const formErrors = error.response?.data.data
+          console.log(formErrors)
+          // Way 2
+          if (formErrors) {
+            Object.keys(formErrors).forEach((key) => {
+              console.log(key)
+              setError(key as keyof Omit<FormData, 'confirm_password'>, {
+                message:
+                  formErrors[key as keyof Omit<FormData, 'confirm_password'>],
+                type: 'Server'
+              })
+            })
+          }
+        }
+      }
+    })
+  })
+  // const value = watch()
+  // console.log(value, errors)
   return (
     <div className='bg-redRegister'>
-      <div className='w-1024 bg-register-hero-pattern h-600 mx-auto relative'>
+      <div className='w-full max-w-[1024px] bg-register-hero-pattern bg-no-repeat h-600 mx-auto relative'>
         <div className='absolute -translate-y-[50%] top-[50%] w-full right-0'>
           {/* <Helmet>
           <title>Đăng nhập | Shopee Clone</title>
@@ -23,31 +64,30 @@ export default function Login() {
               <div className='lg:col-span-2 lg:col-start-4'>
                 <form
                   className='rounded bg-white p-10 shadow-sm'
-                  // onSubmit={onSubmit}
+                  onSubmit={onSubmit}
                   noValidate
                 >
                   <div className='text-2xl'>Đăng Nhập</div>
-
-                  <input
+                  <Input
                     name='email'
-                    // register={register}
+                    register={register}
                     type='email'
-                    className=' mt-8 bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
-                    // errorMessage={errors.email?.message}
+                    className='mt-8'
+                    errors={errors.email?.message}
                     placeholder='Email/Số điện thoại/Tên đăng nhập'
+                    // rules={rules.email}
                   />
-
-                  <input
+                  <Input
                     name='password'
-                    // register={register}
+                    register={register}
                     type='password'
-                    className='mt-[30px] bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
-                    // classNameEye='absolute right-[5px] h-5 w-5 cursor-pointer top-[12px]'
-                    // errorMessage={errors.password?.message}
+                    className='mt-2'
+                    errors={errors.password?.message}
                     placeholder='Password'
+                    // rules={rules.password}
                     autoComplete='on'
                   />
-                  <div className='mt-8'>
+                  <div className='mt-3'>
                     <button
                       type='submit'
                       className='flex  w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'

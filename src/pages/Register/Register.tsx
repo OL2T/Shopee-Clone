@@ -8,7 +8,6 @@ import Input from 'src/components/Input'
 import { ResponseAPI } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
-// import * as yup from 'yup'
 
 type FormData = Schema
 
@@ -75,13 +74,13 @@ export default function Register() {
 
   return (
     <div className='bg-redRegister'>
-      <div className='w-1024 bg-register-hero-pattern h-600 mx-auto relative'>
+      <div className='w-full max-w-[1024px] bg-register-hero-pattern bg-no-repeat h-600 mx-auto relative'>
         <div className='absolute -translate-y-[50%] top-[50%] w-full right-0'>
           {/* <Helmet>
           <title>Đăng nhập | Shopee Clone</title>
           <meta name='description' content='Đăng nhập vào dự án Shopee Clone' />
         </Helmet> */}
-          <div className='container px-4'>
+          <div className='container px-4 mx-auto'>
             <div className='grid grid-cols-1 py-12 xl:px-0 lg:grid-cols-5'>
               <div className='lg:col-span-2 lg:col-start-4'>
                 <form
@@ -97,7 +96,6 @@ export default function Register() {
                     className='mt-8'
                     errors={errors.email?.message}
                     placeholder='Email/Số điện thoại/Tên đăng nhập'
-                    // rules={rules.email}
                   />
                   <Input
                     name='password'
@@ -106,7 +104,6 @@ export default function Register() {
                     className='mt-2'
                     errors={errors.password?.message}
                     placeholder='Password'
-                    // rules={rules.password}
                     autoComplete='on'
                   />
                   <Input
@@ -116,7 +113,6 @@ export default function Register() {
                     className='mt-2'
                     errors={errors.confirm_password?.message}
                     placeholder='Confirm Password'
-                    // rules={rules.confirm_password}
                     autoComplete='on'
                   />
 

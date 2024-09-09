@@ -18,9 +18,13 @@ export default function RegisterHeader() {
           <div className='ml-4 text-xl lg:text-2xl'>Đăng ký</div>
         </nav>
         <div>
-          <Link to={'/help'} className='text-orange text-sm'>
+          <a
+            href='https://help.shopee.vn/vn/s'
+            className='text-orange text-sm'
+            target='blank'
+          >
             Bạn cần giúp đỡ?
-          </Link>
+          </a>
         </div>
       </div>
     </header>
