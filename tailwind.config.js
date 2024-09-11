@@ -1,6 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const plugin = require('tailwindcss/plugin')
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  corePlugins: {
+    container: false
+  },
   theme: {
     extend: {
       width: {
@@ -40,5 +46,15 @@ export default {
       }
     }
   },
-  plugins: []
+  plugins: [
+    plugin(function ({ addComponents }) {
+      addComponents({
+        '.container': {
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 16px'
+        }
+      })
+    })
+  ]
 }

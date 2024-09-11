@@ -6,7 +6,7 @@ import FooterBellow from './FooterBellow'
 export default function Footer() {
   return (
     <footer className='pt-top50 bg-neutral-100 text-black/54 text-sm'>
-      <div className='container max-w-container mx-auto px-4 xl:px-0'>
+      <div className='container xl:px-0'>
         <FooterAbove />
         <FooterBellow />
       </div>

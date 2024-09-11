@@ -2,7 +2,7 @@ import styles from './Footer.module.scss'
 
 export default function FooterAbove() {
   return (
-    <div className='grid grid-cols-5'>
+    <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
       <div className='text-xs '>
         <div className={styles.title}>CHĂM SÓC KHÁCH HÀNG</div>
         <ul className='text-gray-600'>

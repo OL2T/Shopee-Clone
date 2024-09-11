@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 
 export default function Header() {
   return (
-    <header className='fixed bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'>
-      <div className='flex container mx-auto text-white text-[13px] font-light pt-[5px]'>
-        <nav className='container navbar flex justify-between'>
+    <header className='sticky bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'>
+      <div className='nav-top flex container text-white text-[13px] font-light pt-[5px]'>
+        <nav className='flex justify-between w-full'>
           <div className='flex gap-4 items-center'>
             <a
               href='//banhang.shopee.vn'
@@ -56,7 +56,7 @@ export default function Header() {
                 <div className='stardust-popover' id='stardust-popover1'>
                   <div role='button' className='stardust-popover__target'>
                     <a
-                      className='flex items-center fill-current'
+                      className='flex items-center fill-current gap-1'
                       href='/user/notifications/order'
                     >
                       <svg
@@ -71,9 +71,9 @@ export default function Header() {
                   </div>
                 </div>
               </li>
-              <li>
+              <li className='navbar__link--help'>
                 <a
-                  className='flex items-center'
+                  className='flex items-center gap-1'
                   href='https://help.shopee.vn/vn/s'
                   target='_blank'
                   rel='noopener noreferrer'
@@ -107,7 +107,7 @@ export default function Header() {
               <li className='flex items-center navbar__link navbar__link--hoverable navbar__link--tappable'>
                 <div className='stardust-popover' id='stardust-popover0'>
                   <div role='button' className='stardust-popover__target'>
-                    <div className='flex items-center'>
+                    <div className='flex items-center gap-1'>
                       <div className=''>
                         <svg
                           width={16}
@@ -155,10 +155,10 @@ export default function Header() {
                   </div>
                 </div>
               </li>
-              <Link className='font-semibold' to={'/register'}>
+              <Link className='font-medium' to={'/register'}>
                 Đăng Ký
               </Link>
-              <Link className='font-semibold' to={'/login'}>
+              <Link className='font-medium' to={'/login'}>
                 Đăng Nhập
               </Link>
             </ul>
@@ -166,7 +166,7 @@ export default function Header() {
         </nav>
       </div>
 
-      <div className='container text-white py-4 mx-auto'>
+      <div className='container  text-white py-4'>
         <div className='flex items-center flex-wrap justify-between'>
           <Link className='logo pr-10' to={'/'}>
             <div className='header-with-logo'>
