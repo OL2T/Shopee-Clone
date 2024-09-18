@@ -1,6 +1,16 @@
+import { useRef, useState } from 'react'
+import { FloatingPortal, useFloating, arrow } from '@floating-ui/react'
 import { Link } from 'react-router-dom'
-
+import { AnimatePresence, motion } from 'framer-motion'
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false)
+  const arrowRef = useRef<HTMLElement>(null)
+  const { x, y, refs, floatingStyles, middlewareData } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [arrow({ element: arrowRef })]
+  })
+
   return (
     <header className='sticky bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'>
       <div className='nav-top flex container text-white text-[13px] font-light pt-[5px]'>
@@ -55,19 +65,16 @@ export default function Header() {
               <li className='navbar__link--notification navbar__link navbar__link--hoverable navbar__link--tappable'>
                 <div className='stardust-popover' id='stardust-popover1'>
                   <div role='button' className='stardust-popover__target'>
-                    <a
-                      className='flex items-center fill-current gap-1'
-                      href='/user/notifications/order'
-                    >
+                    <div className='flex items-center fill-current gap-1'>
                       <svg
                         viewBox='3 2.5 14 14'
-                        className='shopee-svg-icon icon-notification-2 w-[1.125rem] h-[0.875rem] text-white'
+                        className='shopee-svg-icon icon-notification-2 h-[1.125rem] w-[0.875rem] text-white'
                       >
                         <path d='m17 15.6-.6-1.2-.6-1.2v-7.3c0-.2 0-.4-.1-.6-.3-1.2-1.4-2.2-2.7-2.2h-1c-.3-.7-1.1-1.2-2.1-1.2s-1.8.5-2.1 1.3h-.8c-1.5 0-2.8 1.2-2.8 2.7v7.2l-1.2 2.5-.2.4h14.4zm-12.2-.8.1-.2.5-1v-.1-7.6c0-.8.7-1.5 1.5-1.5h6.1c.8 0 1.5.7 1.5 1.5v7.5.1l.6 1.2h-10.3z' />
                         <path d='m10 18c1 0 1.9-.6 2.3-1.4h-4.6c.4.9 1.3 1.4 2.3 1.4z' />
                       </svg>
                       <span className='AfkgIX'>Thông báo</span>
-                    </a>
+                    </div>
                   </div>
                 </div>
               </li>
@@ -104,39 +111,43 @@ export default function Header() {
                   </span>
                 </a>
               </li>
-              <li className='flex items-center navbar__link navbar__link--hoverable navbar__link--tappable'>
+              <li
+                ref={refs.setReference}
+                onMouseEnter={() => setIsOpen(true)}
+                onMouseLeave={() => setIsOpen(false)}
+                className='flex items-center navbar__link navbar__link--hoverable navbar__link--tappable'
+              >
                 <div className='stardust-popover' id='stardust-popover0'>
                   <div role='button' className='stardust-popover__target'>
-                    <div className='flex items-center gap-1'>
-                      <div className=''>
-                        <svg
-                          width={16}
-                          height={16}
-                          viewBox='0 0 16 16'
-                          fill='none'
-                          xmlns='http://www.w3.org/2000/svg'
-                        >
-                          <path
-                            d='M8.00065 14.6667C11.6825 14.6667 14.6673 11.6819 14.6673 8.00004C14.6673 4.31814 11.6825 1.33337 8.00065 1.33337C4.31875 1.33337 1.33398 4.31814 1.33398 8.00004C1.33398 11.6819 4.31875 14.6667 8.00065 14.6667Z'
-                            stroke='currentColor'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M5.33464 8.00004C5.33464 11.6819 6.52854 14.6667 8.0013 14.6667C9.47406 14.6667 10.668 11.6819 10.668 8.00004C10.668 4.31814 9.47406 1.33337 8.0013 1.33337C6.52854 1.33337 5.33464 4.31814 5.33464 8.00004Z'
-                            stroke='currentColor'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                          <path
-                            d='M1.33398 8H14.6673'
-                            stroke='currentColor'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </svg>
-                      </div>
-                      <span className='A58dQg'>Tiếng Việt</span>
+                    <div className='flex items-center gap-1 hover:text-gray-300 '>
+                      <svg
+                        width={16}
+                        height={16}
+                        viewBox='0 0 16 16'
+                        fill='none'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d='M8.00065 14.6667C11.6825 14.6667 14.6673 11.6819 14.6673 8.00004C14.6673 4.31814 11.6825 1.33337 8.00065 1.33337C4.31875 1.33337 1.33398 4.31814 1.33398 8.00004C1.33398 11.6819 4.31875 14.6667 8.00065 14.6667Z'
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                        <path
+                          d='M5.33464 8.00004C5.33464 11.6819 6.52854 14.6667 8.0013 14.6667C9.47406 14.6667 10.668 11.6819 10.668 8.00004C10.668 4.31814 9.47406 1.33337 8.0013 1.33337C6.52854 1.33337 5.33464 4.31814 5.33464 8.00004Z'
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                        <path
+                          d='M1.33398 8H14.6673'
+                          stroke='currentColor'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+
+                      <span className=''>Tiếng Việt</span>
                       <svg
                         viewBox='0 0 12 12'
                         fill='none'
@@ -154,6 +165,47 @@ export default function Header() {
                     </div>
                   </div>
                 </div>
+                <FloatingPortal>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        ref={refs.setFloating}
+                        style={{
+                          ...floatingStyles,
+                          display: 'block',
+                          top: y ?? 0,
+                          left: x ?? 0,
+                          width: '12.5rem',
+                          transformOrigin: `${middlewareData?.origin?.x}px top`
+                        }}
+                        initial={{ opacity: 0, transform: 'scale(0)' }}
+                        animate={{ opacity: 1, transform: 'scale(1)' }}
+                        exit={{ opacity: 0, transform: 'scale(0)' }}
+                        transition={{ duration: 0.3 }}
+                        className='z-[100] relative '
+                      >
+                        <div className='relative top-[10px] bg-white min-w-[12.5rem] font-normal text-gray-900 z-[100] shadow-md rounded-sm'>
+                          <div className='absolute top-0 border-x-transparent border-t-transparent border-b-[10px]'>
+                            <span
+                              ref={arrowRef}
+                              style={{
+                                left: (middlewareData?.arrow?.x ?? 0) + 30,
+                                top: middlewareData?.arrow?.y
+                              }}
+                              className='w-0 h-0 absolute -translate-y-full border-x-transparent border-x-[14px] border-t-transparent border-t-[14px] border-b-[10px] border-b-white'
+                            ></span>
+                          </div>
+                          <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
+                            Tiếng Việt
+                          </button>
+                          <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
+                            Tiếng Anh
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </FloatingPortal>
               </li>
               <Link className='font-medium' to={'/register'}>
                 Đăng Ký

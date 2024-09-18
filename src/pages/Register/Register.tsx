@@ -80,7 +80,7 @@ export default function Register() {
           <title>Đăng nhập | Shopee Clone</title>
           <meta name='description' content='Đăng nhập vào dự án Shopee Clone' />
         </Helmet> */}
-          <div className='container px-4 mx-auto'>
+          <div className='container'>
             <div className='grid grid-cols-1 py-12 xl:px-0 lg:grid-cols-5'>
               <div className='lg:col-span-2 lg:col-start-4'>
                 <form
