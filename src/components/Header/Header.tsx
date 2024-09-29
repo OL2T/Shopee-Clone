@@ -1,16 +1,7 @@
-import { useRef, useState } from 'react'
-import { FloatingPortal, useFloating, arrow } from '@floating-ui/react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
-export default function Header() {
-  const [isOpen, setIsOpen] = useState(false)
-  const arrowRef = useRef<HTMLElement>(null)
-  const { x, y, refs, floatingStyles, middlewareData } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [arrow({ element: arrowRef })]
-  })
+import Popover from '../Popover/Popover'
 
+export default function Header() {
   return (
     <header className='sticky bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'>
       <div className='nav-top flex container text-white text-[13px] font-light pt-[5px]'>
@@ -111,108 +102,106 @@ export default function Header() {
                   </span>
                 </a>
               </li>
-              <li
-                ref={refs.setReference}
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-                className='flex items-center navbar__link navbar__link--hoverable navbar__link--tappable'
-              >
-                <div className='stardust-popover' id='stardust-popover0'>
-                  <div role='button' className='stardust-popover__target'>
-                    <div className='flex items-center gap-1 hover:text-gray-300 '>
-                      <svg
-                        width={16}
-                        height={16}
-                        viewBox='0 0 16 16'
-                        fill='none'
-                        xmlns='http://www.w3.org/2000/svg'
-                      >
-                        <path
-                          d='M8.00065 14.6667C11.6825 14.6667 14.6673 11.6819 14.6673 8.00004C14.6673 4.31814 11.6825 1.33337 8.00065 1.33337C4.31875 1.33337 1.33398 4.31814 1.33398 8.00004C1.33398 11.6819 4.31875 14.6667 8.00065 14.6667Z'
-                          stroke='currentColor'
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                        />
-                        <path
-                          d='M5.33464 8.00004C5.33464 11.6819 6.52854 14.6667 8.0013 14.6667C9.47406 14.6667 10.668 11.6819 10.668 8.00004C10.668 4.31814 9.47406 1.33337 8.0013 1.33337C6.52854 1.33337 5.33464 4.31814 5.33464 8.00004Z'
-                          stroke='currentColor'
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                        />
-                        <path
-                          d='M1.33398 8H14.6673'
-                          stroke='currentColor'
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                        />
-                      </svg>
 
-                      <span className=''>Tiếng Việt</span>
-                      <svg
-                        viewBox='0 0 12 12'
-                        fill='none'
-                        width={12}
-                        height={12}
-                        color='currentColor'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          clipRule='evenodd'
-                          d='M6 8.146L11.146 3l.707.707-5.146 5.147a1 1 0 01-1.414 0L.146 3.707.854 3 6 8.146z'
-                          fill='currentColor'
-                        />
-                      </svg>
-                    </div>
-                  </div>
+              <Popover
+                className='flex items-center'
+                popoverContent={
+                  <>
+                    <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
+                      Tiếng Việt
+                    </button>
+                    <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
+                      Tiếng Anh
+                    </button>
+                  </>
+                }
+                as={'li'}
+              >
+                <div className='flex items-center gap-1 hover:text-gray-300 '>
+                  <svg
+                    width={16}
+                    height={16}
+                    viewBox='0 0 16 16'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      d='M8.00065 14.6667C11.6825 14.6667 14.6673 11.6819 14.6673 8.00004C14.6673 4.31814 11.6825 1.33337 8.00065 1.33337C4.31875 1.33337 1.33398 4.31814 1.33398 8.00004C1.33398 11.6819 4.31875 14.6667 8.00065 14.6667Z'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                    <path
+                      d='M5.33464 8.00004C5.33464 11.6819 6.52854 14.6667 8.0013 14.6667C9.47406 14.6667 10.668 11.6819 10.668 8.00004C10.668 4.31814 9.47406 1.33337 8.0013 1.33337C6.52854 1.33337 5.33464 4.31814 5.33464 8.00004Z'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                    <path
+                      d='M1.33398 8H14.6673'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                  </svg>
+
+                  <span className=''>Tiếng Việt</span>
+                  <svg
+                    viewBox='0 0 12 12'
+                    fill='none'
+                    width={12}
+                    height={12}
+                    color='currentColor'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      clipRule='evenodd'
+                      d='M6 8.146L11.146 3l.707.707-5.146 5.147a1 1 0 01-1.414 0L.146 3.707.854 3 6 8.146z'
+                      fill='currentColor'
+                    />
+                  </svg>
                 </div>
-                <FloatingPortal>
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        ref={refs.setFloating}
-                        style={{
-                          ...floatingStyles,
-                          display: 'block',
-                          top: y ?? 0,
-                          left: x ?? 0,
-                          width: '12.5rem',
-                          transformOrigin: `${middlewareData?.origin?.x}px top`
-                        }}
-                        initial={{ opacity: 0, transform: 'scale(0)' }}
-                        animate={{ opacity: 1, transform: 'scale(1)' }}
-                        exit={{ opacity: 0, transform: 'scale(0)' }}
-                        transition={{ duration: 0.3 }}
-                        className='z-[100] relative '
-                      >
-                        <div className='relative top-[10px] bg-white min-w-[12.5rem] font-normal text-gray-900 z-[100] shadow-md rounded-sm'>
-                          <div className='absolute top-0 border-x-transparent border-t-transparent border-b-[10px]'>
-                            <span
-                              ref={arrowRef}
-                              style={{
-                                left: (middlewareData?.arrow?.x ?? 0) + 30,
-                                top: middlewareData?.arrow?.y
-                              }}
-                              className='w-0 h-0 absolute -translate-y-full border-x-transparent border-x-[14px] border-t-transparent border-t-[14px] border-b-[10px] border-b-white'
-                            ></span>
-                          </div>
-                          <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
-                            Tiếng Việt
-                          </button>
-                          <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
-                            Tiếng Anh
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </FloatingPortal>
-              </li>
-              <Link className='font-medium' to={'/register'}>
+              </Popover>
+
+              <Popover
+                className='flex items-center'
+                popoverContent={
+                  <div className='flex flex-col text-sm font-medium'>
+                    <Link
+                      to={'/account'}
+                      className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
+                    >
+                      Tài khoản của tôi
+                    </Link>
+                    <Link
+                      to={'/purchase'}
+                      className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
+                    >
+                      Đơn mua
+                    </Link>
+                    <button className='block p-[10px] text-sm w-full text-left hover:text-[#00bfa5]'>
+                      Đăng xuất
+                    </button>
+                  </div>
+                }
+              >
+                <div className='flex items-center'>
+                  <div className=' w-6 h-6 mr-2'>
+                    <img
+                      src='https://picsum.photos/200/300'
+                      alt='https://picsum.photos/200/300'
+                      className='w-full h-full rounded-full object-cover'
+                    />
+                  </div>
+                  <div>lamtai123</div>
+                </div>
+              </Popover>
+              {/* <Link className='font-medium' to={'/register'}>
                 Đăng Ký
               </Link>
               <Link className='font-medium' to={'/login'}>
                 Đăng Nhập
-              </Link>
+              </Link> */}
             </ul>
           </div>
         </nav>
@@ -232,7 +221,7 @@ export default function Header() {
               </svg>
             </div>
           </Link>
-          <div className='w-full flex-1'>
+          <div className='w-full flex-1 max-w-[840px]'>
             <form
               role='search'
               autoComplete='off'
@@ -556,36 +545,78 @@ export default function Header() {
               </div> */}
             </div>
           </div>
-          <div className='cart mx-4'>
+          <div className='cart'>
             <div className='stardust-popover' id='cart_drawer_target_id'>
               <div role='button' className='stardust-popover__target'>
                 <div className='cart-drawer-container'>
-                  <a
-                    className='cart-drawer flex v-center'
-                    id='cart_drawer_target_id'
-                    href='/buyer/login?next=https%3A%2F%2Fshopee.vn%2F'
+                  <Popover
+                    className='w-full'
+                    popoverContent={
+                      <div className='flex flex-col max-w-[400px] min-w-[400px] text-sm mt-2'>
+                        <div className='capitalize text-gray-300 px-[10px] h-[40px] align-middle flex items-center'>
+                          Sản phẩm mới thêm
+                        </div>
+                        <div className='product-list-card flex flex-col mt-2'>
+                          <div className='flex flex-row items-start gap-3 justify-between hover:bg-gray-100 hover:cursor-pointer p-[10px]'>
+                            <div className='flex items-start gap-[10px]'>
+                              <div className='relative w-[42px] h-[42px]'>
+                                <img
+                                  className='object-cover w-full h-full'
+                                  src='https://picsum.photos/200/300'
+                                  alt='product'
+                                />
+                              </div>
+                              <div className='flex flex-col'>
+                                <div className='text-sm text-gray-900 truncate max-w-[200px] font-medium'>
+                                  Áo Thun Nam
+                                </div>
+                              </div>
+                            </div>
+                            <div className='text-sm text-orange'>₫190.000</div>
+                          </div>
+                        </div>
+                        <div className='flex items-center gap-4 justify-between p-[10px]'>
+                          <div className='text-[12px] capitalize'>
+                            110 Thêm hàng vào giỏ
+                          </div>
+                          <Link
+                            to={'/cart'}
+                            className='bg-orange p-2 rounded-sm text-white hover:bg-opacity-90'
+                          >
+                            Xem giỏ hàng
+                          </Link>
+                        </div>
+                      </div>
+                    }
                   >
-                    <svg
-                      viewBox='0 0 26.6 25.6'
-                      className='shopee-svg-icon fill-current w-[26px] h-[26px] stroke-white'
+                    <Link
+                      className='flex px-6'
+                      id='cart_drawer_target_id'
+                      to={'/'}
                     >
-                      <title>Shopping Cart Icon</title>
-                      <polyline
-                        fill='none'
-                        points='2 1.7 5.5 1.7 9.6 18.3 21.2 18.3 24.6 6.1 7 6.1'
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeMiterlimit={10}
-                        strokeWidth='2.5'
-                      />
-                      <circle cx='10.7' cy={23} r='2.2' stroke='none' />
-                      <circle cx='19.7' cy={23} r='2.2' stroke='none' />
-                    </svg>
+                      <svg
+                        viewBox='0 0 26.6 25.6'
+                        className='shopee-svg-icon fill-current w-[26px] h-[26px] stroke-white'
+                      >
+                        <title>Shopping Cart Icon</title>
+                        <polyline
+                          fill='none'
+                          points='2 1.7 5.5 1.7 9.6 18.3 21.2 18.3 24.6 6.1 7 6.1'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeMiterlimit={10}
+                          strokeWidth='2.5'
+                        />
+                        <circle cx='10.7' cy={23} r='2.2' stroke='none' />
+                        <circle cx='19.7' cy={23} r='2.2' stroke='none' />
+                      </svg>
+                    </Link>
+
                     <span className='sr-only'>
                       Shopping Cart Please log in to view cart / add items to
                       cart
                     </span>
-                  </a>
+                  </Popover>
                 </div>
               </div>
             </div>
