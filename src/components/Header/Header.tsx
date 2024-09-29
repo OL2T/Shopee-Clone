@@ -168,7 +168,7 @@ export default function Header() {
                 popoverContent={
                   <div className='flex flex-col text-sm font-medium'>
                     <Link
-                      to={'/account'}
+                      to={'/profile'}
                       className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                     >
                       Tài khoản của tôi
