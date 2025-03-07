@@ -1,20 +1,23 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { omit } from 'lodash'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { registerAccount } from 'src/apis/auth.api'
 import Input from 'src/components/Input'
-import { ResponseAPI } from 'src/types/utils.type'
+import { AppContext } from 'src/Contexts/app.context'
+import { ErrorResponseAPI } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 
 type FormData = Schema
 
 export default function Register() {
+  const { setIsAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
-    // watch,
     setError,
     handleSubmit,
     formState: { errors }
@@ -28,16 +31,16 @@ export default function Register() {
   })
 
   const onSubmit = handleSubmit((data) => {
-    // console.log(data)
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
-      onSuccess: (data) => {
-        console.log(data)
+      onSuccess: () => {
+        setIsAuthenticated(true)
+        navigate('/login')
       },
       onError: (error) => {
         if (
           isUnprocessableEntityError<
-            ResponseAPI<Omit<FormData, 'confirm_password'>>
+            ErrorResponseAPI<Omit<FormData, 'confirm_password'>>
           >(error)
         ) {
           const formErrors = error.response?.data.data
@@ -70,7 +73,6 @@ export default function Register() {
       }
     })
   })
-  // console.log(watch())
 
   return (
     <div className='bg-redRegister'>
