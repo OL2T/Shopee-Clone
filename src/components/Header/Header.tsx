@@ -1,7 +1,21 @@
 import { Link } from 'react-router-dom'
 import Popover from '../Popover/Popover'
+import { logoutAccount } from 'src/apis/auth.api'
+import { useMutation } from '@tanstack/react-query'
+import { useContext } from 'react'
+import { AppContext } from 'src/Contexts/app.context'
 
 export default function Header() {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: () => logoutAccount(),
+    onSuccess: () => {
+      setIsAuthenticated(false)
+    }
+  })
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
   return (
     <header className='sticky bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'>
       <div className='nav-top flex container text-white text-[13px] font-light pt-[5px]'>
@@ -163,45 +177,53 @@ export default function Header() {
                 </div>
               </Popover>
 
-              <Popover
-                className='flex items-center'
-                popoverContent={
-                  <div className='flex flex-col text-sm font-medium'>
-                    <Link
-                      to={'/profile'}
-                      className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
-                    >
-                      Tài khoản của tôi
-                    </Link>
-                    <Link
-                      to={'/purchase'}
-                      className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
-                    >
-                      Đơn mua
-                    </Link>
-                    <button className='block p-[10px] text-sm w-full text-left hover:text-[#00bfa5]'>
-                      Đăng xuất
-                    </button>
+              {!isAuthenticated ? (
+                <>
+                  <Link className='font-medium' to={'/register'}>
+                    Đăng Ký
+                  </Link>
+                  <Link className='font-medium' to={'/login'}>
+                    Đăng Nhập
+                  </Link>
+                </>
+              ) : (
+                <Popover
+                  className='flex items-center'
+                  popoverContent={
+                    <div className='flex flex-col text-sm font-medium'>
+                      <Link
+                        to={'/profile'}
+                        className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
+                      >
+                        Tài khoản của tôi
+                      </Link>
+                      <Link
+                        to={'/purchase'}
+                        className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
+                      >
+                        Đơn mua
+                      </Link>
+                      <button
+                        className='block p-[10px] text-sm w-full text-left hover:text-[#00bfa5]'
+                        onClick={handleLogout}
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  }
+                >
+                  <div className='flex items-center'>
+                    <div className=' w-6 h-6 mr-2'>
+                      <img
+                        src='https://picsum.photos/200/300'
+                        alt='https://picsum.photos/200/300'
+                        className='w-full h-full rounded-full object-cover'
+                      />
+                    </div>
+                    <div>lamtai123</div>
                   </div>
-                }
-              >
-                <div className='flex items-center'>
-                  <div className=' w-6 h-6 mr-2'>
-                    <img
-                      src='https://picsum.photos/200/300'
-                      alt='https://picsum.photos/200/300'
-                      className='w-full h-full rounded-full object-cover'
-                    />
-                  </div>
-                  <div>lamtai123</div>
-                </div>
-              </Popover>
-              {/* <Link className='font-medium' to={'/register'}>
-                Đăng Ký
-              </Link>
-              <Link className='font-medium' to={'/login'}>
-                Đăng Nhập
-              </Link> */}
+                </Popover>
+              )}
             </ul>
           </div>
         </nav>

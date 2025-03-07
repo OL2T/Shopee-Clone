@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function RegisterHeader() {
+  const location = useLocation()
+
   return (
     <header>
       <div className='flex justify-between items-center container h-header px-4'>
@@ -15,7 +17,9 @@ export default function RegisterHeader() {
               </g>
             </svg>
           </Link>
-          <div className='ml-4 text-xl lg:text-2xl'>Đăng ký</div>
+          <div className='ml-4 text-xl lg:text-2xl'>
+            {location.pathname === '/login' ? 'Đăng nhập' : 'Đăng ký'}
+          </div>
         </nav>
         <div>
           <a

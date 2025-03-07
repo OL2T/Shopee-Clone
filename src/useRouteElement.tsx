@@ -5,42 +5,20 @@ import Register from './pages/Register'
 import RegisterLayout from './layouts/RegisterLayout'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
+import { AppContext } from './Contexts/app.context'
+import { useContext } from 'react'
 
 function ProtectedRoute() {
-  const isAuthenticated = true
+  const { isAuthenticated } = useContext(AppContext)
   return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
 }
 function RejectedRoute() {
-  const isLoggedIn = true
-  return !isLoggedIn ? <Outlet /> : <Navigate to='/' />
+  const { isAuthenticated } = useContext(AppContext)
+  return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
 }
 
 export default function useRouteElement() {
   const routeElements = useRoutes([
-    {
-      path: '/',
-      index: true,
-      element: (
-        <Home>
-          <ProductList />
-          {/* <Login /> */}
-        </Home>
-      )
-    },
-    {
-      path: '',
-      element: <ProtectedRoute />,
-      children: [
-        {
-          path: '/profile',
-          element: (
-            <Home>
-              <Profile />
-            </Home>
-          )
-        }
-      ]
-    },
     {
       path: '',
       element: <RejectedRoute />,
@@ -62,6 +40,29 @@ export default function useRouteElement() {
           )
         }
       ]
+    },
+    {
+      path: '',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/profile',
+          element: (
+            <Home>
+              <Profile />
+            </Home>
+          )
+        }
+      ]
+    },
+    {
+      path: '/',
+      index: true,
+      element: (
+        <Home>
+          <ProductList />
+        </Home>
+      )
     }
   ])
   return routeElements
