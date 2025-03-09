@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginAccount } from 'src/apis/auth.api'
+import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/Contexts/app.context'
 import { ErrorResponseAPI } from 'src/types/utils.type'
@@ -88,14 +89,14 @@ export default function Login() {
                     autoComplete='on'
                   />
                   <div className='mt-3'>
-                    <button
+                    <Button
                       type='submit'
                       className='flex  w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'
-                      // isLoading={loginMutation.isLoading}
-                      // disabled={loginMutation.isLoading}
+                      isLoading={loginAccountMutation.isPending}
+                      disabled={loginAccountMutation.isPending}
                     >
                       Đăng nhập
-                    </button>
+                    </Button>
                   </div>
                   <div className='mt-8 flex items-center justify-center'>
                     <span className='text-gray-400 text-sm'>
