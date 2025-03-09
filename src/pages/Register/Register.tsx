@@ -5,6 +5,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerAccount } from 'src/apis/auth.api'
+import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/Contexts/app.context'
 import { ErrorResponseAPI } from 'src/types/utils.type'
@@ -119,14 +120,14 @@ export default function Register() {
                   />
 
                   <div className='mt-3'>
-                    <button
+                    <Button
                       type='submit'
-                      className='flex w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'
-                      // isLoading={loginMutation.isLoading}
-                      // disabled={loginMutation.isLoading}
+                      className='flex  w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'
+                      isLoading={registerAccountMutation.isPending}
+                      disabled={registerAccountMutation.isPending}
                     >
                       Đăng ký
-                    </button>
+                    </Button>
                   </div>
                   <div className='text-[12px] mt-8 text-center px-[25px]'>
                     Bằng việc đăng kí, bạn đã đồng ý với Shopee về
