@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { registerAccount } from 'src/apis/auth.api'
 import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
+import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
 import { ErrorResponseAPI } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
@@ -15,7 +16,7 @@ import { isUnprocessableEntityError } from 'src/utils/utils'
 type FormData = Schema
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setUser } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -34,9 +35,10 @@ export default function Register() {
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
-        navigate('/login')
+        setUser(data.data.data.user)
+        navigate(path.login)
       },
       onError: (error) => {
         if (
@@ -154,7 +156,7 @@ export default function Register() {
                     <span className='text-gray-400 text-sm'>
                       Bạn đã có tài khoản?
                     </span>
-                    <Link className='text-sm ml-1 text-red-400' to='/login'>
+                    <Link className='text-sm ml-1 text-red-400' to={path.login}>
                       Đăng nhập
                     </Link>
                   </div>

@@ -4,13 +4,16 @@ import { logoutAccount } from 'src/apis/auth.api'
 import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { AppContext } from 'src/Contexts/app.context'
+import path from 'src/constant/path'
 
 export default function Header() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, setIsAuthenticated, setUser, user } =
+    useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: () => logoutAccount(),
     onSuccess: () => {
       setIsAuthenticated(false)
+      setUser(null)
     }
   })
   const handleLogout = () => {
@@ -179,10 +182,10 @@ export default function Header() {
 
               {!isAuthenticated ? (
                 <>
-                  <Link className='font-medium' to={'/register'}>
+                  <Link className='font-medium' to={path.register}>
                     Đăng Ký
                   </Link>
-                  <Link className='font-medium' to={'/login'}>
+                  <Link className='font-medium' to={path.login}>
                     Đăng Nhập
                   </Link>
                 </>
@@ -192,7 +195,7 @@ export default function Header() {
                   popoverContent={
                     <div className='flex flex-col text-sm font-medium'>
                       <Link
-                        to={'/profile'}
+                        to={path.profile}
                         className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                       >
                         Tài khoản của tôi
@@ -220,7 +223,7 @@ export default function Header() {
                         className='w-full h-full rounded-full object-cover'
                       />
                     </div>
-                    <div>lamtai123</div>
+                    <div>{user?.email}</div>
                   </div>
                 </Popover>
               )}
