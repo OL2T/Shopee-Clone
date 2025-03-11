@@ -17,7 +17,7 @@ class Http {
     // Get access token from RAM
     this.accessToken = getAccessTokenFromLocalStorage()
     this.instance = axios.create({
-      baseURL: 'https://api-ecom.duthanhduoc.com',
+      baseURL: 'api',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ class Http {
       (response) => {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
-        const { url } = response.config
+        const url = `/${response.config.url}`
         if (url === path.login || url === path.register) {
           const data = response.data as AuthResponse
           this.accessToken = (data as AuthResponse).data.access_token
