@@ -14,10 +14,11 @@ class Http {
   instance: AxiosInstance
   private accessToken: string | null = null
   constructor() {
+    const baseURL = import.meta.env.PROD ? import.meta.env.VITE_API_URL : '/api'
     // Get access token from RAM
     this.accessToken = getAccessTokenFromLocalStorage()
     this.instance = axios.create({
-      baseURL: 'api',
+      baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'
