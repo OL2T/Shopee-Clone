@@ -15,7 +15,6 @@ export default function ProductList() {
     }
   })
 
-  console.log('data', data)
   const [searchParams] = useSearchParams()
   const queryConfig = useMemo(() => {
     const params = Object.fromEntries([...searchParams])

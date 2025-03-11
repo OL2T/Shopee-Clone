@@ -47,11 +47,9 @@ export default function Register() {
           >(error)
         ) {
           const formErrors = error.response?.data.data
-          console.log(formErrors)
           // Way 2
           if (formErrors) {
             Object.keys(formErrors).forEach((key) => {
-              console.log(key)
               setError(key as keyof Omit<FormData, 'confirm_password'>, {
                 message:
                   formErrors[key as keyof Omit<FormData, 'confirm_password'>],
