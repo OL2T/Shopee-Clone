@@ -23,7 +23,8 @@ export default function ProductList() {
   const queryConfig: QueryConfig = omitBy(
     {
       page: queryParams.page || '1',
-      limit: queryParams.limit || 5,
+      limit: queryParams.limit || 8,
+      order: queryParams.order,
       sort_by: queryParams.sort_by,
       exclude: queryParams.exclude,
       rating_filter: queryParams.rating_filter,
@@ -69,8 +70,8 @@ export default function ProductList() {
             </div>
             <div className='col-span-9'>
               <SortProductList
-              // queryConfig={queryConfig}
-              // pageSize={productsData.data.data.pagination.page_size}
+                queryConfig={queryConfig}
+                pageSize={paginationData?.page_size || 1}
               />
               <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
                 {isLoading && <ProductListSkeleton />}
