@@ -1,17 +1,8 @@
 import { createSearchParams, Link } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
 import path from 'src/constant/path'
-
-interface Category {
-  _id: string
-  name: string
-}
-
-interface QueryConfig {
-  category?: string
-  price_min?: string
-  price_max?: string
-}
+import { QueryConfig } from '../../ProductList'
+import { Category } from 'src/types/category.type'
 
 interface Props {
   queryConfig: QueryConfig
@@ -24,13 +15,14 @@ interface Props {
  */
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
+  const { category } = queryConfig
   return (
     <div className='py-4'>
       <Link
         to={path.home}
-        // className={classNames('flex items-center font-bold', {
-        //   'text-orange': !category
-        // })}
+        className={`flex items-center font-bold ${
+          !category ? 'text-orange' : ''
+        }`}
       >
         <svg viewBox='0 0 12 10' className='mr-3 h-4 w-3 fill-current'>
           <g fillRule='evenodd' stroke='none' strokeWidth={1}>
@@ -45,7 +37,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             </g>
           </g>
         </svg>
-        {/* {t('aside filter.all categories')} */}
+        Theo danh mục
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />
       <ul>
@@ -61,9 +53,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     category: categoryItem._id
                   }).toString()
                 }}
-                // className={classNames('relative px-2', {
-                //   'font-semibold text-orange': isActive
-                // })}
+                className={`relative px-2 ${isActive ? 'text-orange font-semibold' : ''}`}
               >
                 {isActive && (
                   <svg
@@ -100,6 +90,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             />
           </g>
         </svg>
+        Theo khoảng giá
         {/* {t('aside filter.filter search')} */}
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />

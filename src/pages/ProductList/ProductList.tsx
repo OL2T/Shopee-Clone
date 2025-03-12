@@ -12,6 +12,7 @@ import Pagination from 'src/components/Pagination/Pagination'
 import { ProductListConfig } from 'src/types/product.type'
 import { isUndefined, omitBy } from 'lodash'
 import ProductListSkeleton from './ProductListSkeleton'
+import categoriesAPI from '../../apis/category.api'
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -30,7 +31,8 @@ export default function ProductList() {
       rating_filter: queryParams.rating_filter,
       price_max: queryParams.price_max,
       price_min: queryParams.price_min,
-      name: queryParams.name
+      name: queryParams.name,
+      category: queryParams.category
     },
     isUndefined
   )
@@ -43,15 +45,15 @@ export default function ProductList() {
     placeholderData: keepPreviousData
   })
 
+  const categoriesData = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => {
+      return categoriesAPI.getCategories()
+    }
+  })
+
   const productsData = data.data?.data.data.products || []
   const paginationData = data.data?.data.data.pagination
-
-  // Temporary mock data for categories
-  const categoriesData = {
-    data: {
-      data: []
-    }
-  }
 
   return (
     <div className=' py-6  container'>
@@ -65,7 +67,7 @@ export default function ProductList() {
             <div className='col-span-3'>
               <AsideFilter
                 queryConfig={queryConfig}
-                categories={categoriesData?.data.data || []}
+                categories={categoriesData?.data?.data.data || []}
               />
             </div>
             <div className='col-span-9'>
