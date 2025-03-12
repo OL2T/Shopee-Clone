@@ -1,4 +1,3 @@
-// import { type RegisterOptions } from 'react-hook-form'
 import * as yup from 'yup'
 // interface FormData {
 //   email: string
@@ -85,7 +84,30 @@ export const schema = yup.object({
     .required('Confirm Password không được để trống')
     .min(6, 'Password phải từ 6 ký tự trở lên')
     .max(160, 'Password có tối đa 160 ký tự')
-    .oneOf([yup.ref('password')], 'Passwords không trùng khớp')
+    .oneOf([yup.ref('password')], 'Passwords không trùng khớp'),
+
+  price_min: yup.string().test({
+    name: 'price-not-allowed',
+    message: 'Vui lòng điền khoảng giá phù hợp',
+    test: function (value) {
+      const price_max = this.parent.price_max
+      if (value !== '' && price_max !== '') {
+        return Number(value) <= Number(price_max)
+      }
+      return value !== '' || price_max !== ''
+    }
+  }),
+  price_max: yup.string().test({
+    name: 'price-not-allowed',
+    message: 'Giá không phù hợp',
+    test: function (value) {
+      const price_min = this.parent.price_min
+      if (value !== '' && price_min !== '') {
+        return Number(price_min) <= Number(value)
+      }
+      return value !== '' || price_min !== ''
+    }
+  })
 })
 
 // const loginSchema = schema.omit(['confirm_password'])
