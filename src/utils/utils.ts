@@ -14,3 +14,27 @@ export function isUnprocessableEntityError<FormError>(
     error.response?.status === HttpStatusCode.UnprocessableEntity
   )
 }
+
+export function formatCurrency(number: number) {
+  return new Intl.NumberFormat('de-DE').format(number)
+}
+
+export function formatNumberToSocialStyle(number: number) {
+  return new Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  })
+    .format(number)
+    .replace('.', ',')
+    .toLowerCase()
+}
+
+export function formatDifferencePriceToPercent(
+  originalPrice: number,
+  newPrice: number
+) {
+  const discount = Math.round(
+    ((originalPrice - newPrice) / originalPrice) * 100
+  )
+  return discount > 0 ? `-${discount}%` : `+${discount * -1}%`
+}
