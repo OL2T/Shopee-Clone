@@ -37,12 +37,10 @@ export default function Product({ product }: Props) {
                 <span className=''>{formatCurrency(product.price)}</span>
               </div>
               <div className='text-[10px] bg-[rgba(254,238,234,1)] p-1 rounded-sm'>
-                -
                 {formatDifferencePriceToPercent(
                   product.price_before_discount,
                   product.price
                 )}
-                %
               </div>
             </div>
           </div>

@@ -33,5 +33,8 @@ export function formatDifferencePriceToPercent(
   originalPrice: number,
   newPrice: number
 ) {
-  return Math.round(((originalPrice - newPrice) / originalPrice) * 100)
+  const discount = Math.round(
+    ((originalPrice - newPrice) / originalPrice) * 100
+  )
+  return discount > 0 ? `-${discount}%` : `+${discount * -1}%`
 }
