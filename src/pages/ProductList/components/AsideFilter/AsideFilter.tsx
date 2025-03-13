@@ -1,17 +1,14 @@
-import { createSearchParams, Link } from 'react-router-dom'
+import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button/Button'
 import path from 'src/constant/path'
-
-interface Category {
-  _id: string
-  name: string
-}
-
-interface QueryConfig {
-  category?: string
-  price_min?: string
-  price_max?: string
-}
+import { QueryConfig } from '../../ProductList'
+import { Category } from 'src/types/category.type'
+import InputNumber from 'src/components/InputNumber/InputNumber'
+import { useForm, Controller } from 'react-hook-form'
+import { Schema, schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import RatingStars from '../RatingStar/RatingStar'
+import { omit } from 'lodash'
 
 interface Props {
   queryConfig: QueryConfig
@@ -23,14 +20,74 @@ interface Props {
  * Còn không thì có price_min thì không có price_max và ngược lại
  */
 
+type FormData = Pick<Schema, 'price_min' | 'price_max'>
+
+const priceSchema = schema.pick(['price_min', 'price_max'])
+
 export default function AsideFilter({ queryConfig, categories }: Props) {
+  const navigate = useNavigate()
+  const { category } = queryConfig
+  const {
+    control,
+    trigger,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors }
+  } = useForm<FormData>({
+    defaultValues: {
+      price_min: queryConfig.price_min || '',
+      price_max: queryConfig.price_max || ''
+    },
+    resolver: yupResolver(priceSchema)
+    // shouldFocusError: false
+  })
+  const formValue = watch()
+  console.log('formValue', formValue)
+  console.log('errors', errors)
+
+  const onSubmit = handleSubmit(
+    (data) => {
+      navigate({
+        pathname: path.home,
+        search: createSearchParams({
+          ...queryConfig,
+          ...(data.price_min && { price_min: data.price_min }),
+          ...(data.price_max && { price_max: data.price_max })
+          // price_min: data.price_min,
+          // price_max: data.price_max
+        }).toString()
+      })
+    }
+    // (err) => {
+    //   if (err.price_max?.ref?.focus) {
+    //     err.price_max.ref.focus()
+    //   }
+    // }
+  )
+
+  const handleRemoveAll = () => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(
+        omit(queryConfig, [
+          'price_min',
+          'price_max',
+          'category',
+          'rating_filter'
+        ])
+      ).toString()
+    })
+    reset({ price_min: '', price_max: '' })
+  }
+
   return (
     <div className='py-4'>
       <Link
         to={path.home}
-        // className={classNames('flex items-center font-bold', {
-        //   'text-orange': !category
-        // })}
+        className={`flex items-center font-bold ${
+          !category ? 'text-orange' : ''
+        }`}
       >
         <svg viewBox='0 0 12 10' className='mr-3 h-4 w-3 fill-current'>
           <g fillRule='evenodd' stroke='none' strokeWidth={1}>
@@ -45,7 +102,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             </g>
           </g>
         </svg>
-        {/* {t('aside filter.all categories')} */}
+        Theo danh mục
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />
       <ul>
@@ -61,9 +118,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     category: categoryItem._id
                   }).toString()
                 }}
-                // className={classNames('relative px-2', {
-                //   'font-semibold text-orange': isActive
-                // })}
+                className={`relative px-2 ${isActive ? 'text-orange font-semibold' : ''}`}
               >
                 {isActive && (
                   <svg
@@ -100,72 +155,62 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             />
           </g>
         </svg>
+        Theo khoảng giá
         {/* {t('aside filter.filter search')} */}
       </Link>
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='my-5'>
         <div>Khoảng giá</div>
-        <form className='mt-2'>
-          <div className='flex items-start'>
-            {/* <Controller
-              // control={control}
+        <form className='mt-2' onSubmit={onSubmit}>
+          <div
+            className={`flex items-center ${!errors.price_min ? 'mb-4' : ''}`}
+          >
+            <Controller
+              control={control}
               name='price_min'
               render={({ field }) => {
                 return (
-                  <></>
-                  // <InputNumber
-                  //   type='text'
-                  //   className='grow'
-                  //   placeholder='₫ TỪ'
-                  //   classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  //   classNameError='hidden'
-                  //   {...field}
-                  //   onChange={(event) => {
-                  //     field.onChange(event)
-                  //     trigger('price_max')
-                  //   }}
-                  // />
+                  <InputNumber
+                    type='number'
+                    className='grow'
+                    placeholder='₫ TỪ'
+                    classNameError='hidden'
+                    {...field}
+                    // classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+                    onChange={(e) => {
+                      field.onChange(e)
+                      trigger('price_max')
+                    }}
+                  />
                 )
               }}
-            /> */}
-            {/* <InputV2
-              control={control}
-              name='price_min'
-              type='number'
-              className='grow'
-              placeholder='₫ TỪ'
-              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-              classNameError='hidden'
-              onChange={() => {
-                trigger('price_max')
-              }}
-            /> */}
-
+            />
             <div className='mx-2 mt-2 shrink-0'>-</div>
-            {/* <Controller
+            <Controller
               control={control}
               name='price_max'
               render={({ field }) => {
                 return (
-                  <></>
-                  // <InputNumber
-                  //   type='text'
-                  //   className='grow'
-                  //   placeholder='₫ ĐẾN'
-                  //   classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  //   classNameError='hidden'
-                  //   {...field}
-                  //   onChange={(event) => {
-                  //     field.onChange(event)
-                  //     trigger('price_min')
-                  //   }}
-                  // />
+                  <InputNumber
+                    type='number'
+                    className='grow'
+                    placeholder='₫ ĐẾN'
+                    classNameError='hidden'
+                    {...field}
+                    // classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+                    onChange={(e) => {
+                      field.onChange(e)
+                      trigger('price_min')
+                    }}
+                  />
                 )
               }}
-            /> */}
+            />
           </div>
-          <div className='mt-1 min-h-[1.25rem] text-center text-sm text-red-600'>
-            {/* {errors.price_min?.message} */}
+          <div
+            className={`text-red-600 my-4 text-sm min-h-[1.25rem] text-center ${errors.price_min ? 'my-4' : 'hidden'}`}
+          >
+            {errors.price_min?.message}
           </div>
           <Button className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'>
             Áp dụng
@@ -174,10 +219,10 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       </div>
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='text-sm'>Đánh giá</div>
-      {/* <RatingStars queryConfig={queryConfig} /> */}
+      <RatingStars queryConfig={queryConfig} />
       <div className='my-4 h-[1px] bg-gray-300' />
       <Button
-        // onClick={handleRemoveAll}
+        onClick={handleRemoveAll}
         className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
       >
         Xóa tất cả
