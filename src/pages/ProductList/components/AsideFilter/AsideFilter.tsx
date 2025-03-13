@@ -7,6 +7,8 @@ import InputNumber from 'src/components/InputNumber/InputNumber'
 import { useForm, Controller } from 'react-hook-form'
 import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
+import RatingStars from '../RatingStar/RatingStar'
+import { omit } from 'lodash'
 
 interface Props {
   queryConfig: QueryConfig
@@ -30,11 +32,12 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     trigger,
     handleSubmit,
     watch,
+    reset,
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      price_min: '',
-      price_max: ''
+      price_min: queryConfig.price_min || '',
+      price_max: queryConfig.price_max || ''
     },
     resolver: yupResolver(priceSchema)
     // shouldFocusError: false
@@ -62,6 +65,22 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     //   }
     // }
   )
+
+  const handleRemoveAll = () => {
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(
+        omit(queryConfig, [
+          'price_min',
+          'price_max',
+          'category',
+          'rating_filter'
+        ])
+      ).toString()
+    })
+    reset({ price_min: '', price_max: '' })
+  }
+
   return (
     <div className='py-4'>
       <Link
@@ -200,10 +219,10 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
       </div>
       <div className='my-4 h-[1px] bg-gray-300' />
       <div className='text-sm'>Đánh giá</div>
-      {/* <RatingStars queryConfig={queryConfig} /> */}
+      <RatingStars queryConfig={queryConfig} />
       <div className='my-4 h-[1px] bg-gray-300' />
       <Button
-        // onClick={handleRemoveAll}
+        onClick={handleRemoveAll}
         className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
       >
         Xóa tất cả
