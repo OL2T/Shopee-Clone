@@ -5,7 +5,7 @@ import { QueryConfig } from '../../ProductList'
 import { Category } from 'src/types/category.type'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { useForm, Controller } from 'react-hook-form'
-import { schema } from 'src/utils/rules'
+import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 interface Props {
@@ -18,27 +18,25 @@ interface Props {
  * Còn không thì có price_min thì không có price_max và ngược lại
  */
 
-type FormData = {
-  price_min?: string
-  price_max?: string
-}
+type FormData = Pick<Schema, 'price_min' | 'price_max'>
 
-const PRICE_SCHEMA = schema.pick(['price_min', 'price_max'])
+const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const navigate = useNavigate()
   const { category } = queryConfig
   const {
     control,
+    trigger,
     handleSubmit,
     watch,
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      price_min: queryConfig.price_min || '',
-      price_max: queryConfig.price_max || ''
+      price_min: '',
+      price_max: ''
     },
-    resolver: yupResolver(PRICE_SCHEMA)
+    resolver: yupResolver(priceSchema)
     // shouldFocusError: false
   })
   const formValue = watch()
@@ -53,6 +51,8 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
           ...queryConfig,
           ...(data.price_min && { price_min: data.price_min }),
           ...(data.price_max && { price_max: data.price_max })
+          // price_min: data.price_min,
+          // price_max: data.price_max
         }).toString()
       })
     }
@@ -156,10 +156,12 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     className='grow'
                     placeholder='₫ TỪ'
                     classNameError='hidden'
+                    {...field}
                     // classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                    onChange={field.onChange}
-                    value={field.value}
-                    ref={field.ref}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      trigger('price_max')
+                    }}
                   />
                 )
               }}
@@ -175,10 +177,12 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     className='grow'
                     placeholder='₫ ĐẾN'
                     classNameError='hidden'
+                    {...field}
                     // classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                    onChange={field.onChange}
-                    value={field.value}
-                    ref={field.ref}
+                    onChange={(e) => {
+                      field.onChange(e)
+                      trigger('price_min')
+                    }}
                   />
                 )
               }}

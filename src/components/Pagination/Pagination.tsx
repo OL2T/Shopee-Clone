@@ -79,10 +79,10 @@ export default function Pagination({ queryConfig, pageSize }: Props) {
               page: pageNumber.toString()
             }).toString()
           }}
-          className={`w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 cursor-pointer ${
+          className={`w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center cursor-pointer ${
             currentPage === pageNumber
               ? 'bg-orange text-white text-opacity-100'
-              : ''
+              : 'text-black text-opacity-40'
           }`}
         >
           {pageNumber}

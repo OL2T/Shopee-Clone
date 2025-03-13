@@ -24,7 +24,7 @@ export default function ProductList() {
   const queryConfig: QueryConfig = omitBy(
     {
       page: queryParams.page || '1',
-      limit: queryParams.limit || 8,
+      limit: queryParams.limit || 10,
       order: queryParams.order,
       sort_by: queryParams.sort_by,
       exclude: queryParams.exclude,
@@ -61,7 +61,7 @@ export default function ProductList() {
         <title>Trang chủ | Shopee Clone</title>
         <meta name='description' content='Trang chủ dự án Shopee Clone' />
       </Helmet> */}
-      {data ? (
+      {data && (
         <div className='container'>
           <div className='grid grid-cols-12 gap-6'>
             <div className='col-span-3'>
@@ -75,17 +75,21 @@ export default function ProductList() {
                 queryConfig={queryConfig}
                 pageSize={paginationData?.page_size || 1}
               />
-              <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-                {isLoading && <ProductListSkeleton />}
-                {productsData.map(
-                  (product) =>
-                    !isLoading && (
-                      <div className='col-span-1' key={product._id}>
-                        <Product product={product} />
-                      </div>
-                    )
-                ) || []}
-              </div>
+              {productsData.length ? (
+                <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+                  {isLoading && <ProductListSkeleton />}
+                  {productsData.map(
+                    (product) =>
+                      !isLoading && (
+                        <div className='col-span-1' key={product._id}>
+                          <Product product={product} />
+                        </div>
+                      )
+                  ) || []}
+                </div>
+              ) : (
+                <div className='text-center py-6'>Không có dữ liệu</div>
+              )}
               <Pagination
                 queryConfig={queryConfig}
                 pageSize={paginationData?.page_size || 1}
@@ -93,8 +97,6 @@ export default function ProductList() {
             </div>
           </div>
         </div>
-      ) : (
-        <>Không có dữ liệu</>
       )}
     </div>
   )
