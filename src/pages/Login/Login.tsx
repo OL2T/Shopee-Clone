@@ -7,12 +7,12 @@ import authApi from 'src/apis/auth.api'
 import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/Contexts/app.context'
-import { ErrorResponseAPI } from 'src/types/utils.type'
+import { ErrorResponseAPI, NotUndefinedField } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 
-type FormData = Omit<Schema, 'confirm_password'>
-const loginSchema = schema.omit(['confirm_password'])
+type FormData = NotUndefinedField<Pick<Schema, 'email' | 'password'>>
+const loginSchema = schema.pick(['email', 'password'])
 export default function Login() {
   const { setIsAuthenticated, setUser } = useContext(AppContext)
   const navigate = useNavigate()

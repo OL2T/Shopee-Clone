@@ -9,11 +9,14 @@ import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
-import { ErrorResponseAPI } from 'src/types/utils.type'
+import { ErrorResponseAPI, NotUndefinedField } from 'src/types/utils.type'
 import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 
-type FormData = Schema
+type FormData = NotUndefinedField<
+  Pick<Schema, 'email' | 'password' | 'confirm_password'>
+>
+const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 export default function Register() {
   const { setIsAuthenticated, setUser } = useContext(AppContext)
@@ -24,7 +27,7 @@ export default function Register() {
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(registerSchema)
   })
 
   const registerAccountMutation = useMutation({
