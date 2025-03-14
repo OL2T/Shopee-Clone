@@ -7,10 +7,10 @@ interface Props {
 
 export default function Home({ children }: Props) {
   return (
-    <div>
+    <>
       <Header />
-      {children}
+      <main className='py-6 container'>{children}</main>
       <Footer />
-    </div>
+    </>
   )
 }

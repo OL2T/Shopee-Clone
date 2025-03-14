@@ -9,3 +9,5 @@ export const order = {
   asc: 'asc',
   desc: 'desc'
 } as const
+
+export const LIMIT = 10

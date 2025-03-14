@@ -13,6 +13,7 @@ import { ProductListConfig } from 'src/types/product.type'
 import { isUndefined, omitBy } from 'lodash'
 import ProductListSkeleton from './ProductListSkeleton'
 import categoriesAPI from '../../apis/category.api'
+import { LIMIT } from 'src/constant/product'
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -24,7 +25,7 @@ export default function ProductList() {
   const queryConfig: QueryConfig = omitBy(
     {
       page: queryParams.page || '1',
-      limit: queryParams.limit || 10,
+      limit: queryParams.limit || LIMIT,
       order: queryParams.order,
       sort_by: queryParams.sort_by,
       exclude: queryParams.exclude,
@@ -56,7 +57,7 @@ export default function ProductList() {
   const paginationData = data.data?.data.data.pagination
 
   return (
-    <div className=' py-6  container'>
+    <>
       {/* <Helmet>
         <title>Trang chủ | Shopee Clone</title>
         <meta name='description' content='Trang chủ dự án Shopee Clone' />
@@ -98,6 +99,6 @@ export default function ProductList() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

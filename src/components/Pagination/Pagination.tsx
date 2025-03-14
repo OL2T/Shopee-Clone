@@ -133,7 +133,7 @@ export default function Pagination({ queryConfig, pageSize }: Props) {
       )}
       {renderPagination()}
       {currentPage === pageSize ? (
-        <span className='bg-gray-50 w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 not-allowed cursor-not-allowed'>
+        <span className='w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 not-allowed cursor-not-allowed'>
           <svg
             enableBackground='new 0 0 11 11'
             viewBox='0 0 11 11'
