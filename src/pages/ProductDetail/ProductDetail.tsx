@@ -47,7 +47,7 @@ export default function ProductDetail() {
             <img
               alt='shipping entrance icon'
               className='snjEjZ'
-              src='../src/assets/images/icon-shipping.svg'
+              src='../assets/images/icon-shipping.svg'
             />
 
             <span className='text-gray-900'> {valueData.shipping}</span>
@@ -62,7 +62,7 @@ export default function ProductDetail() {
       title: 'An tâm mua sắm cùng Shopee',
       value: () => (
         <div className='flex items-center gap-x-1'>
-          <img src='../src/assets/images/icon-guard.svg' alt='shopee-guard' />
+          <img src='../assets/images/icon-guard.svg' alt='shopee-guard' />
           <Popover
             placement='bottom-start'
             popoverContent={
@@ -72,7 +72,7 @@ export default function ProductDetail() {
                 </div>
                 <div className='flex gap-x-3 pt-5'>
                   <img
-                    src='../src/assets/images/icon-guard-2.png'
+                    src='../assets/images/icon-guard-2.png'
                     alt='shopee-guard-2'
                     className='w-6 h-6'
                   />
