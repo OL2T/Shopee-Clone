@@ -38,7 +38,7 @@ export default {
         9: '0.09'
       },
       padding: {
-        5: '5px',
+        // 5: '5px',
         6.5: '25px'
       },
       borderWidth: {

@@ -31,7 +31,6 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     control,
     trigger,
     handleSubmit,
-    watch,
     reset,
     formState: { errors }
   } = useForm<FormData>({
@@ -42,9 +41,6 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
     resolver: yupResolver(priceSchema)
     // shouldFocusError: false
   })
-  const formValue = watch()
-  console.log('formValue', formValue)
-  console.log('errors', errors)
 
   const onSubmit = handleSubmit(
     (data) => {

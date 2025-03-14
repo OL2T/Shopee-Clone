@@ -6,7 +6,7 @@ function App() {
   const routeElements = useRouteElement()
   return (
     <>
-      <div>
+      <div className='bg-neutral-100'>
         {routeElements}
         <ToastContainer />
       </div>

@@ -1,7 +1,9 @@
+import { LIMIT } from 'src/constant/product'
+
 export default function ProductListSkeleton() {
   return (
     <>
-      {Array.from({ length: 8 }, (_, index) => (
+      {Array.from({ length: LIMIT }, (_, index) => (
         <div
           key={index}
           role='status'
