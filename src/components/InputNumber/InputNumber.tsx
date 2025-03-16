@@ -4,26 +4,40 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type: React.HTMLInputTypeAttribute
   errors?: string
   className?: string
+  classNameInput?: string
   classNameError?: string
 }
 
 const InputNumber = forwardRef<HTMLInputElement, InputProps>(
   function InputNumberInner(
-    { type, errors, className, classNameError, onChange, ...rest }: InputProps,
+    {
+      type,
+      errors,
+      className,
+      classNameError,
+      classNameInput,
+      onChange,
+      ...rest
+    }: InputProps,
     ref
   ) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
+      console.log('inputValue', value)
+      console.log('inputValue', /^\d+$/.test(value))
       if ((/^\d+$/.test(value) || value === '') && onChange) {
         onChange(e)
       }
     }
+    const inputValue =
+      typeof rest.value === 'number' && isNaN(rest.value) ? '' : rest.value
     return (
       <div className={className}>
         <input
           type={type}
-          className='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
+          className={classNameInput}
           {...rest}
+          value={inputValue}
           ref={ref}
           onChange={handleChange}
         />

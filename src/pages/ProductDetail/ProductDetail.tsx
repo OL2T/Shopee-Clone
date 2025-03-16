@@ -11,7 +11,10 @@ import DOMPurify from 'dompurify'
 import XListView, { ListItem } from 'src/components/XListView/XListView'
 import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
+import InputNumber from 'src/components/InputNumber/InputNumber'
+import { useState } from 'react'
 export default function ProductDetail() {
+  const [productQuantity, setProductQuantity] = useState(1)
   const params = useParams()
   const data = useQuery({
     queryKey: ['productPk', params.id],
@@ -33,9 +36,22 @@ export default function ProductDetail() {
   const valueData = {
     ...productData,
     description: productData?.description || '',
-    shipping: 'Nhận vào ngày mai, phí giao ₫0'
+    shipping: 'Nhận vào ngày mai, phí giao ₫0',
+    quantity: productData?.quantity || 0
   }
-  console.log('valueData', valueData)
+
+  const handleDecrease = () => {
+    if (productQuantity > 1) {
+      setProductQuantity(productQuantity - 1)
+    }
+  }
+  const handleIncrease = () => {
+    if (productQuantity <= valueData?.quantity) {
+      // console.log('value ====>', productQuantity)
+      setProductQuantity(productQuantity + 1)
+    }
+  }
+
   const clothesId = '60aba4e24efcc70f8892e1c6'
   const dataGeneral = [
     {
@@ -122,15 +138,42 @@ export default function ProductDetail() {
       title: 'Số lượng',
       value: () => (
         <div className='flex items-center gap-x-4'>
-          <div className='flex items-center border-gray-300 text-gray-300'>
-            <button className='border w-8 h-8 '>-</button>
-            <input
-              type='number'
+          <div className='flex items-center border-gray-300 text-gray-900'>
+            <button
+              className='flex items-center justify-center border w-8 h-8'
+              onClick={handleDecrease}
+            >
+              <svg
+                enableBackground='new 0 0 10 10'
+                viewBox='0 0 10 10'
+                x={0}
+                y={0}
+                className='w-2.5 h-2.5 text-[10px]'
+              >
+                <polygon points='4.5 4.5 3.5 4.5 0 4.5 0 5.5 3.5 5.5 4.5 5.5 10 5.5 10 4.5' />
+              </svg>
+            </button>
+            <InputNumber
+              type='text'
+              classNameInput='flex items-center justify-center text-center w-[50px] h-8 text-red-600 border-t border-b outline-none'
               min={1}
-              defaultValue={1}
-              className='w-10 h-8 text-center border-t border-b text-red-600'
+              value={productQuantity}
+              onChange={(newValue) => setProductQuantity(Number(newValue))}
             />
-            <button className='w-8 h-8 border '>+</button>
+            <button
+              className='flex items-center justify-center w-8 h-8 border'
+              onClick={handleIncrease}
+            >
+              <svg
+                enableBackground='new 0 0 10 10'
+                viewBox='0 0 10 10'
+                x={0}
+                y={0}
+                className='w-2.5 h-2.5 text-[10px]'
+              >
+                <polygon points='10 4.5 5.5 4.5 5.5 0 4.5 0 4.5 4.5 0 4.5 0 5.5 4.5 5.5 4.5 10 5.5 10 5.5 5.5 10 5.5' />
+              </svg>
+            </button>
           </div>
           <div className='text-sm text-gray-500'>
             {valueData.quantity} sản phẩm có sẵn
@@ -159,6 +202,8 @@ export default function ProductDetail() {
         ]
       : [])
   ]
+
+  // console.log('valueData', valueData)
   return (
     <>
       <div className='bg-white rounded-sm mb-4'>
@@ -244,8 +289,12 @@ export default function ProductDetail() {
                     <button className='bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition'>
                       Mua ngay
                     </button>
-                    <button className='border border-red-500 text-red-500 px-6 py-2 rounded-md hover:bg-red-50 transition'>
-                      Thêm vào giỏ
+                    <button className='flex items-center gap-x-2 border border-red-500 text-red-500 px-6 py-2 rounded-md hover:bg-red-50 transition'>
+                      <img
+                        src='../assets/images/icon-cart.svg'
+                        alt='icon-cart'
+                      />
+                      <span>Thêm vào giỏ hàng</span>
                     </button>
                   </div>
                   {/* Chia sẻ / Lưu */}
