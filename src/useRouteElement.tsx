@@ -58,25 +58,19 @@ export default function useRouteElement() {
       ]
     },
     {
-      path: '',
-      element: <ProtectedRoute />,
-      children: [
-        {
-          path: path.productPk,
-          element: (
-            <Home>
-              <ProductDetail />
-            </Home>
-          )
-        }
-      ]
-    },
-    {
       path: '/',
       index: true,
       element: (
         <Home>
           <ProductList />
+        </Home>
+      )
+    },
+    {
+      path: path.productPk,
+      element: (
+        <Home>
+          <ProductDetail />
         </Home>
       )
     }

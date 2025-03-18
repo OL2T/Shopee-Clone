@@ -38,3 +38,20 @@ export function formatDifferencePriceToPercent(
   )
   return discount > 0 ? `-${discount}%` : `+${discount * -1}%`
 }
+
+export const removeSpecialCharacter = (str: string) => {
+  /* eslint-disable no-useless-escape */
+  return str.replace(
+    /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
+    ''
+  )
+}
+
+export const generateNameId = ({ name, id }: { name: string; id: string }) => {
+  return removeSpecialCharacter(name).replace(/\s/g, '-') + `-i.${id}`
+}
+
+export const getIdFromNameId = (nameId: string) => {
+  const arr = nameId.split('-i.')
+  return arr[arr.length - 1]
+}
