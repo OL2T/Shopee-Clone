@@ -12,7 +12,7 @@ import XListView, { ListItem } from 'src/components/XListView/XListView'
 import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
 import InputNumber from 'src/components/InputNumber/InputNumber'
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 export default function ProductDetail() {
   const [productQuantity, setProductQuantity] = useState(1)
   const params = useParams()
@@ -38,18 +38,6 @@ export default function ProductDetail() {
     description: productData?.description || '',
     shipping: 'Nhận vào ngày mai, phí giao ₫0',
     quantity: productData?.quantity || 0
-  }
-
-  const handleDecrease = () => {
-    if (productQuantity > 1) {
-      setProductQuantity(productQuantity - 1)
-    }
-  }
-  const handleIncrease = () => {
-    if (productQuantity <= valueData?.quantity) {
-      // console.log('value ====>', productQuantity)
-      setProductQuantity(productQuantity + 1)
-    }
   }
 
   const clothesId = '60aba4e24efcc70f8892e1c6'
@@ -203,37 +191,135 @@ export default function ProductDetail() {
       : [])
   ]
 
-  // console.log('valueData', valueData)
+  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
+  const [activeImage, setActiveImage] = useState('')
+  const currentImages = useMemo(() => {
+    return valueData.images?.slice(...currentIndexImage)
+  }, [valueData.images, currentIndexImage])
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    if (valueData.images && valueData.images.length) {
+      setActiveImage(valueData.images[0])
+    }
+  }, [valueData.images])
+
+  const handleSelectImage = (image: string) => {
+    setActiveImage(image)
+  }
+
+  const next = () => {
+    if (valueData.images && currentIndexImage[1] < valueData.images.length) {
+      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+
+  const prev = () => {
+    if (valueData.images && currentIndexImage[0] > 0) {
+      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
+
+  const handleZoomImage = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const image = imageRef.current as HTMLImageElement
+    // Cach 1
+    // Event bubble => error
+    const { offsetX, offsetY } = e.nativeEvent
+    // Cach 2 => không cần xử lý event bubble
+    // const offsetX = e.pageX - (rect.left + window.scrollX)
+    // const offsetY = e.pageY - (rect.top + window.scrollY)
+    const { naturalHeight, naturalWidth } = image
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.left = `${left}px`
+    image.style.top = `${top}px`
+  }
+
+  const handleZoomOutImage = () => {
+    imageRef.current?.removeAttribute('style')
+  }
+
+  const handleDecrease = () => {
+    if (productQuantity > 1) {
+      setProductQuantity(productQuantity - 1)
+    }
+  }
+  const handleIncrease = () => {
+    if (productQuantity <= valueData?.quantity) {
+      // console.log('value ====>', productQuantity)
+      setProductQuantity(productQuantity + 1)
+    }
+  }
+
   return (
     <>
       <div className='bg-white rounded-sm mb-4'>
         {valueData && (
           <div className=' mx-auto p-4'>
-            <div className='flex flex-col md:flex-row gap-6'>
-              <div className='w-full md:w-1/2'>
-                <div className='flex flex-col items-center'>
-                  <div className='mb-4'>
+            <div className='flex flex-col md:flex-row gap-5'>
+              <div className='w-full md:w-[450px] flex-shrink-0 p-[15px]'>
+                <div className=' flex flex-col items-center'>
+                  <div
+                    className='relative w-full pt-[100%] mb-2.5 overflow-hidden hover:cursor-zoom-in'
+                    onMouseMove={(e) => handleZoomImage(e)}
+                    onMouseLeave={handleZoomOutImage}
+                  >
                     <img
-                      src={valueData.image}
-                      alt='Main product'
-                      className='w-full h-auto object-cover rounded-md'
+                      src={activeImage}
+                      alt={valueData.name}
+                      className=' absolute pointer-events-none left-0 top-0 w-full h-auto object-cover'
+                      ref={imageRef}
                     />
                   </div>
 
-                  <div className='flex space-x-2'>
-                    {valueData.images?.map((image, index) => (
+                  <div className='relative flex w-full gap-x-2.5'>
+                    <button
+                      className='absolute top-1/2 left-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
+                      tabIndex={-1}
+                      onClick={prev}
+                    >
                       <img
-                        key={index}
-                        src={image}
-                        alt='Thumbnail product'
-                        className='w-16 h-16 object-cover rounded-md'
+                        alt='icon arrow left bold'
+                        src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/5914c85bab254a6705bd.svg'
                       />
-                    ))}
+                    </button>
+
+                    {currentImages?.slice(0, 5).map((image, index) => {
+                      const isActive = image === activeImage
+                      return (
+                        <div
+                          key={index}
+                          className={`border-2 ${isActive ? 'border-orange' : 'border-transparent'}`}
+                          onMouseEnter={() => handleSelectImage(image)}
+                        >
+                          <img
+                            src={image}
+                            alt={valueData.name}
+                            className='w-[82px] h-[82px] object-cover cursor-pointer'
+                          />
+                        </div>
+                      )
+                    })}
+
+                    <button
+                      className='absolute top-1/2 right-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
+                      tabIndex={-1}
+                      onClick={next}
+                    >
+                      <img
+                        alt='icon arrow right bold'
+                        src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/7e05bc64eb8a25d287c5.svg'
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <div className='w-full md:w-1/2'>
+              <div className='w-full'>
                 <div className='flex flex-col'>
                   <div className='text-xl font-medium text-gray-800 mb-2'>
                     {valueData.name}
@@ -273,73 +359,23 @@ export default function ProductDetail() {
                       )}
                     </span>
                   </div>
-
-                  {/* <p className='text-gray-700 mb-4'>
-                    Viên thả bồn cầu CleanZ giúp sạch khuẩn, khử mùi và làm
-                    thơm. Thích hợp cho mọi loại bồn cầu...
-                  </p> */}
                   <XListView dataView={dataGeneral} />
-                  {/* Chọn số lượng */}
-                  {/* <div className='flex items-center mb-4'>
-                    <span className='mr-3 text-gray-600'>Số lượng</span>
-                    
-                  </div> */}
-                  {/* Nút Mua & Thêm giỏ hàng */}
                   <div className='flex items-center space-x-3 mb-4'>
-                    <button className='bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition'>
-                      Mua ngay
-                    </button>
-                    <button className='flex items-center gap-x-2 border border-red-500 text-red-500 px-6 py-2 rounded-md hover:bg-red-50 transition'>
+                    <button className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'>
                       <img
                         src='../assets/images/icon-cart.svg'
                         alt='icon-cart'
+                        className='w-5 h-5'
                       />
                       <span>Thêm vào giỏ hàng</span>
                     </button>
-                  </div>
-                  {/* Chia sẻ / Lưu */}
-                  <div className='flex items-center space-x-4'>
-                    <button className='text-gray-500 flex items-center hover:text-gray-700 transition'>
-                      {/* icon share */}
-                      <svg
-                        className='w-5 h-5 mr-1'
-                        fill='none'
-                        stroke='currentColor'
-                        strokeWidth={2}
-                        viewBox='0 0 24 24'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M18 8l4 4m0 0l-4 4m4-4H6m6 4v1a3 3 0 11-6 0v-1a3 3 0 016 0z'
-                        />
-                      </svg>
-                      Chia sẻ
-                    </button>
-                    <button className='text-gray-500 flex items-center hover:text-gray-700 transition'>
-                      {/* icon heart */}
-                      <svg
-                        className='w-5 h-5 mr-1'
-                        fill='none'
-                        stroke='currentColor'
-                        strokeWidth={2}
-                        viewBox='0 0 24 24'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.343l-6.828-6.829a4 4 0 010-5.656z'
-                        />
-                      </svg>
-                      Đã thích (6,6k)
+                    <button className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'>
+                      Mua ngay
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* (Tuỳ chọn) Thêm khu vực mô tả dài, đánh giá khách hàng... */}
-            {/* ... */}
           </div>
         )}
       </div>
