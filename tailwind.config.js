@@ -50,7 +50,7 @@ export default {
     plugin(function ({ addComponents }) {
       addComponents({
         '.container': {
-          maxWidth: '1200px',
+          maxWidth: '1232px',
           margin: '0 auto',
           padding: '0 16px'
         }
