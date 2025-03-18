@@ -4,7 +4,8 @@ import productAPI from 'src/apis/product.api'
 import {
   formatCurrency,
   formatDifferencePriceToPercent,
-  formatNumberToSocialStyle
+  formatNumberToSocialStyle,
+  getIdFromNameId
 } from '../../utils/utils'
 import ProductRating from '../ProductList/components/ProductRating/ProductRating'
 import DOMPurify from 'dompurify'
@@ -15,12 +16,13 @@ import InputNumber from 'src/components/InputNumber/InputNumber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 export default function ProductDetail() {
   const [productQuantity, setProductQuantity] = useState(1)
-  const params = useParams()
+  const { nameId } = useParams()
+  const id = getIdFromNameId(nameId as string)
   const data = useQuery({
-    queryKey: ['productPk', params.id],
+    queryKey: ['productPk', id],
     queryFn: () => {
-      if (params.id) {
-        return productAPI.getProductById(params.id)
+      if (id) {
+        return productAPI.getProductById(id)
       }
     }
   })
@@ -41,6 +43,7 @@ export default function ProductDetail() {
   }
 
   const clothesId = '60aba4e24efcc70f8892e1c6'
+  const isFavorite = valueData.rating && valueData.rating > 4.5
   const dataGeneral = [
     {
       title: 'Vận chuyển',
@@ -250,7 +253,6 @@ export default function ProductDetail() {
   }
   const handleIncrease = () => {
     if (productQuantity <= valueData?.quantity) {
-      // console.log('value ====>', productQuantity)
       setProductQuantity(productQuantity + 1)
     }
   }
@@ -322,7 +324,14 @@ export default function ProductDetail() {
               <div className='w-full'>
                 <div className='flex flex-col'>
                   <div className='text-xl font-medium text-gray-800 mb-2'>
-                    {valueData.name}
+                    <div>
+                      {isFavorite && (
+                        <div className='text-xs bg-orange text-white rounded-sm px-1 py-[3px] mr-2.5 inline-block  -translate-y-[2px]'>
+                          Yêu thích+
+                        </div>
+                      )}
+                      <span>{valueData.name}</span>
+                    </div>
                   </div>
                   <div className='flex items-center mb-2.5'>
                     <span className='flex items-center '>
