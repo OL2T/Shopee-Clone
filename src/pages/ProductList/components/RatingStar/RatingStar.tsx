@@ -1,6 +1,6 @@
 import { createSearchParams, useNavigate } from 'react-router-dom'
-import { QueryConfig } from '../../ProductList'
 import path from 'src/constant/path'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 /**
  * index 0: Có 5 cái màu vàng tương ứng từ indexStar 0 - 4 đều màu vang
@@ -34,13 +34,18 @@ export default function RatingStars({ queryConfig }: Props) {
       {Array(5)
         .fill(0)
         .map((_, index) => (
-          <li className='py-1 pl-2' key={index}>
+          <li className='py-1' key={index}>
             <div
               className='flex cursor-pointer items-center text-sm'
               onClick={() => handleFilterStar(5 - index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleFilterStar(5 - index)
+                }
+              }}
               tabIndex={0}
               role='button'
-              aria-hidden='true'
             >
               {Array(5)
                 .fill(0)

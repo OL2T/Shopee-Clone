@@ -1,14 +1,32 @@
-import { Link } from 'react-router-dom'
+import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover/Popover'
 import authApi from 'src/apis/auth.api'
 import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { AppContext } from 'src/Contexts/app.context'
 import path from 'src/constant/path'
+import useQueryConfig from 'src/hooks/useQueryConfig'
+import { useForm } from 'react-hook-form'
+import { schema, Schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { omit } from 'lodash'
+
+type FormData = Pick<Schema, 'name'>
+
+const inputSearch = schema.pick(['name'])
 
 export default function Header() {
+  const navigate = useNavigate()
   const { isAuthenticated, setIsAuthenticated, setUser, user } =
     useContext(AppContext)
+  const queryConfig = useQueryConfig()
+  const { register, handleSubmit, watch, setValue } = useForm<FormData>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(inputSearch)
+  })
+
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logoutAccount(),
     onSuccess: () => {
@@ -16,6 +34,40 @@ export default function Header() {
       setUser(null)
     }
   })
+
+  const handleSearch = handleSubmit((data) => {
+    const searchValue = data.name?.trim() || ''
+    let newQueryConfig = { ...queryConfig }
+
+    if (searchValue) {
+      newQueryConfig = { ...newQueryConfig, name: searchValue }
+    } else {
+      delete newQueryConfig.name
+    }
+    const config = newQueryConfig.order
+      ? omit(
+          {
+            ...newQueryConfig,
+            name: searchValue
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...newQueryConfig,
+          name: searchValue
+        }
+
+    // Filter out undefined values to match URLSearchParamsInit type
+    const filteredConfig = Object.fromEntries(
+      Object.entries(config).filter(([_, value]) => value !== undefined)
+    ) as Record<string, string>
+
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(filteredConfig).toString()
+    })
+  })
+
   const handleLogout = () => {
     logoutMutation.mutate()
   }
@@ -250,13 +302,14 @@ export default function Header() {
             <form
               role='search'
               autoComplete='off'
-              className='shopee-searchbar flex w-full h-10 bg-white p-1 rounded-sm'
+              className=' flex w-full h-10 bg-white p-1 rounded-sm'
+              onSubmit={handleSearch}
             >
               <div className='w-full h-full'>
                 <div className='relative'>
                   <input
                     aria-label='Shopee bao ship 0Đ - Đăng ký ngay!'
-                    className='w-full h-full p-2'
+                    className='w-full h-full p-2 text-black outline-none'
                     maxLength={128}
                     placeholder='Shopee bao ship 0Đ - Đăng ký ngay!'
                     autoComplete='off'
@@ -264,11 +317,14 @@ export default function Header() {
                     aria-controls='shopee-searchbar-listbox'
                     aria-expanded='false'
                     role='combobox'
+                    {...register('name')}
+                    value={watch('name')}
+                    onChange={(e) => setValue('name', e.target.value)}
                   />
                 </div>
               </div>
               <button
-                type='button'
+                type='submit'
                 className='btn btn-solid-primary relative z-1 bg-orange px-6 py-2 rounded-sm'
               >
                 <svg
@@ -292,283 +348,7 @@ export default function Header() {
                 </svg>
               </button>
             </form>
-            <div className='recent-search'>
-              {/* <div className='flex items-center flex-wrap gap-2'>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=a%20iphone%2015%20pro%20max%20gi%C3%A1%20r%E1%BA%BB%201k'
-                >
-                  A iPhone 15 Pro Max Giá Rẻ 1k
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=%C3%A1o%20ph%C3%B4ng'
-                >
-                  Áo Phông
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=mua%20h%C3%A0ng%200%20%C4%91%E1%BB%93ng'
-                >
-                  Mua Hàng 0 Đồng
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=qu%E1%BA%A7n%20d%C3%A0i%20dsq'
-                >
-                  Quần Dài DSQ
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=%E1%BB%91p%20l%C6%B0ng'
-                >
-                  Ốp Lưng
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91i%E1%BB%87n%20tho%E1%BA%A1i%208plus%20gi%C3%A1%20r%E1%BA%BB'
-                >
-                  Điện Thoại 8plus Giá Rẻ
-                </a>
-                <a
-                  aria-hidden='false'
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91%E1%BB%93%20makeup%20ch%C3%ADnh%20h%C3%A3ng'
-                >
-                  Đồ Makeup Chính Hãng
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=tai%20nghe%20bluetooth'
-                >
-                  Tai Nghe Bluetooth
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C3%A1o%20kho%C3%A1c%20nam%20%C4%91%E1%BA%B9p%202024'
-                >
-                  Áo Khoác Nam Đẹp 2024
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=d%C3%A9p'
-                >
-                  Dép
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=capybara%20ch%E1%BA%A3y%20n%C6%B0%E1%BB%9Bc%20m%C5%A9i'
-                >
-                  Capybara Chảy Nước Mũi
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91i%E1%BB%87n%20tho%E1%BA%A1i%201%20k'
-                >
-                  Điện Thoại 1 K
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=g%E1%BA%A5u%20b%C3%B4ng'
-                >
-                  Gấu Bông
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91%E1%BB%93%20decor%20b%C3%A0n%20h%E1%BB%8Dc%201k'
-                >
-                  Đồ Decor Bàn Học 1k
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=labubu'
-                >
-                  Labubu
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=balo%20n%E1%BB%AF%20nhi%E1%BB%81u%20ng%C4%83n'
-                >
-                  Balo Nữ Nhiều Ngăn
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=b%C3%ACnh%20gi%E1%BB%AF%20nhi%E1%BB%87t'
-                >
-                  Bình Giữ Nhiệt
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=b%C3%A1nh%20tr%C3%A1ng%20ph%C6%A1i%20s%C6%B0%C6%A1ng%20t%C3%B3p%20m%E1%BB%A1%201k'
-                >
-                  Bánh Tráng Phơi Sương Tóp Mỡ 1k
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91%E1%BB%93%20b%E1%BB%99%20b%C3%A9%20g%C3%A1i%2012%20tu%E1%BB%95i'
-                >
-                  Đồ Bộ Bé Gái 12 Tuổi
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C3%A1o%20kho%C3%A1c%20hoodie%20c%C3%B3%20d%C3%A2y%20k%C3%A9o'
-                >
-                  Áo Khoác Hoodie Có Dây Kéo
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=m%C3%A1y%20%E1%BA%A3nh%20mini%20gi%C3%A1%20r%E1%BA%BB%20cho%20h%E1%BB%8Dc%20sinh%20l%E1%BA%A5y%20%E1%BA%A3nh%20lu%C3%B4n'
-                >
-                  Máy Ảnh Mini Giá Rẻ Cho Học Sinh Lấy Ảnh Luôn
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=son'
-                >
-                  Son
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=m%C5%A9%20boy%20ph%E1%BB%91%20nam%201k'
-                >
-                  Mũ Boy Phố Nam 1k
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=v%E1%BB%A3t%20c%E1%BA%A7u%20l%C3%B4ng%20%C4%91%C6%A1n%20c%C4%83ng%2011kg%20carbon'
-                >
-                  Vợt Cầu Lông Đơn Căng 11kg Carbon
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=qu%E1%BA%A7n%20%E1%BB%91ng%20r%E1%BB%99ng'
-                >
-                  Quần Ống Rộng
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=s%E1%BB%AFa%20r%E1%BB%ADa%20m%E1%BA%B7t'
-                >
-                  Sữa Rửa Mặt
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=t%C3%BAi%20m%C3%B9'
-                >
-                  Túi Mù
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=qu%E1%BA%A7n%20%C4%91%C3%B9i'
-                >
-                  Quần Đùi
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C4%91%E1%BB%93%20nam%20%C4%91%E1%BA%B9p'
-                >
-                  Đồ Nam Đẹp
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=s%C3%B2%20l%E1%BA%A1nh%20t%E1%BA%A3n%20nhi%E1%BB%87t%20kh%C3%B4ng%20d%C3%A2y'
-                >
-                  Sò Lạnh Tản Nhiệt Không Dây
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=gi%C3%A0y%20th%E1%BB%83%20thao%20n%E1%BB%AF'
-                >
-                  Giày Thể Thao Nữ
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=b%C3%A0n%20ph%C3%ADm%20ch%C6%A1i%20game'
-                >
-                  Bàn Phím Chơi Game
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=k%E1%BB%87%20%C4%91%E1%BB%83%20qu%E1%BA%A7n%20%C3%A1o%20nhi%E1%BB%81u%20t%E1%BA%A7ng'
-                >
-                  Kệ Để Quần Áo Nhiều Tầng
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=%C3%A1o%20thun%20hot%20trend%202024'
-                >
-                  Áo Thun Hot Trend 2024
-                </a>
-                <a
-                  aria-hidden='true'
-                  tabIndex={-1}
-                  className='OoJSfV'
-                  href='/search?keyword=s%C4%83n%20sale%20iphone'
-                >
-                  Săn Sale iPhone
-                </a>
-              </div> */}
-            </div>
+            <div className='recent-search'></div>
           </div>
           <div className='cart'>
             <div className='stardust-popover' id='cart_drawer_target_id'>

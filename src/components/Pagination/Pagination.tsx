@@ -1,14 +1,15 @@
 import { createSearchParams, Link } from 'react-router-dom'
 import path from 'src/constant/path'
-import { QueryConfig } from 'src/pages/ProductList/ProductList'
 import 'src/components/Pagination/style.scss'
+import { QueryConfig } from 'src/hooks/useQueryConfig'
 
 interface Props {
   queryConfig: QueryConfig
   pageSize: number
+  disabled: boolean
 }
 const RANGE = 2
-export default function Pagination({ queryConfig, pageSize }: Props) {
+export default function Pagination({ queryConfig, pageSize, disabled }: Props) {
   const currentPage = Number(queryConfig.page)
 
   const renderPagination = () => {
@@ -93,7 +94,7 @@ export default function Pagination({ queryConfig, pageSize }: Props) {
 
   return (
     <div className='flex mt-12 mb-[60px] justify-center text-[20px]'>
-      {currentPage === 1 ? (
+      {currentPage === 1 || disabled ? (
         <span className=' w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 not-allowed cursor-not-allowed'>
           <svg
             enableBackground='new 0 0 11 11'
@@ -132,7 +133,7 @@ export default function Pagination({ queryConfig, pageSize }: Props) {
         </Link>
       )}
       {renderPagination()}
-      {currentPage === pageSize ? (
+      {currentPage === pageSize || disabled ? (
         <span className='w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 not-allowed cursor-not-allowed'>
           <svg
             enableBackground='new 0 0 11 11'
