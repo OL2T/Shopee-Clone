@@ -107,7 +107,8 @@ export const schema = yup.object({
       }
       return value !== '' || price_min !== ''
     }
-  })
+  }),
+  name: yup.string()
 })
 
 // const loginSchema = schema.omit(['confirm_password'])

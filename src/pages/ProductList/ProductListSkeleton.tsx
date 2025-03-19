@@ -9,7 +9,7 @@ export default function ProductListSkeleton() {
           role='status'
           className='max-w-sm border border-gray-200 rounded-sm shadow-sm animate-pulse'
         >
-          <div className='flex items-center justify-center h-48 bg-gray-300 rounded-sm '>
+          <div className='flex items-center justify-center h-[164px] bg-gray-300 rounded-sm '>
             <svg
               className='w-10 h-10 text-gray-200 '
               aria-hidden='true'
@@ -21,7 +21,7 @@ export default function ProductListSkeleton() {
               <path d='M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z' />
             </svg>
           </div>
-          <div className='overflow-hidden p-2'>
+          <div className='overflow-hidden p-2 h-[107px]'>
             <div className='min-h-[2rem] text-sm line-clamp-2 bg-gray-300 rounded-sm'></div>
             <div className='mt-1 flex items-center'>
               <div className='flex items-center gap-1 truncate text-orange font-medium'>
