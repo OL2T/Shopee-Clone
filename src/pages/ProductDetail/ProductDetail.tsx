@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import productAPI from 'src/apis/product.api'
 import {
@@ -15,9 +15,14 @@ import 'src/pages/ProductDetail/styles.scss'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Loading from 'src/components/Loading/Loading'
+import { ProductListConfig } from 'src/types/product.type'
+import Product from '../ProductList/components/Product/Product'
+import Button from 'src/components/Button/Button'
+import { LIMIT } from 'src/constant/product'
 export default function ProductDetail() {
   const [productQuantity, setProductQuantity] = useState(1)
   const { nameId } = useParams()
+
   const id = getIdFromNameId(nameId as string)
   const { data, isFetching } = useQuery({
     queryKey: ['productPk', id],
@@ -28,6 +33,31 @@ export default function ProductDetail() {
     }
   })
   const productData = data?.data.data
+  const queryConfig: ProductListConfig = {
+    page: 1,
+    limit: LIMIT,
+    category: productData?.category?._id
+  }
+
+  const {
+    data: productDataByCategory,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: ({ pageParam }) =>
+      productAPI.getProducts({ ...queryConfig, page: pageParam as number }),
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.data.data.products.length === LIMIT
+        ? pages.length + 1
+        : undefined
+    },
+    initialPageParam: 1,
+    staleTime: 3 * 60 * 1000,
+    enabled: Boolean(productData)
+  })
+
   const readDescription = (description: string) => {
     return (
       <div
@@ -251,6 +281,12 @@ export default function ProductDetail() {
     imageRef.current?.removeAttribute('style')
   }
 
+  const handleLoadMore = () => {
+    if (hasNextPage) {
+      fetchNextPage()
+    }
+  }
+
   const handleDecrease = () => {
     if (productQuantity > 1) {
       setProductQuantity(productQuantity - 1)
@@ -270,9 +306,10 @@ export default function ProductDetail() {
         <>
           <div className='bg-white rounded-sm mb-4'>
             {valueData && (
-              <div className=' mx-auto p-4'>
-                <div className='flex flex-col md:flex-row gap-5'>
-                  <div className='w-full md:w-[450px] flex-shrink-0 px-[15px]'>
+              <div className='mx-auto'>
+                <div className='flex flex-col md:flex-row'>
+                  {/* <------ Content Left ------> */}
+                  <div className='w-full md:w-[480px] flex-shrink-0 p-[15px]'>
                     <div className=' flex flex-col items-center'>
                       <div
                         className='relative w-full pt-[100%] mb-2.5 overflow-hidden hover:cursor-zoom-in'
@@ -329,8 +366,8 @@ export default function ProductDetail() {
                       </div>
                     </div>
                   </div>
-
-                  <div className='w-full'>
+                  {/* <------ Content Right ------> */}
+                  <div className='w-full p-[15px] md:p-5'>
                     <div className='flex flex-col'>
                       <div className='text-xl font-medium text-gray-800 mb-2'>
                         <div>
@@ -413,6 +450,36 @@ export default function ProductDetail() {
                 </div>
                 {readDescription(valueData?.description || '')}
               </div>
+            </div>
+          </div>
+          <div className='mt-10'>
+            <div className='uppercase text-gray-500 font-semibold'>
+              Các sản phẩm bạn có thể thích
+            </div>
+            {!productDataByCategory ? (
+              <Loading />
+            ) : (
+              <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+                {productDataByCategory.pages.flatMap((page) =>
+                  page.data.data.products
+                    .filter((product) => product._id !== productData?._id)
+                    .map((product) => (
+                      <div className='col-span-1' key={product._id}>
+                        <Product product={product} />
+                      </div>
+                    ))
+                )}
+              </div>
+            )}
+            <div className='flex justify-center mt-6'>
+              {hasNextPage && (
+                <Button
+                  className='text-sm text-gray-600 border bg-white h-10 max-w-[220px] min-w-[70px] px-5 py-2'
+                  onClick={handleLoadMore}
+                >
+                  {isFetchingNextPage ? 'Đang tải...' : 'Xem Thêm'}
+                </Button>
+              )}
             </div>
           </div>
         </>
