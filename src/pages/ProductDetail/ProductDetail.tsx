@@ -14,11 +14,12 @@ import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Loading from 'src/components/Loading/Loading'
 export default function ProductDetail() {
   const [productQuantity, setProductQuantity] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
-  const data = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ['productPk', id],
     queryFn: () => {
       if (id) {
@@ -26,7 +27,7 @@ export default function ProductDetail() {
       }
     }
   })
-  const productData = data.data?.data.data
+  const productData = data?.data.data
   const readDescription = (description: string) => {
     return (
       <div
@@ -53,7 +54,7 @@ export default function ProductDetail() {
           <span className='flex items-center gap-x-2'>
             <img
               alt='shipping entrance icon'
-              className='snjEjZ'
+              className='w-5 h-5'
               src='../assets/images/icon-shipping.svg'
             />
 
@@ -69,7 +70,11 @@ export default function ProductDetail() {
       title: 'An tâm mua sắm cùng Shopee',
       value: () => (
         <div className='flex items-center gap-x-1'>
-          <img src='../assets/images/icon-guard.svg' alt='shopee-guard' />
+          <img
+            src='../assets/images/icon-guard.svg'
+            alt='shopee-guard'
+            className='w-5 h-5'
+          />
           <Popover
             placement='bottom-start'
             popoverContent={
@@ -259,151 +264,159 @@ export default function ProductDetail() {
 
   return (
     <>
-      <div className='bg-white rounded-sm mb-4'>
-        {valueData && (
-          <div className=' mx-auto p-4'>
-            <div className='flex flex-col md:flex-row gap-5'>
-              <div className='w-full md:w-[450px] flex-shrink-0 p-[15px]'>
-                <div className=' flex flex-col items-center'>
-                  <div
-                    className='relative w-full pt-[100%] mb-2.5 overflow-hidden hover:cursor-zoom-in'
-                    onMouseMove={(e) => handleZoomImage(e)}
-                    onMouseLeave={handleZoomOutImage}
-                  >
-                    <img
-                      src={activeImage}
-                      alt={valueData.name}
-                      className=' absolute pointer-events-none left-0 top-0 w-full h-auto object-cover'
-                      ref={imageRef}
-                    />
-                  </div>
+      {isFetching ? (
+        <Loading />
+      ) : (
+        <>
+          <div className='bg-white rounded-sm mb-4'>
+            {valueData && (
+              <div className=' mx-auto p-4'>
+                <div className='flex flex-col md:flex-row gap-5'>
+                  <div className='w-full md:w-[450px] flex-shrink-0 px-[15px]'>
+                    <div className=' flex flex-col items-center'>
+                      <div
+                        className='relative w-full pt-[100%] mb-2.5 overflow-hidden hover:cursor-zoom-in'
+                        onMouseMove={(e) => handleZoomImage(e)}
+                        onMouseLeave={handleZoomOutImage}
+                      >
+                        <img
+                          src={activeImage}
+                          alt={valueData.name}
+                          className=' absolute pointer-events-none left-0 top-0 w-full h-auto object-cover'
+                          ref={imageRef}
+                        />
+                      </div>
 
-                  <div className='relative flex w-full gap-x-2.5'>
-                    <button
-                      className='absolute top-1/2 left-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
-                      tabIndex={-1}
-                      onClick={prev}
-                    >
-                      <img
-                        alt='icon arrow left bold'
-                        src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/5914c85bab254a6705bd.svg'
-                      />
-                    </button>
-
-                    {currentImages?.slice(0, 5).map((image, index) => {
-                      const isActive = image === activeImage
-                      return (
-                        <div
-                          key={index}
-                          className={`border-2 ${isActive ? 'border-orange' : 'border-transparent'}`}
-                          onMouseEnter={() => handleSelectImage(image)}
+                      <div className='relative flex w-full gap-x-2.5'>
+                        <button
+                          className='absolute top-1/2 left-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
+                          tabIndex={-1}
+                          onClick={prev}
                         >
                           <img
-                            src={image}
-                            alt={valueData.name}
-                            className='w-[82px] h-[82px] object-cover cursor-pointer'
+                            alt='icon arrow left bold'
+                            src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/5914c85bab254a6705bd.svg'
                           />
-                        </div>
-                      )
-                    })}
+                        </button>
 
-                    <button
-                      className='absolute top-1/2 right-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
-                      tabIndex={-1}
-                      onClick={next}
-                    >
-                      <img
-                        alt='icon arrow right bold'
-                        src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/7e05bc64eb8a25d287c5.svg'
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
+                        {currentImages?.slice(0, 5).map((image, index) => {
+                          const isActive = image === activeImage
+                          return (
+                            <div
+                              key={index}
+                              className={`border-2 ${isActive ? 'border-orange' : 'border-transparent'}`}
+                              onMouseEnter={() => handleSelectImage(image)}
+                            >
+                              <img
+                                src={image}
+                                alt={valueData.name}
+                                className='w-[82px] h-[82px] object-cover cursor-pointer'
+                              />
+                            </div>
+                          )
+                        })}
 
-              <div className='w-full'>
-                <div className='flex flex-col'>
-                  <div className='text-xl font-medium text-gray-800 mb-2'>
-                    <div>
-                      {isFavorite && (
-                        <div className='text-xs bg-orange text-white rounded-sm px-1 py-[3px] mr-2.5 inline-block  -translate-y-[2px]'>
-                          Yêu thích+
-                        </div>
-                      )}
-                      <span>{valueData.name}</span>
+                        <button
+                          className='absolute top-1/2 right-0 transform -translate-y-1/2 w-5 h-10 bg-black bg-opacity-20 flex justify-center items-center'
+                          tabIndex={-1}
+                          onClick={next}
+                        >
+                          <img
+                            alt='icon arrow right bold'
+                            src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/productdetailspage/7e05bc64eb8a25d287c5.svg'
+                          />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className='flex items-center mb-2.5'>
-                    <span className='flex items-center '>
-                      <span className='border-b border-black mr-1'>
-                        {valueData.rating?.toFixed(1)}
-                      </span>
-                      <ProductRating rating={valueData.rating || 0} />
-                    </span>
-                    <span className=' border-r border-l mx-4 px-4'>
-                      <span className='border-b border-black mr-1'>
-                        {formatNumberToSocialStyle(valueData.view || 0)}
-                      </span>
-                      <span className='text-sm text-gray-600'>Lượt xem</span>
-                    </span>
-                    <span className=''>
-                      <span className='border-b border-black mr-1'>
-                        {formatNumberToSocialStyle(valueData.sold || 0)}
-                      </span>
-                      <span className='text-sm text-gray-600'>Sold</span>
-                    </span>
-                  </div>
 
-                  <div className='flex items-center mb-3 px-5 py-[15px] bg-neutral-50 px'>
-                    <span className='text-2xl font-semibold text-red-600 mr-3'>
-                      ₫{formatCurrency(valueData.price || 0)}
-                    </span>
-                    <span className='text-gray-400 line-through mr-2'>
-                      {formatCurrency(valueData.price_before_discount || 0)}
-                    </span>
-                    <span className='bg-[rgba(254,238,234,1)] text-orange text-sm px-2 py-1 rounded'>
-                      {formatDifferencePriceToPercent(
-                        valueData.price_before_discount || 0,
-                        valueData.price || 0
-                      )}
-                    </span>
-                  </div>
-                  <XListView dataView={dataGeneral} />
-                  <div className='flex items-center space-x-3 mb-4'>
-                    <button className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'>
-                      <img
-                        src='../assets/images/icon-cart.svg'
-                        alt='icon-cart'
-                        className='w-5 h-5'
-                      />
-                      <span>Thêm vào giỏ hàng</span>
-                    </button>
-                    <button className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'>
-                      Mua ngay
-                    </button>
+                  <div className='w-full'>
+                    <div className='flex flex-col'>
+                      <div className='text-xl font-medium text-gray-800 mb-2'>
+                        <div>
+                          {isFavorite && (
+                            <div className='text-xs bg-orange text-white rounded-sm px-1 py-[3px] mr-2.5 inline-block  -translate-y-[2px]'>
+                              Yêu thích+
+                            </div>
+                          )}
+                          <span>{valueData.name}</span>
+                        </div>
+                      </div>
+                      <div className='flex items-center mb-2.5'>
+                        <span className='flex items-center '>
+                          <span className='border-b border-black mr-1'>
+                            {valueData.rating?.toFixed(1)}
+                          </span>
+                          <ProductRating rating={valueData.rating || 0} />
+                        </span>
+                        <span className=' border-r border-l mx-4 px-4'>
+                          <span className='border-b border-black mr-1'>
+                            {formatNumberToSocialStyle(valueData.view || 0)}
+                          </span>
+                          <span className='text-sm text-gray-600'>
+                            Lượt xem
+                          </span>
+                        </span>
+                        <span className=''>
+                          <span className='border-b border-black mr-1'>
+                            {formatNumberToSocialStyle(valueData.sold || 0)}
+                          </span>
+                          <span className='text-sm text-gray-600'>Sold</span>
+                        </span>
+                      </div>
+
+                      <div className='flex items-center mb-3 px-5 py-[15px] bg-neutral-50 px'>
+                        <span className='text-2xl font-semibold text-red-600 mr-3'>
+                          ₫{formatCurrency(valueData.price || 0)}
+                        </span>
+                        <span className='text-gray-400 line-through mr-2'>
+                          {formatCurrency(valueData.price_before_discount || 0)}
+                        </span>
+                        <span className='bg-[rgba(254,238,234,1)] text-orange text-sm px-2 py-1 rounded'>
+                          {formatDifferencePriceToPercent(
+                            valueData.price_before_discount || 0,
+                            valueData.price || 0
+                          )}
+                        </span>
+                      </div>
+                      <XListView dataView={dataGeneral} />
+                      <div className='flex items-center space-x-3 mb-4'>
+                        <button className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'>
+                          <img
+                            src='../assets/images/icon-cart.svg'
+                            alt='icon-cart'
+                            className='w-5 h-5'
+                          />
+                          <span>Thêm vào giỏ hàng</span>
+                        </button>
+                        <button className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'>
+                          Mua ngay
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
+          <div className='bg-white rounded-sm p-2.5'>
+            <div className='p-4'>
+              <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
+                Chi tiết sản phẩm
+              </div>
+              <div className='mx-4'>
+                <XListView dataView={dataDetail}></XListView>
+              </div>
+              <div className=''>
+                <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
+                  Mô tả sản phẩm
+                </div>
+                {readDescription(valueData?.description || '')}
+              </div>
             </div>
           </div>
-        )}
-      </div>
-      <div className='bg-white rounded-sm p-2.5'>
-        <div className='p-4'>
-          <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
-            Chi tiết sản phẩm
-          </div>
-          <div className='mx-4'>
-            <XListView dataView={dataDetail}></XListView>
-          </div>
-          <div className=''>
-            <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
-              Mô tả sản phẩm
-            </div>
-            {readDescription(valueData?.description || '')}
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   )
 }

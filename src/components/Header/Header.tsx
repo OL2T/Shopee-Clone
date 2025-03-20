@@ -59,7 +59,7 @@ export default function Header() {
 
     // Filter out undefined values to match URLSearchParamsInit type
     const filteredConfig = Object.fromEntries(
-      Object.entries(config).filter(([_, value]) => value !== undefined)
+      Object.entries(config).filter(([value]) => value !== undefined)
     ) as Record<string, string>
 
     navigate({
@@ -325,7 +325,7 @@ export default function Header() {
               </div>
               <button
                 type='submit'
-                className='btn btn-solid-primary relative z-1 bg-orange px-6 py-2 rounded-sm'
+                className='btn btn-solid-primary relative z-1 bg-orange flex items-center justify-center px-6 py-2 rounded-sm'
               >
                 <svg
                   height={19}
@@ -401,7 +401,7 @@ export default function Header() {
                     >
                       <svg
                         viewBox='0 0 26.6 25.6'
-                        className='shopee-svg-icon fill-current w-[26px] h-[26px] stroke-white'
+                        className='fill-current w-[26px] h-[26px] stroke-white'
                       >
                         <title>Shopping Cart Icon</title>
                         <polyline
