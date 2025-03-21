@@ -29,9 +29,9 @@ export default {
       },
       backgroundImage: {
         'register-hero-pattern-normal-day':
-          "url('./assets/images/hero-register-normal-day.png')",
+          "url('public/assets/images/hero-register-normal-day.png')",
         'register-hero-pattern-sale-day':
-          "url('./assets/images/hero-register.png')"
+          "url('public/assets/images/hero-register.png')"
       },
       spacing: {
         top50: '50px'
