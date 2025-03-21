@@ -9,6 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import RatingStars from '../RatingStar/RatingStar'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import InputV2 from 'src/components/InputV2/InputV2'
 
 interface Props {
   queryConfig: QueryConfig
@@ -153,7 +154,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             <div
               className={`flex items-center ${!errors.price_min ? 'mb-4' : ''}`}
             >
-              <Controller
+              {/* <Controller
                 control={control}
                 name='price_min'
                 render={({ field }) => {
@@ -171,6 +172,18 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                       }}
                     />
                   )
+                }}
+              /> */}
+              <InputV2
+                type='number'
+                control={control}
+                name='price_min'
+                className='grow'
+                placeholder='₫ TỪ'
+                classNameError='hidden'
+                classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
+                onChange={() => {
+                  trigger('price_max')
                 }}
               />
               <div className='mx-2 mt-2 shrink-0'>-</div>
