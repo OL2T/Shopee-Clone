@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import InputNumber, { InputNumberProps } from '../InputNumber/InputNumber'
 
 interface Props extends InputNumberProps {
   max?: number
   onDecrease?: (value: number) => void
-  onIncrease: (value: number) => void
+  onIncrease?: (value: number) => void
   onType?: (value: number) => void
   classNameWrapper?: string
 }
@@ -17,6 +18,7 @@ export default function QuantityController({
   value,
   ...rest
 }: Props) {
+  const [localValue, setLocalValue] = useState<number>(Number(value) || 0)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(e.target.value)
     if (max !== undefined && _value > max) {
@@ -25,21 +27,24 @@ export default function QuantityController({
       _value = 1
     }
     onType && onType(_value)
+    setLocalValue(_value)
   }
 
   const handleIncrease = () => {
-    let _value = Number(value) + 1
+    let _value = Number(value || localValue) + 1
     if (max !== undefined && _value > max) {
       _value = max
     }
     onIncrease && onIncrease(_value)
+    setLocalValue(_value)
   }
   const handleDecrease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value || localValue) - 1
     if (_value < 1) {
       _value = 1
     }
     onDecrease && onDecrease(_value)
+    setLocalValue(_value)
   }
   return (
     <div className={`flex items-center ${classNameWrapper}`}>
@@ -60,7 +65,7 @@ export default function QuantityController({
         </button>
         <InputNumber
           classNameInput='flex items-center justify-center text-center w-[50px] h-8 text-red-600 border-t border-b outline-none'
-          value={value}
+          value={value || localValue}
           onChange={handleChange}
           {...rest}
         />
