@@ -1,14 +1,15 @@
 import { forwardRef, InputHTMLAttributes } from 'react'
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  type: React.HTMLInputTypeAttribute
+export interface InputNumberProps
+  extends InputHTMLAttributes<HTMLInputElement> {
+  type?: React.HTMLInputTypeAttribute
   errors?: string
   className?: string
   classNameInput?: string
   classNameError?: string
 }
 
-const InputNumber = forwardRef<HTMLInputElement, InputProps>(
+const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
   function InputNumberInner(
     {
       type,
@@ -18,26 +19,22 @@ const InputNumber = forwardRef<HTMLInputElement, InputProps>(
       classNameInput,
       onChange,
       ...rest
-    }: InputProps,
+    }: InputNumberProps,
     ref
   ) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target
-      console.log('inputValue', value)
-      console.log('inputValue', /^\d+$/.test(value))
       if ((/^\d+$/.test(value) || value === '') && onChange) {
         onChange(e)
       }
     }
-    const inputValue =
-      typeof rest.value === 'number' && isNaN(rest.value) ? '' : rest.value
+
     return (
       <div className={className}>
         <input
           type={type}
           className={classNameInput}
           {...rest}
-          value={inputValue}
           ref={ref}
           onChange={handleChange}
         />

@@ -1,5 +1,10 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
 import productAPI from 'src/apis/product.api'
 import {
   formatCurrency,
@@ -12,17 +17,23 @@ import DOMPurify from 'dompurify'
 import XListView, { ListItem } from 'src/components/XListView/XListView'
 import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
-import InputNumber from 'src/components/InputNumber/InputNumber'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import Loading from 'src/components/Loading/Loading'
 import { ProductListConfig } from 'src/types/product.type'
 import Product from '../ProductList/components/Product/Product'
 import Button from 'src/components/Button/Button'
 import { LIMIT } from 'src/constant/product'
+import QuantityController from 'src/components/QuantityController/QuantityController'
+import purchaseApi from 'src/apis/purchase.api'
+import { purchaseStatus } from 'src/constant/purchase'
+import { toast } from 'react-toastify'
+import path from 'src/constant/path'
+import { AppContext } from 'src/Contexts/app.context'
 export default function ProductDetail() {
+  const { isAuthenticated } = useContext(AppContext)
   const [productQuantity, setProductQuantity] = useState(1)
+  const queryClient = useQueryClient()
   const { nameId } = useParams()
-
   const id = getIdFromNameId(nameId as string)
   const { data, isFetching } = useQuery({
     queryKey: ['productPk', id],
@@ -58,6 +69,10 @@ export default function ProductDetail() {
     enabled: Boolean(productData)
   })
 
+  const addToCartMutation = useMutation({
+    mutationFn: purchaseApi.addToCart
+  })
+
   const readDescription = (description: string) => {
     return (
       <div
@@ -75,6 +90,90 @@ export default function ProductDetail() {
 
   const clothesId = '60aba4e24efcc70f8892e1c6'
   const isFavorite = valueData.rating && valueData.rating > 4.5
+
+  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
+  const [activeImage, setActiveImage] = useState('')
+  const currentImages = useMemo(() => {
+    return valueData.images?.slice(...currentIndexImage)
+  }, [valueData.images, currentIndexImage])
+  const imageRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    if (valueData.images && valueData.images.length) {
+      setActiveImage(valueData.images[0])
+    }
+  }, [valueData.images])
+
+  const handleSelectImage = (image: string) => {
+    setActiveImage(image)
+  }
+
+  const next = () => {
+    if (valueData.images && currentIndexImage[1] < valueData.images.length) {
+      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+
+  const prev = () => {
+    if (valueData.images && currentIndexImage[0] > 0) {
+      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
+
+  const handleZoomImage = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const image = imageRef.current as HTMLImageElement
+    // Cach 1
+    // Event bubble => error
+    const { offsetX, offsetY } = e.nativeEvent
+    // Cach 2 => không cần xử lý event bubble
+    // const offsetX = e.pageX - (rect.left + window.scrollX)
+    // const offsetY = e.pageY - (rect.top + window.scrollY)
+    const { naturalHeight, naturalWidth } = image
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.left = `${left}px`
+    image.style.top = `${top}px`
+  }
+
+  const handleZoomOutImage = () => {
+    imageRef.current?.removeAttribute('style')
+  }
+
+  const handleLoadMore = () => {
+    if (hasNextPage) {
+      fetchNextPage()
+    }
+  }
+
+  const handleBuyCount = (value: number) => {
+    setProductQuantity(value)
+  }
+  const navigate = useNavigate()
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate(path.login)
+    } else {
+      addToCartMutation.mutate(
+        {
+          product_id: productData?._id as string,
+          buy_count: productQuantity
+        },
+        {
+          onSuccess: (data) => {
+            queryClient.invalidateQueries({
+              queryKey: ['purchases', { status: purchaseStatus.inCart }]
+            })
+            toast.success(data.data.message)
+          }
+        }
+      )
+    }
+  }
+
   const dataGeneral = [
     {
       title: 'Vận chuyển',
@@ -156,55 +255,16 @@ export default function ProductDetail() {
         </div>
       )
     },
-    // {
-    //   title: 'Kho',
-    //   value: () => valueData.quantity
-    // },
     {
       title: 'Số lượng',
       value: () => (
-        <div className='flex items-center gap-x-4'>
-          <div className='flex items-center border-gray-300 text-gray-900'>
-            <button
-              className='flex items-center justify-center border w-8 h-8'
-              onClick={handleDecrease}
-            >
-              <svg
-                enableBackground='new 0 0 10 10'
-                viewBox='0 0 10 10'
-                x={0}
-                y={0}
-                className='w-2.5 h-2.5 text-[10px]'
-              >
-                <polygon points='4.5 4.5 3.5 4.5 0 4.5 0 5.5 3.5 5.5 4.5 5.5 10 5.5 10 4.5' />
-              </svg>
-            </button>
-            <InputNumber
-              type='text'
-              classNameInput='flex items-center justify-center text-center w-[50px] h-8 text-red-600 border-t border-b outline-none'
-              min={1}
-              value={productQuantity}
-              onChange={(newValue) => setProductQuantity(Number(newValue))}
-            />
-            <button
-              className='flex items-center justify-center w-8 h-8 border'
-              onClick={handleIncrease}
-            >
-              <svg
-                enableBackground='new 0 0 10 10'
-                viewBox='0 0 10 10'
-                x={0}
-                y={0}
-                className='w-2.5 h-2.5 text-[10px]'
-              >
-                <polygon points='10 4.5 5.5 4.5 5.5 0 4.5 0 4.5 4.5 0 4.5 0 5.5 4.5 5.5 4.5 10 5.5 10 5.5 5.5 10 5.5' />
-              </svg>
-            </button>
-          </div>
-          <div className='text-sm text-gray-500'>
-            {valueData.quantity} sản phẩm có sẵn
-          </div>
-        </div>
+        <QuantityController
+          value={productQuantity}
+          onIncrease={handleBuyCount}
+          onDecrease={handleBuyCount}
+          onType={handleBuyCount}
+          max={valueData.quantity}
+        />
       )
     }
   ]
@@ -228,76 +288,6 @@ export default function ProductDetail() {
         ]
       : [])
   ]
-
-  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
-  const [activeImage, setActiveImage] = useState('')
-  const currentImages = useMemo(() => {
-    return valueData.images?.slice(...currentIndexImage)
-  }, [valueData.images, currentIndexImage])
-  const imageRef = useRef<HTMLImageElement>(null)
-
-  useEffect(() => {
-    if (valueData.images && valueData.images.length) {
-      setActiveImage(valueData.images[0])
-    }
-  }, [valueData.images])
-
-  const handleSelectImage = (image: string) => {
-    setActiveImage(image)
-  }
-
-  const next = () => {
-    if (valueData.images && currentIndexImage[1] < valueData.images.length) {
-      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
-    }
-  }
-
-  const prev = () => {
-    if (valueData.images && currentIndexImage[0] > 0) {
-      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
-    }
-  }
-
-  const handleZoomImage = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const image = imageRef.current as HTMLImageElement
-    // Cach 1
-    // Event bubble => error
-    const { offsetX, offsetY } = e.nativeEvent
-    // Cach 2 => không cần xử lý event bubble
-    // const offsetX = e.pageX - (rect.left + window.scrollX)
-    // const offsetY = e.pageY - (rect.top + window.scrollY)
-    const { naturalHeight, naturalWidth } = image
-    const left = offsetX * (1 - naturalWidth / rect.width)
-    const top = offsetY * (1 - naturalHeight / rect.height)
-    image.style.width = naturalWidth + 'px'
-    image.style.height = naturalHeight + 'px'
-    image.style.maxWidth = 'unset'
-    image.style.left = `${left}px`
-    image.style.top = `${top}px`
-  }
-
-  const handleZoomOutImage = () => {
-    imageRef.current?.removeAttribute('style')
-  }
-
-  const handleLoadMore = () => {
-    if (hasNextPage) {
-      fetchNextPage()
-    }
-  }
-
-  const handleDecrease = () => {
-    if (productQuantity > 1) {
-      setProductQuantity(productQuantity - 1)
-    }
-  }
-  const handleIncrease = () => {
-    if (productQuantity <= valueData?.quantity) {
-      setProductQuantity(productQuantity + 1)
-    }
-  }
-
   return (
     <>
       {isFetching ? (
@@ -418,7 +408,10 @@ export default function ProductDetail() {
                       </div>
                       <XListView dataView={dataGeneral} />
                       <div className='flex items-center space-x-3 mb-4'>
-                        <button className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'>
+                        <button
+                          className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'
+                          onClick={handleAddToCart}
+                        >
                           <img
                             src='../assets/images/icon-cart.svg'
                             alt='icon-cart'
