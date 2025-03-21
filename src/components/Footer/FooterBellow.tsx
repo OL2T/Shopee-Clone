@@ -1,61 +1,62 @@
 export default function FooterBellow() {
+  const currentYears = new Date().getFullYear()
   return (
     <div>
       <div className='flex items-center flex-wrap xl:flex-nowrap gap-2 justify-between py-10 border-t border-t-black/10'>
-        <div>© 2024 ShopeeClone. Tất cả các quyền được bảo lưu.</div>
+        <div>© {currentYears} ShopeeClone. Tất cả các quyền được bảo lưu.</div>
         <div className='flex items-center flex-wrap xl:flex-nowrap'>
           <div className=''>Quốc gia &amp; Khu vực:</div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.sg' className='jsGQO7 WfURpL'>
               Singapore
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.co.id' className='jsGQO7 WfURpL'>
               Indonesia
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.co.th' className='jsGQO7 WfURpL'>
               Thái Lan
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.com.my' className='jsGQO7 WfURpL'>
               Malaysia
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.vn' className='jsGQO7 WfURpL'>
               Việt Nam
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.ph' className='jsGQO7 WfURpL'>
               Philippines
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.com.br' className='jsGQO7 WfURpL'>
               Brazil
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.com.mx' className='jsGQO7 WfURpL'>
               México
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.com.co' className='jsGQO7 WfURpL'>
               Colombia
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.cl' className='jsGQO7 WfURpL'>
               Chile
             </a>
           </div>
-          <div className='px-5 border-r-black/20 border-r-0.5 last:border-r-0'>
+          <div className='px-[5px] border-r-black/20 border-r-0.5 last:border-r-0'>
             <a href='https://shopee.tw' className='jsGQO7 WfURpL'>
               Đài Loan
             </a>

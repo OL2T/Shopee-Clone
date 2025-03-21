@@ -1,7 +1,7 @@
 import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover/Popover'
 import authApi from 'src/apis/auth.api'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { AppContext } from 'src/Contexts/app.context'
 import path from 'src/constant/path'
@@ -10,6 +10,9 @@ import { useForm } from 'react-hook-form'
 import { schema, Schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
+import purchaseApi from 'src/apis/purchase.api'
+import { purchaseStatus } from 'src/constant/purchase'
+import { formatCurrency, generateNameId } from 'src/utils/utils'
 
 type FormData = Pick<Schema, 'name'>
 
@@ -19,6 +22,7 @@ export default function Header() {
   const navigate = useNavigate()
   const { isAuthenticated, setIsAuthenticated, setUser, user } =
     useContext(AppContext)
+  const limitCart = 5
   const queryConfig = useQueryConfig()
   const { register, handleSubmit, watch, setValue } = useForm<FormData>({
     defaultValues: {
@@ -34,6 +38,14 @@ export default function Header() {
       setUser(null)
     }
   })
+  // Khi chúng ta chuyển trang, header chỉ re-redender chứ không bị unmount - mounting again
+  const { data: cartData } = useQuery({
+    queryKey: ['purchases', { status: purchaseStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.inCart }),
+    enabled: isAuthenticated
+  })
+
+  const inCartData = cartData?.data.data
 
   const handleSearch = handleSubmit((data) => {
     const searchValue = data.name?.trim() || ''
@@ -358,50 +370,71 @@ export default function Header() {
                     className='w-full'
                     popoverContent={
                       <div className='flex flex-col max-w-[400px] min-w-[400px] text-sm mt-2'>
-                        <div className='capitalize text-gray-300 px-[10px] h-[40px] align-middle flex items-center'>
-                          Sản phẩm mới thêm
-                        </div>
-                        <div className='product-list-card flex flex-col mt-2'>
-                          <div className='flex flex-row items-start gap-3 justify-between hover:bg-gray-100 hover:cursor-pointer p-[10px]'>
-                            <div className='flex items-start gap-[10px]'>
-                              <div className='relative w-[42px] h-[42px]'>
-                                <img
-                                  className='object-cover w-full h-full'
-                                  src='https://picsum.photos/200/300'
-                                  alt='product'
-                                />
-                              </div>
-                              <div className='flex flex-col'>
-                                <div className='text-sm text-gray-900 truncate max-w-[200px] font-medium'>
-                                  Áo Thun Nam
-                                </div>
-                              </div>
+                        {inCartData?.length ? (
+                          <>
+                            <div className='capitalize text-gray-300 px-[10px] h-[40px] align-middle flex items-center'>
+                              Sản phẩm mới thêm
                             </div>
-                            <div className='text-sm text-orange'>₫190.000</div>
+                            <div className='product-list-card flex flex-col mt-2'>
+                              {inCartData.slice(0, limitCart).map((item) => (
+                                <Link
+                                  className='flex flex-row items-start gap-3 justify-between hover:bg-gray-100 hover:cursor-pointer p-[10px]'
+                                  key={item._id}
+                                  to={`${path.home}${generateNameId({ name: item.product.name, id: item.product._id })}`}
+                                >
+                                  <div className='flex items-start gap-[10px]'>
+                                    <div className='relative w-[42px] h-[42px]'>
+                                      <img
+                                        className='object-cover w-full h-full'
+                                        src={item.product.image}
+                                        alt={item.product.name}
+                                      />
+                                    </div>
+                                    <div className='flex flex-col'>
+                                      <div className='text-sm text-gray-900 truncate max-w-[200px] font-medium'>
+                                        {item.product.name}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className='text-sm text-orange'>
+                                    {formatCurrency(item.product.price)}
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                            <div className='flex items-center gap-4 justify-between p-[10px]'>
+                              <div className='text-[12px] capitalize'>
+                                {inCartData?.length
+                                  ? inCartData?.length -
+                                    limitCart +
+                                    ' Thêm hàng vào giỏ'
+                                  : ''}
+                              </div>
+                              <Link
+                                to={'/cart'}
+                                className='bg-orange p-2 rounded-sm text-white hover:bg-opacity-90'
+                              >
+                                Xem giỏ hàng
+                              </Link>
+                            </div>
+                          </>
+                        ) : (
+                          <div className='text-center p-[60px]'>
+                            <img
+                              className='w-[100px] h-[100px] mx-auto'
+                              src='../assets/images/empty-cart.png'
+                              alt='empty-cart'
+                            />
+                            <div className='text-sm'>Chưa có sản phẩm</div>
                           </div>
-                        </div>
-                        <div className='flex items-center gap-4 justify-between p-[10px]'>
-                          <div className='text-[12px] capitalize'>
-                            110 Thêm hàng vào giỏ
-                          </div>
-                          <Link
-                            to={'/cart'}
-                            className='bg-orange p-2 rounded-sm text-white hover:bg-opacity-90'
-                          >
-                            Xem giỏ hàng
-                          </Link>
-                        </div>
+                        )}
                       </div>
                     }
                   >
-                    <Link
-                      className='flex px-6'
-                      id='cart_drawer_target_id'
-                      to={'/'}
-                    >
+                    <Link className='flex' id='cart_drawer_target_id' to={'/'}>
                       <svg
                         viewBox='0 0 26.6 25.6'
-                        className='fill-current w-[26px] h-[26px] stroke-white'
+                        className='fill-current w-[26px] h-[26px] stroke-white mr-2'
                       >
                         <title>Shopping Cart Icon</title>
                         <polyline
@@ -415,12 +448,17 @@ export default function Header() {
                         <circle cx='10.7' cy={23} r='2.2' stroke='none' />
                         <circle cx='19.7' cy={23} r='2.2' stroke='none' />
                       </svg>
+                      <span className='sr-only'>
+                        Shopping Cart number of items in cart 146
+                      </span>
+                      {inCartData && inCartData.length > 0 && (
+                        <div className='relative -top-3 right-4 bg-white text-sm border border-orange text-orange rounded-[44px] h-5 py-1 px-2 flex items-center justify-center'>
+                          <span className='cart-quantity'>
+                            {inCartData.length}
+                          </span>
+                        </div>
+                      )}
                     </Link>
-
-                    <span className='sr-only'>
-                      Shopping Cart Please log in to view cart / add items to
-                      cart
-                    </span>
                   </Popover>
                 </div>
               </div>

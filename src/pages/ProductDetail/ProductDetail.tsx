@@ -1,5 +1,10 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router-dom'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query'
+import { useNavigate, useParams } from 'react-router-dom'
 import productAPI from 'src/apis/product.api'
 import {
   formatCurrency,
@@ -12,17 +17,23 @@ import DOMPurify from 'dompurify'
 import XListView, { ListItem } from 'src/components/XListView/XListView'
 import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import Loading from 'src/components/Loading/Loading'
 import { ProductListConfig } from 'src/types/product.type'
 import Product from '../ProductList/components/Product/Product'
 import Button from 'src/components/Button/Button'
 import { LIMIT } from 'src/constant/product'
 import QuantityController from 'src/components/QuantityController/QuantityController'
+import purchaseApi from 'src/apis/purchase.api'
+import { purchaseStatus } from 'src/constant/purchase'
+import { toast } from 'react-toastify'
+import path from 'src/constant/path'
+import { AppContext } from 'src/Contexts/app.context'
 export default function ProductDetail() {
+  const { isAuthenticated } = useContext(AppContext)
   const [productQuantity, setProductQuantity] = useState(1)
+  const queryClient = useQueryClient()
   const { nameId } = useParams()
-
   const id = getIdFromNameId(nameId as string)
   const { data, isFetching } = useQuery({
     queryKey: ['productPk', id],
@@ -56,6 +67,10 @@ export default function ProductDetail() {
     initialPageParam: 1,
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(productData)
+  })
+
+  const addToCartMutation = useMutation({
+    mutationFn: purchaseApi.addToCart
   })
 
   const readDescription = (description: string) => {
@@ -136,6 +151,27 @@ export default function ProductDetail() {
 
   const handleBuyCount = (value: number) => {
     setProductQuantity(value)
+  }
+  const navigate = useNavigate()
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate(path.login)
+    } else {
+      addToCartMutation.mutate(
+        {
+          product_id: productData?._id as string,
+          buy_count: productQuantity
+        },
+        {
+          onSuccess: (data) => {
+            queryClient.invalidateQueries({
+              queryKey: ['purchases', { status: purchaseStatus.inCart }]
+            })
+            toast.success(data.data.message)
+          }
+        }
+      )
+    }
   }
 
   const dataGeneral = [
@@ -372,7 +408,10 @@ export default function ProductDetail() {
                       </div>
                       <XListView dataView={dataGeneral} />
                       <div className='flex items-center space-x-3 mb-4'>
-                        <button className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'>
+                        <button
+                          className='flex items-center text-sm gap-x-2 border border-orange min-w-[180px] max-w-[250px] text-orange px-5 py-3 h-[48px] rounded-sm bg-orange bg-opacity-10 hover:bg-opacity-5'
+                          onClick={handleAddToCart}
+                        >
                           <img
                             src='../assets/images/icon-cart.svg'
                             alt='icon-cart'
