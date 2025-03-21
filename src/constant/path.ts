@@ -4,7 +4,7 @@ const path = {
   profile: '/profile',
   home: '/',
   logout: '/logout',
-  purchases: '/purchases',
+  cart: '/cart',
   productPk: ':nameId'
 } as const
 

@@ -28,7 +28,10 @@ export default {
         18: '18px'
       },
       backgroundImage: {
-        'register-hero-pattern': "url('public/assets/images/hero-register.png')"
+        'register-hero-pattern-normal-day':
+          "url('./assets/images/hero-register-normal-day.png')",
+        'register-hero-pattern-sale-day':
+          "url('./assets/images/hero-register.png')"
       },
       spacing: {
         top50: '50px'
