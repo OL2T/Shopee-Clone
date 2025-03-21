@@ -8,6 +8,7 @@ import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/Contexts/app.context'
 import { ErrorResponseAPI, NotUndefinedField } from 'src/types/utils.type'
+import { currentDayWithoutYear, salesDay } from 'src/utils/daytime'
 import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 
@@ -24,6 +25,8 @@ export default function Login() {
   } = useForm<FormData>({
     resolver: yupResolver<FormData>(loginSchema)
   })
+
+  const isSaleDay = salesDay.some((day) => day === currentDayWithoutYear)
 
   const loginAccountMutation = useMutation({
     mutationFn: (body: Omit<FormData, 'confirm_password'>) =>
@@ -55,8 +58,10 @@ export default function Login() {
     })
   })
   return (
-    <div className='bg-redRegister'>
-      <div className='w-full max-w-[1024px] bg-register-hero-pattern bg-no-repeat h-600 mx-auto relative'>
+    <div className={`${isSaleDay ? 'bg-redRegister' : 'bg-orange'}`}>
+      <div
+        className={`${isSaleDay ? 'bg-register-hero-pattern-sale-day' : 'bg-register-hero-pattern-normal-day'} w-full max-w-[1024px] bg-no-repeat h-600 mx-auto relative`}
+      >
         <div className='absolute -translate-y-[50%] top-[50%] w-full right-0'>
           {/* <Helmet>
           <title>Đăng nhập | Shopee Clone</title>

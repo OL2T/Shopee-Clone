@@ -1,7 +1,7 @@
 import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover/Popover'
 import authApi from 'src/apis/auth.api'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { AppContext } from 'src/Contexts/app.context'
 import path from 'src/constant/path'
@@ -24,6 +24,7 @@ export default function Header() {
     useContext(AppContext)
   const limitCart = 5
   const queryConfig = useQueryConfig()
+  const queryClient = useQueryClient()
   const { register, handleSubmit, watch, setValue } = useForm<FormData>({
     defaultValues: {
       name: ''
@@ -36,6 +37,9 @@ export default function Header() {
     onSuccess: () => {
       setIsAuthenticated(false)
       setUser(null)
+      queryClient.removeQueries({
+        queryKey: ['purchases', { status: purchaseStatus.inCart }]
+      })
     }
   })
   // Khi chúng ta chuyển trang, header chỉ re-redender chứ không bị unmount - mounting again
@@ -431,7 +435,11 @@ export default function Header() {
                       </div>
                     }
                   >
-                    <Link className='flex' id='cart_drawer_target_id' to={'/'}>
+                    <Link
+                      className='flex'
+                      id='cart_drawer_target_id'
+                      to={path.cart}
+                    >
                       <svg
                         viewBox='0 0 26.6 25.6'
                         className='fill-current w-[26px] h-[26px] stroke-white mr-2'
