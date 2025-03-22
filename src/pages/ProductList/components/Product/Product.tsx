@@ -32,10 +32,7 @@ export default function Product({ product }: Props) {
           </div>
           <div className='mt-1 flex items-center'>
             <div className='flex items-center gap-1 truncate text-orange font-medium'>
-              <div>
-                <span className='text-sm'>₫</span>
-                <span className=''>{formatCurrency(product.price)}</span>
-              </div>
+              <span>{formatCurrency(product.price)}</span>
               <div className='text-[10px] bg-[rgba(254,238,234,1)] p-1 rounded-sm'>
                 {formatDifferencePriceToPercent(
                   product.price_before_discount,
