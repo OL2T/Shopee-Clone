@@ -16,7 +16,7 @@ export function isUnprocessableEntityError<FormError>(
 }
 
 export function formatCurrency(number: number) {
-  return new Intl.NumberFormat('de-DE').format(number)
+  return '₫' + new Intl.NumberFormat('de-DE').format(number)
 }
 
 export function formatNumberToSocialStyle(number: number) {

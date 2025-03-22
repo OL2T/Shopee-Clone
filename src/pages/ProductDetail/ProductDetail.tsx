@@ -394,7 +394,7 @@ export default function ProductDetail() {
 
                       <div className='flex items-center mb-3 px-5 py-[15px] bg-neutral-50 px'>
                         <span className='text-2xl font-semibold text-red-600 mr-3'>
-                          ₫{formatCurrency(valueData.price || 0)}
+                          {formatCurrency(valueData.price || 0)}
                         </span>
                         <span className='text-gray-400 line-through mr-2'>
                           {formatCurrency(valueData.price_before_discount || 0)}

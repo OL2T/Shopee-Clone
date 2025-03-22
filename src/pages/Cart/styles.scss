@@ -1,0 +1,9 @@
+.cart-sticky::before {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.06));
+  content: '';
+  height: 1.25rem;
+  left: 0;
+  position: absolute;
+  top: -1.25rem;
+  width: 100%;
+}
