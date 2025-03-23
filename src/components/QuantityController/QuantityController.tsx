@@ -6,16 +6,22 @@ interface Props extends InputNumberProps {
   onDecrease?: (value: number) => void
   onIncrease?: (value: number) => void
   onType?: (value: number) => void
+  onFocusOut?: (value: number) => void
   classNameWrapper?: string
+  classNameQuantity?: string
 }
 
 export default function QuantityController({
   max,
   classNameWrapper = 'gap-x-4',
+  classNameQuantity = 'text-sm text-gray-500',
+  classNameInput = 'flex items-center justify-center text-center w-[50px] h-8 text-red-600 border-t border-b outline-none',
   onIncrease,
   onDecrease,
   onType,
+  onFocusOut,
   value,
+  disabled,
   ...rest
 }: Props) {
   const [localValue, setLocalValue] = useState<number>(Number(value) || 1)
@@ -46,12 +52,21 @@ export default function QuantityController({
     onDecrease && onDecrease(_value)
     setLocalValue(_value)
   }
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
+    const _value = Number(e.target.value)
+    onFocusOut && onFocusOut(_value)
+    setLocalValue(_value)
+  }
   return (
-    <div className={`flex items-center ${classNameWrapper}`}>
+    <div
+      className={`flex items-center ${disabled && 'opacity-60'} ${classNameWrapper}`}
+    >
       <div className='flex items-center border-gray-300 text-gray-900'>
         <button
           className='flex items-center justify-center border w-8 h-8'
           onClick={handleDecrease}
+          disabled={disabled}
         >
           <svg
             enableBackground='new 0 0 10 10'
@@ -64,14 +79,16 @@ export default function QuantityController({
           </svg>
         </button>
         <InputNumber
-          classNameInput='flex items-center justify-center text-center w-[50px] h-8 text-red-600 border-t border-b outline-none'
+          classNameInput={classNameInput}
           value={value || localValue}
           onChange={handleChange}
+          onBlur={handleBlur}
           {...rest}
         />
         <button
           className='flex items-center justify-center w-8 h-8 border'
           onClick={handleIncrease}
+          disabled={disabled}
         >
           <svg
             enableBackground='new 0 0 10 10'
@@ -84,7 +101,7 @@ export default function QuantityController({
           </svg>
         </button>
       </div>
-      <div className='text-sm text-gray-500'> {max} sản phẩm có sẵn</div>
+      <div className={classNameQuantity}> {max} sản phẩm có sẵn</div>
     </div>
   )
 }

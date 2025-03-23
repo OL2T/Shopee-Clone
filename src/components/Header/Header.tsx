@@ -280,7 +280,7 @@ export default function Header() {
                         Tài khoản của tôi
                       </Link>
                       <Link
-                        to={'/purchase'}
+                        to={path.cart}
                         className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                       >
                         Đơn mua

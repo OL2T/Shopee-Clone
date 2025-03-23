@@ -43,11 +43,11 @@ export default function ProductDetail() {
       }
     }
   })
-  const productData = data?.data.data
+  const productDataPk = data?.data.data
   const queryConfig: ProductListConfig = {
     page: 1,
     limit: LIMIT,
-    category: productData?.category?._id
+    category: productDataPk?.category?._id
   }
 
   const {
@@ -66,7 +66,7 @@ export default function ProductDetail() {
     },
     initialPageParam: 1,
     staleTime: 3 * 60 * 1000,
-    enabled: Boolean(productData)
+    enabled: Boolean(productDataPk)
   })
 
   const addToCartMutation = useMutation({
@@ -82,10 +82,10 @@ export default function ProductDetail() {
     )
   }
   const valueData = {
-    ...productData,
-    description: productData?.description || '',
+    ...productDataPk,
+    description: productDataPk?.description || '',
     shipping: 'Nhận vào ngày mai, phí giao ₫0',
-    quantity: productData?.quantity || 0
+    quantity: productDataPk?.quantity || 0
   }
 
   const clothesId = '60aba4e24efcc70f8892e1c6'
@@ -159,7 +159,7 @@ export default function ProductDetail() {
     } else {
       addToCartMutation.mutate(
         {
-          product_id: productData?._id as string,
+          product_id: productDataPk?._id as string,
           buy_count: productQuantity
         },
         {
@@ -446,7 +446,7 @@ export default function ProductDetail() {
             </div>
           </div>
           <div className='mt-10'>
-            <div className='uppercase text-gray-500 font-semibold'>
+            <div className='uppercase text-black text-opacity-[0.54] font-medium'>
               Các sản phẩm bạn có thể thích
             </div>
             {!productDataByCategory ? (
@@ -455,7 +455,7 @@ export default function ProductDetail() {
               <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
                 {productDataByCategory.pages.flatMap((page) =>
                   page.data.data.products
-                    .filter((product) => product._id !== productData?._id)
+                    .filter((product) => product._id !== productDataPk?._id)
                     .map((product) => (
                       <div className='col-span-1' key={product._id}>
                         <Product product={product} />
