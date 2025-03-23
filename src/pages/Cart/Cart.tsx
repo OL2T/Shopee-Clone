@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import purchaseApi from 'src/apis/purchase.api'
 import QuantityController from 'src/components/QuantityController/QuantityController'
@@ -9,6 +9,7 @@ import './styles.scss'
 import { useEffect, useState } from 'react'
 import { PurChase } from 'src/apis/purchase.type'
 import { produce } from 'immer'
+import { keyBy } from 'lodash'
 interface ExtendedPurchase extends PurChase {
   disabled: boolean
   checked: boolean
@@ -19,7 +20,7 @@ export default function Cart() {
     []
   )
 
-  const { data: cartData } = useQuery({
+  const { data: cartData, refetch } = useQuery({
     queryKey: ['purchases', { status: purchaseStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.inCart })
   })
@@ -28,16 +29,28 @@ export default function Cart() {
   const isCheckedAll = extendedPurchase?.every((purchase) => purchase.checked)
   useEffect(() => {
     if (inCartData) {
-      setExtendedPurchase(
-        inCartData.map((purchase) => ({
+      setExtendedPurchase((prev) => {
+        const extendedPurchasesObject = keyBy(prev, '_id')
+        return inCartData.map((purchase) => ({
           ...purchase,
           disabled: false,
-          checked: false
+          checked: Boolean(extendedPurchasesObject[purchase._id]?.checked)
         }))
-      )
+      })
     }
   }, [inCartData])
   // console.log('extendedPurchase', extendedPurchase)
+
+  const buyProductsMutation = useMutation({
+    mutationFn: purchaseApi.buyProduct
+  })
+
+  const updatePurchaseMutation = useMutation({
+    mutationFn: purchaseApi.updatePurchase,
+    onSuccess: () => {
+      refetch()
+    }
+  })
 
   const handleChecked =
     (purchaseId: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +73,49 @@ export default function Cart() {
     )
   }
 
+  const handleBuyCount = (
+    purchaseId: string,
+    value: number,
+    enable: boolean
+  ) => {
+    if (enable) {
+      setExtendedPurchase(
+        produce((draft) => {
+          const purchaseIndex = draft.findIndex(
+            (purchase) => purchase._id === purchaseId
+          )
+          draft[purchaseIndex].disabled = true
+          draft[purchaseIndex].buy_count = value
+        })
+      )
+      const purchase = extendedPurchase.find(
+        (purchase) => purchase._id === purchaseId
+      )
+      updatePurchaseMutation.mutate({
+        product_id: purchase?.product._id as string,
+        buy_count: value
+      })
+    }
+  }
+
+  const handleTypeQuantity = (purchaseId: string) => (value: number) => {
+    setExtendedPurchase(
+      produce((draft) => {
+        const purchaseIndex = draft.findIndex(
+          (purchase) => purchase._id === purchaseId
+        )
+        draft[purchaseIndex].buy_count = value
+      })
+    )
+  }
+
+  const onSubmit = () => {
+    const purchaseIds = extendedPurchase
+      .filter((purchase) => purchase.checked)
+      .map((purchase) => purchase.product._id)
+    console.log('purchaseIds', purchaseIds)
+  }
+
   const handlePaidTotal = () => {
     if (!extendedPurchase) return 0
 
@@ -67,6 +123,21 @@ export default function Cart() {
       .filter((purchase) => purchase.checked)
       .reduce(
         (total, purchase) => total + purchase.price * purchase.buy_count,
+        0
+      )
+    return formatCurrency(total)
+  }
+
+  const handleCalcSaved = () => {
+    if (!extendedPurchase) return 0
+
+    const total = extendedPurchase
+      .filter((purchase) => purchase.checked)
+      .reduce(
+        (total, purchase) =>
+          total +
+          (purchase.price_before_discount - purchase.price) *
+            purchase.buy_count,
         0
       )
     return formatCurrency(total)
@@ -143,8 +214,43 @@ export default function Cart() {
 
                   <QuantityController
                     classNameWrapper='w-1/4 flex-col gap-2'
+                    classNameQuantity='sr-only'
+                    classNameInput='flex items-center justify-center text-center w-[50px] h-8 border-t border-b outline-none'
                     value={buyCount}
                     max={purchase.product.quantity}
+                    onIncrease={(value) =>
+                      handleBuyCount(
+                        purchase._id,
+                        value,
+                        value <= purchase.product.quantity
+                      )
+                    }
+                    onDecrease={(value) => {
+                      console.log('value', value)
+                      return handleBuyCount(
+                        purchase._id,
+                        value,
+                        value >= 1 &&
+                          value !==
+                            inCartData?.find(
+                              (item) => item._id === purchase._id
+                            )?.buy_count
+                      )
+                    }}
+                    onType={handleTypeQuantity(purchase._id)}
+                    onFocusOut={(value) =>
+                      handleBuyCount(
+                        purchase._id,
+                        value,
+                        value <= purchase.product.quantity &&
+                          value >= 1 &&
+                          value !==
+                            inCartData?.find(
+                              (item) => item._id === purchase._id
+                            )?.buy_count
+                      )
+                    }
+                    disabled={purchase.disabled}
                   />
 
                   <div className='w-1/4'>
@@ -178,21 +284,47 @@ export default function Cart() {
             <button onClick={handleCheckedAll}>
               Chọn tất cả ({extendedPurchase.length})
             </button>
+            <button className='ml-8'>Xoá</button>
           </div>
-          <div className='mr-6'>
-            <span className='text-gray-700'>
-              Tổng thanh toán (
-              {extendedPurchase.filter((purchase) => purchase.checked).length}{' '}
-              Sản phẩm):
-            </span>
-            <span className='text-orange font-semibold ml-1'>
-              {handlePaidTotal()}
-            </span>
+          <div className=''>
+            <div className='flex items-center'>
+              <span className='text-gray-700 mr-4'>
+                <span>Tổng thanh toán</span> (
+                {extendedPurchase.filter((purchase) => purchase.checked).length}
+                <span> Sản phẩm</span>):
+              </span>
+              <span className='flex items-center text-2xl text-orange ml-1'>
+                <span>{handlePaidTotal()}</span>
+                <div className='ml-3'>
+                  <svg
+                    viewBox='0 0 12 12'
+                    fill='none'
+                    width={12}
+                    height={12}
+                    color='rgba(0, 0, 0, 0.54)'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      clipRule='evenodd'
+                      d='M6 4L.854 9.146.146 8.44l5.147-5.146a1 1 0 011.414 0l5.147 5.146-.707.707L6 4z'
+                      fill='currentColor'
+                    />
+                  </svg>
+                </div>
+              </span>
+            </div>
+            {extendedPurchase.some((purchase) => purchase.checked) && (
+              <div className='text-sm flex justify-end mt-2'>
+                Tiết kiệm
+                <span className='text-orange pl-2.5'>{handleCalcSaved()}</span>
+              </div>
+            )}
           </div>
 
           <button
             type='button'
-            className='bg-orange text-white text-sm px-6 py-2'
+            className='bg-orange text-white text-sm px-12 py-2 ml-6'
+            onClick={onSubmit}
           >
             Mua Hàng
           </button>
