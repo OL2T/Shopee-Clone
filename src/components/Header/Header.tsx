@@ -431,9 +431,11 @@ export default function Header() {
                               <div className='flex items-center gap-4 justify-between p-[10px]'>
                                 <div className='text-[12px] capitalize'>
                                   {inCartData?.length
-                                    ? inCartData?.length -
-                                      limitCart +
-                                      ' Thêm hàng vào giỏ'
+                                    ? inCartData?.length > limitCart
+                                      ? inCartData.length -
+                                        limitCart +
+                                        ' Thêm hàng vào giỏ'
+                                      : ''
                                     : ''}
                                 </div>
                                 <Link
