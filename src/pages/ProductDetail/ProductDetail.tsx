@@ -31,6 +31,7 @@ import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
 export default function ProductDetail() {
   const { isAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
   const [productQuantity, setProductQuantity] = useState(1)
   const queryClient = useQueryClient()
   const { nameId } = useParams()
@@ -152,7 +153,7 @@ export default function ProductDetail() {
   const handleBuyCount = (value: number) => {
     setProductQuantity(value)
   }
-  const navigate = useNavigate()
+
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       navigate(path.login)
@@ -171,6 +172,21 @@ export default function ProductDetail() {
           }
         }
       )
+    }
+  }
+
+  const handleBuyNow = async () => {
+    if (!isAuthenticated) {
+      navigate(path.login)
+    } else {
+      const res = await addToCartMutation.mutateAsync({
+        product_id: productDataPk?._id as string,
+        buy_count: productQuantity
+      })
+      const purchase = res.data.data
+      if (purchase) {
+        navigate(path.cart, { state: { purchaseId: purchase._id } })
+      }
     }
   }
 
@@ -419,7 +435,10 @@ export default function ProductDetail() {
                           />
                           <span>Thêm vào giỏ hàng</span>
                         </button>
-                        <button className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'>
+                        <button
+                          className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'
+                          onClick={handleBuyNow}
+                        >
                           Mua ngay
                         </button>
                       </div>

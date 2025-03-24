@@ -1,13 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import purchaseApi from 'src/apis/purchase.api'
 import QuantityController from 'src/components/QuantityController/QuantityController'
 import path from 'src/constant/path'
 import { purchaseStatus } from 'src/constant/purchase'
 import { formatCurrency, generateNameId } from 'src/utils/utils'
-import './styles.scss'
-import { useEffect, useState } from 'react'
-import { PurChase } from 'src/apis/purchase.type'
+import { useContext, useEffect, useMemo } from 'react'
 import { produce } from 'immer'
 import { keyBy } from 'lodash'
 import Button from 'src/components/Button/Button'
@@ -15,20 +13,19 @@ import { ProductListConfig } from 'src/types/product.type'
 import productAPI from 'src/apis/product.api'
 import ProductListSkeleton from '../ProductList/ProductListSkeleton'
 import Product from '../ProductList/components/Product/Product'
+import Loading from 'src/components/Loading/Loading'
+import { AppContext } from 'src/Contexts/app.context'
+import Popover from 'src/components/Popover'
+import './styles.scss'
 
-interface ExtendedPurchase extends PurChase {
-  disabled: boolean
-  checked: boolean
-}
 const LIMIT = 12
 export default function Cart() {
+  const { extendedPurchase, setExtendedPurchase } = useContext(AppContext)
   const queryConfig: ProductListConfig = {
     page: 1,
     limit: LIMIT
   }
-  const [extendedPurchase, setExtendedPurchase] = useState<ExtendedPurchase[]>(
-    []
-  )
+
   const { data: productsResponse, isFetching } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => {
@@ -37,49 +34,71 @@ export default function Cart() {
     enabled: extendedPurchase.length === 0
   })
   const productsData = productsResponse?.data?.data.products || []
-  const { data: cartData, refetch } = useQuery({
+  const {
+    data: cartData,
+    refetch,
+    isLoading: cartDataLoading
+  } = useQuery({
     queryKey: ['purchases', { status: purchaseStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.inCart })
   })
 
   const inCartData = cartData?.data.data
-  const isCheckedAll = extendedPurchase?.every((purchase) => purchase.checked)
-  const checkedPurchase = extendedPurchase?.filter(
-    (purchase) => purchase.checked
+  const isCheckedAll = useMemo(() => {
+    return extendedPurchase?.every((purchase) => purchase.checked)
+  }, [extendedPurchase])
+  const checkedPurchase = useMemo(
+    () => extendedPurchase.filter((purchase) => purchase.checked),
+    [extendedPurchase]
   )
-  const discountPurchase = formatCurrency(
-    extendedPurchase
-      .filter((purchase) => purchase.checked)
-      .reduce(
+  const discountPurchase = useMemo(() => {
+    return formatCurrency(
+      checkedPurchase.reduce(
         (total, purchase) =>
           total +
           (purchase.price_before_discount - purchase.price) *
             purchase.buy_count,
         0
       )
-  )
-  const totalPurchase = formatCurrency(
-    extendedPurchase
-      .filter((purchase) => purchase.checked)
-      .reduce(
+    )
+  }, [checkedPurchase])
+  const totalPurchase = useMemo(() => {
+    return formatCurrency(
+      checkedPurchase.reduce(
         (total, purchase) => total + purchase.price * purchase.buy_count,
         0
       )
-  )
+    )
+  }, [checkedPurchase])
+
+  const location = useLocation()
+  const purchaseIdFromProductPk = (
+    location.state as { purchaseId: string | null }
+  )?.purchaseId
 
   useEffect(() => {
     if (inCartData) {
       setExtendedPurchase((prev) => {
         const extendedPurchasesObject = keyBy(prev, '_id')
-        return inCartData.map((purchase) => ({
-          ...purchase,
-          disabled: false,
-          checked: Boolean(extendedPurchasesObject[purchase._id]?.checked)
-        }))
+        return inCartData.map((purchase) => {
+          const isChosenPurchaseId = purchaseIdFromProductPk === purchase._id
+          return {
+            ...purchase,
+            disabled: false,
+            checked:
+              isChosenPurchaseId ||
+              Boolean(extendedPurchasesObject[purchase._id]?.checked)
+          }
+        })
       })
     }
-  }, [inCartData])
-  // console.log('extendedPurchase', extendedPurchase)
+  }, [inCartData, purchaseIdFromProductPk, setExtendedPurchase])
+
+  useEffect(() => {
+    return () => {
+      history.replaceState(null, '')
+    }
+  }, [])
 
   const buyProductsMutation = useMutation({
     mutationFn: purchaseApi.buyProduct,
@@ -183,7 +202,9 @@ export default function Cart() {
   }
   return (
     <>
-      {extendedPurchase.length > 0 ? (
+      {cartDataLoading ? (
+        <Loading />
+      ) : extendedPurchase.length > 0 ? (
         <>
           <div className='bg-white px-5 h-[55px] flex items-center justify-between mb-3'>
             <div className='flex items-center flex-1'>
@@ -264,7 +285,6 @@ export default function Cart() {
                           )
                         }
                         onDecrease={(value) => {
-                          console.log('value', value)
                           return handleBuyCount(
                             purchase._id,
                             value,
@@ -331,41 +351,85 @@ export default function Cart() {
                   Xoá
                 </button>
               </div>
-              <div className=''>
-                <div className='flex items-center'>
-                  <span className='text-gray-700 mr-4'>
-                    <span>Tổng thanh toán</span> ({checkedPurchase.length}
-                    <span> Sản phẩm</span>):
-                  </span>
-                  <span className='flex items-center text-2xl text-orange ml-1'>
-                    <span>{totalPurchase}</span>
-                    <div className='ml-3'>
-                      <svg
-                        viewBox='0 0 12 12'
-                        fill='none'
-                        width={12}
-                        height={12}
-                        color='rgba(0, 0, 0, 0.54)'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          clipRule='evenodd'
-                          d='M6 4L.854 9.146.146 8.44l5.147-5.146a1 1 0 011.414 0l5.147 5.146-.707.707L6 4z'
-                          fill='currentColor'
-                        />
-                      </svg>
+              <Popover
+                placement='top-end'
+                popoverContent={
+                  checkedPurchase.length > 0 ? (
+                    <div className='px-[30px] w-[550px] divide-y-0.5 divide-gray-200'>
+                      <div className='text-xl py-6 font-medium '>
+                        Chi tiết khuyến mãi
+                      </div>
+                      <div className='text-sm'>
+                        <div className='flex items-center justify-between py-[15px]'>
+                          <span className='vxKt8Q'>Tổng tiền hàng</span>
+                          <span>{totalPurchase}</span>
+                        </div>
+                      </div>
+                      <div className='py-[15px] text-sm'>
+                        <div className='flex items-center justify-between'>
+                          <span className='vxKt8Q'>Giảm giá sản phẩm</span>
+                          <span className=''>-{discountPurchase}</span>
+                        </div>
+                      </div>
+                      <div className='py-[15px] text-sm'>
+                        <div className='flex items-center justify-between mb-2 font-medium'>
+                          <span>Tiết kiệm</span>
+                          <span className='text-orange'>
+                            -{discountPurchase}
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='font-medium'>Tổng số tiền</span>
+                          <span className='font-medium'>{totalPurchase}</span>
+                        </div>
+                        <div className='text-gray-400 text-xs flex justify-end mt-2'>
+                          Số tiền cuối cùng thanh toán
+                        </div>
+                      </div>
                     </div>
-                  </span>
-                </div>
-                {extendedPurchase.some((purchase) => purchase.checked) && (
-                  <div className='text-sm flex justify-end mt-2'>
-                    Tiết kiệm
-                    <span className='text-orange pl-2.5'>
-                      {discountPurchase}
+                  ) : (
+                    <></>
+                  )
+                }
+              >
+                <div className='group'>
+                  <div className='flex items-center'>
+                    <span className='text-gray-700 mr-4'>
+                      <span>Tổng thanh toán</span> ({checkedPurchase.length}
+                      <span> Sản phẩm</span>):
+                    </span>
+                    <span className='flex items-center text-2xl text-orange ml-1'>
+                      <span>{totalPurchase}</span>
+                      {checkedPurchase.length > 0 && (
+                        <div className='ml-3 group-hover:-rotate-180 transition-transform duration-300'>
+                          <svg
+                            viewBox='0 0 12 12'
+                            fill='none'
+                            width={12}
+                            height={12}
+                            color='rgba(0, 0, 0, 0.54)'
+                          >
+                            <path
+                              fillRule='evenodd'
+                              clipRule='evenodd'
+                              d='M6 4L.854 9.146.146 8.44l5.147-5.146a1 1 0 011.414 0l5.147 5.146-.707.707L6 4z'
+                              fill='currentColor'
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </span>
                   </div>
-                )}
-              </div>
+                  {extendedPurchase.some((purchase) => purchase.checked) && (
+                    <div className='text-sm flex justify-end mt-2'>
+                      Tiết kiệm
+                      <span className='text-orange pl-2.5'>
+                        {discountPurchase}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </Popover>
 
               <Button
                 type='button'
@@ -379,42 +443,44 @@ export default function Cart() {
           </div>
         </>
       ) : (
-        <>
-          <div className='text-center p-[60px]'>
-            <img
-              className='w-[100px] h-[100px] mx-auto'
-              src='../assets/images/empty-cart.png'
-              alt='empty-cart'
-            />
-            <div className='text-sm text-gray-400 font-medium my-4'>
-              Giỏ hàng của bạn còn trống
-            </div>
-            <Button
-              type='button'
-              className='bg-orange uppercase font-light text-white px-10 py-2'
-            >
-              <Link to={path.home}>Mua ngay</Link>
-            </Button>
-          </div>
-          {isFetching ? (
-            <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
-              <ProductListSkeleton limit={LIMIT} />
-            </div>
-          ) : productsData.length > 0 ? (
-            <>
-              <div className='uppercase text-black text-opacity-[0.54] font-medium'>
-                Có thể bạn cũng thích
+        !cartDataLoading && (
+          <>
+            <div className='text-center p-[60px]'>
+              <img
+                className='w-[100px] h-[100px] mx-auto'
+                src='../assets/images/empty-cart.png'
+                alt='empty-cart'
+              />
+              <div className='text-sm text-gray-400 font-medium my-4'>
+                Giỏ hàng của bạn còn trống
               </div>
-              <div className='mt-6 mb-12 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
-                {productsData.map((product) => (
-                  <div className='col-span-1' key={product._id}>
-                    <Product product={product} />
-                  </div>
-                ))}
+              <Button
+                type='button'
+                className='bg-orange uppercase font-light text-white px-10 py-2'
+              >
+                <Link to={path.home}>Mua ngay</Link>
+              </Button>
+            </div>
+            {isFetching ? (
+              <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+                <ProductListSkeleton limit={LIMIT} />
               </div>
-            </>
-          ) : null}
-        </>
+            ) : productsData.length > 0 ? (
+              <>
+                <div className='uppercase text-black text-opacity-[0.54] font-medium'>
+                  Có thể bạn cũng thích
+                </div>
+                <div className='mt-6 mb-12 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+                  {productsData.map((product) => (
+                    <div className='col-span-1' key={product._id}>
+                      <Product product={product} />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </>
+        )
       )}
     </>
   )
