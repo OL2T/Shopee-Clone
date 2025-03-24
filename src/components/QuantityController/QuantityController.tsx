@@ -47,7 +47,7 @@ export default function QuantityController({
   const handleDecrease = () => {
     let _value = Number(value || localValue) - 1
     if (_value < 1) {
-      _value = 1
+      _value = 0
     }
     onDecrease && onDecrease(_value)
     setLocalValue(_value)

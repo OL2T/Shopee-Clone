@@ -5,7 +5,7 @@ import QuantityController from 'src/components/QuantityController/QuantityContro
 import path from 'src/constant/path'
 import { purchaseStatus } from 'src/constant/purchase'
 import { formatCurrency, generateNameId } from 'src/utils/utils'
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { produce } from 'immer'
 import { keyBy } from 'lodash'
 import Button from 'src/components/Button/Button'
@@ -17,23 +17,20 @@ import Loading from 'src/components/Loading/Loading'
 import { AppContext } from 'src/Contexts/app.context'
 import Popover from 'src/components/Popover'
 import './styles.scss'
+import XDialog from 'src/components/XDialog/XDialog'
+import CustomToast from 'src/components/CustomToast/CustomToast'
 
 const LIMIT = 12
 export default function Cart() {
   const { extendedPurchase, setExtendedPurchase } = useContext(AppContext)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogProductRow, setIsDialogProductRow] = useState(false)
+  const [isBuyProduct, setIsBuyProduct] = useState(false)
   const queryConfig: ProductListConfig = {
     page: 1,
     limit: LIMIT
   }
 
-  const { data: productsResponse, isFetching } = useQuery({
-    queryKey: ['products', queryConfig],
-    queryFn: () => {
-      return productAPI.getProducts(queryConfig as ProductListConfig)
-    },
-    enabled: extendedPurchase.length === 0
-  })
-  const productsData = productsResponse?.data?.data.products || []
   const {
     data: cartData,
     refetch,
@@ -42,8 +39,17 @@ export default function Cart() {
     queryKey: ['purchases', { status: purchaseStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchaseStatus.inCart })
   })
-
   const inCartData = cartData?.data.data
+
+  const { data: productsResponse, isFetching } = useQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: () => {
+      return productAPI.getProducts(queryConfig as ProductListConfig)
+    },
+    enabled: !cartDataLoading && (!inCartData || inCartData.length === 0)
+  })
+  const productsData = productsResponse?.data?.data.products || []
+
   const isCheckedAll = useMemo(() => {
     return extendedPurchase?.every((purchase) => purchase.checked)
   }, [extendedPurchase])
@@ -101,10 +107,7 @@ export default function Cart() {
   }, [])
 
   const buyProductsMutation = useMutation({
-    mutationFn: purchaseApi.buyProduct,
-    onSuccess: () => {
-      refetch()
-    }
+    mutationFn: purchaseApi.buyProduct
   })
 
   const updatePurchaseMutation = useMutation({
@@ -184,27 +187,59 @@ export default function Cart() {
         checkedPurchase.map((purchase) => ({
           product_id: purchase.product._id,
           buy_count: purchase.buy_count
-        }))
+        })),
+        {
+          onSuccess: () => {
+            setIsBuyProduct(true)
+
+            setTimeout(() => {
+              refetch()
+              setIsBuyProduct(false)
+            }, 2000)
+          }
+        }
       )
     }
   }
 
-  const handleDelete = (purchaseId: string) => () => {
+  const handleDelete = (purchaseId: string) => {
+    setIsDialogProductRow(false)
+    handleConfirmDelete(purchaseId)
+  }
+
+  const handleDeleteManyPurchases = () => {
+    setIsDialogOpen(true)
+  }
+
+  const handleCancel = () => {
+    setIsDialogProductRow(false)
+  }
+
+  const handleCancelAllProducts = () => {
+    setIsDialogOpen(false)
+  }
+
+  const handleConfirmDelete = (purchaseId: string) => {
+    setIsDialogOpen(false)
     deletePurchaseMutation.mutate([
       extendedPurchase.find((purchase) => purchase._id === purchaseId)
         ?._id as string
     ])
   }
 
-  const handleDeleteManyPurchases = () => {
+  const handleConfirm = () => {
+    setIsDialogOpen(false)
     const purchaseIds = checkedPurchase.map((purchase) => purchase._id)
     deletePurchaseMutation.mutate(purchaseIds)
   }
+
+  if (cartDataLoading) {
+    return <Loading />
+  }
+
   return (
     <>
-      {cartDataLoading ? (
-        <Loading />
-      ) : extendedPurchase.length > 0 ? (
+      {inCartData && inCartData.length > 0 ? (
         <>
           <div className='bg-white px-5 h-[55px] flex items-center justify-between mb-3'>
             <div className='flex items-center flex-1'>
@@ -223,7 +258,6 @@ export default function Cart() {
               <span className='text-gray-500 text-sm w-1/4'>Thao tác</span>
             </div>
           </div>
-
           {extendedPurchase?.map((purchase) => {
             const buyCount = purchase.buy_count
 
@@ -285,6 +319,10 @@ export default function Cart() {
                           )
                         }
                         onDecrease={(value) => {
+                          if (value < 1) {
+                            value = 1
+                            setIsDialogProductRow(true)
+                          }
                           return handleBuyCount(
                             purchase._id,
                             value,
@@ -320,13 +358,22 @@ export default function Cart() {
                       <button
                         type='button'
                         className='w-1/4 first:text-gray-500 hover:text-orange'
-                        onClick={handleDelete(purchase._id)}
+                        onClick={() => setIsDialogProductRow(true)}
                       >
                         Xoá
                       </button>
                     </div>
                   </div>
                 </div>
+                <XDialog
+                  isOpen={isDialogProductRow}
+                  title='Xoá sản phẩm'
+                  message={`Bạn có chắc chắn muốn xoá sản phẩm "${purchase.product.name}" khỏi giỏ hàng không?`}
+                  onCancel={handleCancel}
+                  onConfirm={() => handleDelete(purchase._id)}
+                  onCancelText='Trở lại'
+                  onConfirmText='Có'
+                />
               </div>
             )
           })}
@@ -343,13 +390,13 @@ export default function Cart() {
                 <button onClick={handleCheckedAll}>
                   Chọn tất cả ({extendedPurchase.length})
                 </button>
-                <button
+                <Button
                   className='ml-8'
                   onClick={handleDeleteManyPurchases}
                   disabled={checkedPurchase.length === 0}
                 >
                   Xoá
-                </button>
+                </Button>
               </div>
               <Popover
                 placement='top-end'
@@ -435,15 +482,25 @@ export default function Cart() {
                 type='button'
                 className='bg-orange text-white text-sm px-12 py-2 ml-6'
                 onClick={handleBuyPurchase}
-                disabled={buyProductsMutation.isPending}
+                disabled={
+                  buyProductsMutation.isPending || checkedPurchase.length === 0
+                }
               >
                 Mua Hàng
               </Button>
             </div>
           </div>
+          <XDialog
+            isOpen={isDialogOpen}
+            title='Xoá sản phẩm đã chọn'
+            message='Bạn có chắc chắn muốn xoá tất cả sản phẩm đã chọn khỏi giỏ hàng không?'
+            onCancel={handleCancelAllProducts}
+            onConfirm={handleConfirm}
+          />
+          {isBuyProduct && <CustomToast message='Mua sản phẩm thành công' />}
         </>
       ) : (
-        !cartDataLoading && (
+        !isBuyProduct && (
           <>
             <div className='text-center p-[60px]'>
               <img
@@ -454,12 +511,12 @@ export default function Cart() {
               <div className='text-sm text-gray-400 font-medium my-4'>
                 Giỏ hàng của bạn còn trống
               </div>
-              <Button
-                type='button'
+              <Link
+                to={path.home}
                 className='bg-orange uppercase font-light text-white px-10 py-2'
               >
-                <Link to={path.home}>Mua ngay</Link>
-              </Button>
+                Mua ngay
+              </Link>
             </div>
             {isFetching ? (
               <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>

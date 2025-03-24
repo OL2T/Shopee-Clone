@@ -26,13 +26,14 @@ import { LIMIT } from 'src/constant/product'
 import QuantityController from 'src/components/QuantityController/QuantityController'
 import purchaseApi from 'src/apis/purchase.api'
 import { purchaseStatus } from 'src/constant/purchase'
-import { toast } from 'react-toastify'
 import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
+import CustomToast from 'src/components/CustomToast/CustomToast'
 export default function ProductDetail() {
   const { isAuthenticated } = useContext(AppContext)
   const navigate = useNavigate()
   const [productQuantity, setProductQuantity] = useState(1)
+  const [showToast, setShowToast] = useState(false)
   const queryClient = useQueryClient()
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
@@ -71,6 +72,9 @@ export default function ProductDetail() {
   })
 
   const addToCartMutation = useMutation({
+    mutationFn: purchaseApi.addToCart
+  })
+  const buyNowMutation = useMutation({
     mutationFn: purchaseApi.addToCart
   })
 
@@ -164,11 +168,16 @@ export default function ProductDetail() {
           buy_count: productQuantity
         },
         {
-          onSuccess: (data) => {
+          onSuccess: () => {
             queryClient.invalidateQueries({
               queryKey: ['purchases', { status: purchaseStatus.inCart }]
             })
-            toast.success(data.data.message)
+
+            setShowToast(true)
+
+            setTimeout(() => {
+              setShowToast(false)
+            }, 2500)
           }
         }
       )
@@ -179,12 +188,16 @@ export default function ProductDetail() {
     if (!isAuthenticated) {
       navigate(path.login)
     } else {
-      const res = await addToCartMutation.mutateAsync({
+      const res = await buyNowMutation.mutateAsync({
         product_id: productDataPk?._id as string,
         buy_count: productQuantity
       })
       const purchase = res.data.data
       if (purchase) {
+        await queryClient.invalidateQueries({
+          queryKey: ['purchases', { status: purchaseStatus.inCart }]
+        })
+
         navigate(path.cart, { state: { purchaseId: purchase._id } })
       }
     }
@@ -277,7 +290,12 @@ export default function ProductDetail() {
         <QuantityController
           value={productQuantity}
           onIncrease={handleBuyCount}
-          onDecrease={handleBuyCount}
+          onDecrease={(value) => {
+            if (value < 1) {
+              value = 1
+            }
+            handleBuyCount(value)
+          }}
           onType={handleBuyCount}
           max={valueData.quantity}
         />
@@ -435,12 +453,14 @@ export default function ProductDetail() {
                           />
                           <span>Thêm vào giỏ hàng</span>
                         </button>
-                        <button
+                        <Button
                           className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'
                           onClick={handleBuyNow}
+                          isLoading={buyNowMutation.isPending}
+                          disabled={buyNowMutation.isPending}
                         >
                           Mua ngay
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -494,6 +514,9 @@ export default function ProductDetail() {
               )}
             </div>
           </div>
+          {showToast && (
+            <CustomToast message='Sản phẩm đã được thêm vào giỏ hàng' />
+          )}
         </>
       )}
     </>
