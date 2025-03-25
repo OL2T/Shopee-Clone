@@ -1,21 +1,27 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import userAPI from 'src/apis/user.api'
 import Button from 'src/components/Button/Button'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import DateSelect from 'src/components/DateSelect/DateSelect'
 import Input from 'src/components/Input'
+import InputFile from 'src/components/InputFile/InputFile'
 import InputNumber from 'src/components/InputNumber/InputNumber'
 import { AppContext } from 'src/Contexts/app.context'
 import { setUserToLocalStorage } from 'src/types/auth'
+import { ErrorResponseAPI } from 'src/types/utils.type'
 import { userSchema, UserSchema } from 'src/utils/rules'
+import { getAvatarUrl, isUnprocessableEntityError } from 'src/utils/utils'
 
 type FormData = Pick<
   UserSchema,
   'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'
 >
+type FormDataError = Omit<FormData, 'date_of_birth'> & {
+  date_of_birth?: string
+}
 
 const profileSchema = userSchema.pick([
   'name',
@@ -26,8 +32,14 @@ const profileSchema = userSchema.pick([
 ])
 
 export default function Profile() {
-  const { setUser } = useContext(AppContext)
+  const { setUser, user } = useContext(AppContext)
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(false)
+  const [fileLocal, setFileLocal] = useState<File>()
+
+  const previewImage = useMemo(() => {
+    return fileLocal ? URL.createObjectURL(fileLocal) : ''
+  }, [fileLocal])
+
   const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
     queryFn: userAPI.getProfile
@@ -38,11 +50,17 @@ export default function Profile() {
     mutationFn: userAPI.updateProfile
   })
 
+  const uploadAvatarMutation = useMutation({
+    mutationFn: userAPI.uploadAvatar
+  })
+
   const {
     register,
+    watch,
     control,
     formState: { errors },
     setValue,
+    setError,
     handleSubmit
   } = useForm<FormData>({
     defaultValues: {
@@ -54,6 +72,8 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema)
   })
+
+  const avatar = watch('avatar')
 
   useEffect(() => {
     if (profile) {
@@ -71,30 +91,53 @@ export default function Profile() {
   }, [profile, setValue])
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data)
-    const res = await updateProfileMutation.mutateAsync(
-      {
-        name: data.name || '',
-        phone: data.phone || '',
-        address: data.address || '',
-        avatar: data.avatar || '',
-        date_of_birth: data.date_of_birth
-          ? data.date_of_birth.toISOString()
-          : new Date(1990, 0, 1).toISOString()
-      },
-      {
-        onSuccess: (data) => {
-          setIsUpdateSuccess(true)
-          setTimeout(() => {
-            setUser(data.data.data)
-            setUserToLocalStorage(data.data.data)
-            refetch()
-            setIsUpdateSuccess(false)
-          }, 2000)
+    try {
+      let avatarRes = avatar
+      if (fileLocal) {
+        const formData = new FormData()
+        formData.append('image', fileLocal)
+        await uploadAvatarMutation.mutateAsync(formData, {
+          onSuccess: (data) => {
+            avatarRes = data.data.data
+            setValue('avatar', avatarRes)
+          }
+        })
+      }
+      await updateProfileMutation.mutateAsync(
+        {
+          name: data.name || '',
+          phone: data.phone || '',
+          address: data.address || '',
+          avatar: avatarRes || data.avatar,
+          date_of_birth: data.date_of_birth
+            ? data.date_of_birth.toISOString()
+            : new Date(1990, 0, 1).toISOString()
+        },
+        {
+          onSuccess: (data) => {
+            setIsUpdateSuccess(true)
+            setTimeout(() => {
+              setUser(data.data.data)
+              setUserToLocalStorage(data.data.data)
+              refetch()
+              setIsUpdateSuccess(false)
+            }, 1500)
+          }
+        }
+      )
+    } catch (error) {
+      if (isUnprocessableEntityError<ErrorResponseAPI<FormDataError>>(error)) {
+        const formErrors = error.response?.data.data
+        if (formErrors) {
+          Object.keys(formErrors).forEach((key) => {
+            setError(key as keyof FormDataError, {
+              message: formErrors[key as keyof FormDataError],
+              type: 'Server'
+            })
+          })
         }
       }
-    )
-    console.log('res', res)
+    }
   })
 
   return (
@@ -107,7 +150,7 @@ export default function Profile() {
       </div>
 
       <form className='text-sm flex' onSubmit={onSubmit}>
-        <div className='space-y-8 flex-1 w-[602px]'>
+        <div className='space-y-7 flex-1 w-[602px]'>
           <div className='flex items-center'>
             <div className='text-right mr-5 w-1/4 text-gray-600'>Email</div>
             <div className='w-full truncate'>{profile?.email}</div>
@@ -169,7 +212,6 @@ export default function Profile() {
             )}
           />
 
-          {/* Nút Lưu */}
           <div className='flex items-center'>
             <label
               htmlFor='birthdate'
@@ -190,33 +232,61 @@ export default function Profile() {
             </div>
           </div>
         </div>
-        {/* Avatar (tuỳ chỉnh theo ý muốn) */}
+
         <div className='w-[280px] flex justify-center border-l border-gray-200 ml-[50px]'>
           <div className='mx-auto'>
-            <div className='my-5'>
+            <div className=' my-5'>
               <label htmlFor='avatarUpload' className='sr-only'>
                 Ảnh đại diện
               </label>
-              <img
-                src='https://down-vn.img.susercontent.com/file/vn-11134226-7ra0g-m7m83ajnwame54_tn'
-                alt='avatar'
-                className='w-[100px] h-[100px] rounded-full object-cover mx-auto'
-              />
+              {avatar || previewImage ? (
+                <img
+                  src={previewImage || (avatar && getAvatarUrl(avatar))}
+                  alt={user?.name}
+                  className={`w-[100px] h-[100px] rounded-full object-cover mx-auto ${errors.avatar?.message ? 'animate-shake border border-red-600' : ''}`}
+                />
+              ) : (
+                <div className='w-[100px] h-[100px] rounded-full bg-gray-100 flex items-center justify-center mx-auto'>
+                  <svg
+                    enableBackground='new 0 0 15 15'
+                    viewBox='0 0 15 15'
+                    x={0}
+                    y={0}
+                    className='stroke-[#c6c6c6] w-[80px] h-[80px] rounded-full'
+                  >
+                    <g>
+                      <circle
+                        cx='7.5'
+                        cy='4.5'
+                        fill='none'
+                        r='3.8'
+                        strokeMiterlimit={10}
+                      />
+                      <path
+                        d='m1.5 14.2c0-3.3 2.7-6 6-6s6 2.7 6 6'
+                        fill='none'
+                        strokeLinecap='round'
+                        strokeMiterlimit={10}
+                      />
+                    </g>
+                  </svg>
+                </div>
+              )}
             </div>
-            <input className='hidden' type='file' accept='.jpg, .jpeg, .png' />
-            <button
-              id='avatarUpload'
-              type='button'
-              className='flex justify-center mx-auto px-3 py-2 border border-gray-300 bg-black bg-opacity-[0.02] text-gray-700'
-            >
-              Chọn Ảnh
-            </button>
+            <InputFile
+              setError={setError}
+              onChange={(file) => {
+                setFileLocal(file)
+              }}
+            />
 
             <div>
-              <div className=' text-gray-500 mt-4'>
-                Dụng lượng file tối đa 1 MB
+              <div
+                className={`mt-4 ${errors.avatar?.message ? 'text-red-500 animate-shake' : 'text-gray-400'}`}
+              >
+                Dung lượng file tối đa 1 MB
               </div>
-              <div className=' text-gray-500'>Định dạng:.JPEG, .PNG</div>
+              <div className=' text-gray-400'>Định dạng:.JPEG, .PNG, .JPG</div>
             </div>
           </div>
         </div>

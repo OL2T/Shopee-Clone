@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
+import { getAvatarUrl } from 'src/utils/utils'
 
 export default function UserSideBar() {
   const { user } = useContext(AppContext)
@@ -15,7 +16,7 @@ export default function UserSideBar() {
           <div className='shopee-avatar'>
             {user?.avatar ? (
               <img
-                src={user?.avatar}
+                src={getAvatarUrl(user?.avatar)}
                 alt={user?.name}
                 className='w-[50px] h-[50px] rounded-full object-cover'
               />
@@ -48,8 +49,8 @@ export default function UserSideBar() {
             )}
           </div>
         </NavLink>
-        <div className='w-full pl-4'>
-          <div className='text-sm font-medium mb-[5px]'>
+        <div className='pl-4'>
+          <div className='text-sm font-medium mb-[5px] truncate max-w-[120px]'>
             {user?.name ? user.name : user?.email}
           </div>
           <div className='text-sm text-[#888]'>
