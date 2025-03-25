@@ -87,7 +87,7 @@ export default function Login() {
                     name='email'
                     register={register}
                     type='email'
-                    className='mt-8'
+                    className='mt-8 pb-4'
                     errors={errors.email?.message}
                     placeholder='Email/Số điện thoại/Tên đăng nhập'
                     // rules={rules.email}
@@ -96,7 +96,7 @@ export default function Login() {
                     name='password'
                     register={register}
                     type='password'
-                    className='mt-2'
+                    className='mt-2 pb-4'
                     errors={errors.password?.message}
                     placeholder='Password'
                     // rules={rules.password}
