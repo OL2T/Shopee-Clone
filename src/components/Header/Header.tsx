@@ -295,13 +295,39 @@ export default function Header() {
                   }
                 >
                   <div className='flex items-center'>
-                    <div className=' w-6 h-6 mr-2'>
+                    {user?.avatar ? (
                       <img
-                        src='https://picsum.photos/200/300'
-                        alt='https://picsum.photos/200/300'
-                        className='w-full h-full rounded-full object-cover'
+                        src={user?.avatar}
+                        alt={user?.name}
+                        className='w-6 h-6 rounded-full object-cover'
                       />
-                    </div>
+                    ) : (
+                      <div className='w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center mr-2'>
+                        <svg
+                          enableBackground='new 0 0 15 15'
+                          viewBox='0 0 15 15'
+                          x={0}
+                          y={0}
+                          className='stroke-[#c6c6c6] w-4 h-4 rounded-full'
+                        >
+                          <g>
+                            <circle
+                              cx='7.5'
+                              cy='4.5'
+                              fill='none'
+                              r='3.8'
+                              strokeMiterlimit={10}
+                            />
+                            <path
+                              d='m1.5 14.2c0-3.3 2.7-6 6-6s6 2.7 6 6'
+                              fill='none'
+                              strokeLinecap='round'
+                              strokeMiterlimit={10}
+                            />
+                          </g>
+                        </svg>
+                      </div>
+                    )}
                     <div>{user?.email}</div>
                   </div>
                 </Popover>

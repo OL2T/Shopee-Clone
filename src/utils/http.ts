@@ -6,7 +6,7 @@ import {
   clearLocalStorage,
   getAccessTokenFromLocalStorage,
   setAccessTokenToLocalStorage,
-  setUser
+  setUserToLocalStorage
 } from 'src/types/auth'
 import { AuthResponse } from 'src/types/auth.type'
 
@@ -46,7 +46,7 @@ class Http {
           const data = response.data as AuthResponse
           this.accessToken = (data as AuthResponse).data.access_token
           setAccessTokenToLocalStorage(this.accessToken)
-          setUser(data.data.user)
+          setUserToLocalStorage(data.data.user)
         } else if (url === path.logout) {
           this.accessToken = ''
           clearLocalStorage()
