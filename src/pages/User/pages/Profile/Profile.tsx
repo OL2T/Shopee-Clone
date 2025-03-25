@@ -1,7 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext
+} from 'react-hook-form'
 import userAPI from 'src/apis/user.api'
 import Button from 'src/components/Button/Button'
 import CustomToast from 'src/components/CustomToast/CustomToast'
@@ -14,6 +19,72 @@ import { setUserToLocalStorage } from 'src/types/auth'
 import { ErrorResponseAPI } from 'src/types/utils.type'
 import { userSchema, UserSchema } from 'src/utils/rules'
 import { getAvatarUrl, isUnprocessableEntityError } from 'src/utils/utils'
+
+function Info() {
+  const {
+    register,
+    control,
+    formState: { errors }
+  } = useFormContext<FormData>()
+  return (
+    <>
+      <div className='flex items-center'>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>Tên</div>
+        <Input
+          name='name'
+          type='text'
+          className='w-full'
+          register={register}
+          placeholder='Nhập tên của bạn'
+          errors={errors.name?.message}
+          classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
+        />
+      </div>
+
+      <div className='flex items-center'>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>Số điện thoại</div>
+        <Controller
+          control={control}
+          name='phone'
+          render={({ field }) => (
+            <InputNumber
+              type='text'
+              className='w-full'
+              placeholder='Số điện thoại'
+              classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
+              errors={errors.phone?.message}
+              {...field}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </div>
+      <div className='flex items-center'>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>Địa chỉ</div>
+        <Input
+          name='address'
+          type='text'
+          className='w-full'
+          register={register}
+          placeholder='Nhập địa chỉ của bạn'
+          errors={errors.address?.message}
+          classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
+        />
+      </div>
+      <Controller
+        control={control}
+        name='date_of_birth'
+        render={({ field }) => (
+          <DateSelect
+            value={field.value}
+            onChange={field.onChange}
+            errors={errors.date_of_birth?.message}
+          />
+        )}
+      />
+    </>
+  )
+}
 
 type FormData = Pick<
   UserSchema,
@@ -54,15 +125,7 @@ export default function Profile() {
     mutationFn: userAPI.uploadAvatar
   })
 
-  const {
-    register,
-    watch,
-    control,
-    formState: { errors },
-    setValue,
-    setError,
-    handleSubmit
-  } = useForm<FormData>({
+  const methods = useForm<FormData>({
     defaultValues: {
       name: '',
       phone: '',
@@ -72,7 +135,15 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema)
   })
-
+  const {
+    register,
+    watch,
+    control,
+    formState: { errors },
+    setValue,
+    setError,
+    handleSubmit
+  } = methods
   const avatar = watch('avatar')
 
   useEffect(() => {
@@ -148,150 +219,95 @@ export default function Profile() {
           Quản lý thông tin hồ sơ để bảo mật tài khoản
         </div>
       </div>
-
-      <form className='text-sm flex' onSubmit={onSubmit}>
-        <div className='space-y-7 flex-1 w-[602px]'>
-          <div className='flex items-center'>
-            <div className='text-right mr-5 w-1/4 text-gray-600'>Email</div>
-            <div className='w-full truncate'>{profile?.email}</div>
-          </div>
-          <div className='flex items-center'>
-            <div className='text-right mr-5 w-1/4 text-gray-600'>Tên</div>
-            <Input
-              name='name'
-              type='text'
-              className='w-full'
-              register={register}
-              placeholder='Nhập tên của bạn'
-              errors={errors.name?.message}
-              classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
-            />
-          </div>
-
-          <div className='flex items-center'>
-            <div className='text-right mr-5 w-1/4 text-gray-600'>
-              Số điện thoại
+      <FormProvider {...methods}>
+        <form className='text-sm flex' onSubmit={onSubmit}>
+          <div className='space-y-7 flex-1 w-[602px]'>
+            <div className='flex items-center'>
+              <div className='text-right mr-5 w-1/4 text-gray-600'>Email</div>
+              <div className='w-full truncate'>{profile?.email}</div>
             </div>
-            <Controller
-              control={control}
-              name='phone'
-              render={({ field }) => (
-                <InputNumber
-                  type='text'
-                  className='w-full'
-                  placeholder='Số điện thoại'
-                  classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
-                  errors={errors.phone?.message}
-                  {...field}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-          <div className='flex items-center'>
-            <div className='text-right mr-5 w-1/4 text-gray-600'>Địa chỉ</div>
-            <Input
-              name='address'
-              type='text'
-              className='w-full'
-              register={register}
-              placeholder='Nhập địa chỉ của bạn'
-              errors={errors.address?.message}
-              classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
-            />
-          </div>
-          <Controller
-            control={control}
-            name='date_of_birth'
-            render={({ field }) => (
-              <DateSelect
-                value={field.value}
-                onChange={field.onChange}
-                errors={errors.date_of_birth?.message}
-              />
-            )}
-          />
 
-          <div className='flex items-center'>
-            <label
-              htmlFor='birthdate'
-              className='opacity-0 text-right mr-5 w-1/4 text-gray-600'
-            >
-              Lưu
-            </label>
+            <Info />
 
-            <div className='w-full'>
-              <Button
-                type='submit'
-                className='px-6 py-2 bg-orange text-white'
-                disabled={updateProfileMutation.isPending}
-                isLoading={updateProfileMutation.isPending}
-              >
+            <div className='flex items-center'>
+              <div className='opacity-0 text-right mr-5 w-1/4 text-gray-600'>
                 Lưu
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className='w-[280px] flex justify-center border-l border-gray-200 ml-[50px]'>
-          <div className='mx-auto'>
-            <div className=' my-5'>
-              <label htmlFor='avatarUpload' className='sr-only'>
-                Ảnh đại diện
-              </label>
-              {avatar || previewImage ? (
-                <img
-                  src={previewImage || (avatar && getAvatarUrl(avatar))}
-                  alt={user?.name}
-                  className={`w-[100px] h-[100px] rounded-full object-cover mx-auto ${errors.avatar?.message ? 'animate-shake border border-red-600' : ''}`}
-                />
-              ) : (
-                <div className='w-[100px] h-[100px] rounded-full bg-gray-100 flex items-center justify-center mx-auto'>
-                  <svg
-                    enableBackground='new 0 0 15 15'
-                    viewBox='0 0 15 15'
-                    x={0}
-                    y={0}
-                    className='stroke-[#c6c6c6] w-[80px] h-[80px] rounded-full'
-                  >
-                    <g>
-                      <circle
-                        cx='7.5'
-                        cy='4.5'
-                        fill='none'
-                        r='3.8'
-                        strokeMiterlimit={10}
-                      />
-                      <path
-                        d='m1.5 14.2c0-3.3 2.7-6 6-6s6 2.7 6 6'
-                        fill='none'
-                        strokeLinecap='round'
-                        strokeMiterlimit={10}
-                      />
-                    </g>
-                  </svg>
-                </div>
-              )}
-            </div>
-            <InputFile
-              setError={setError}
-              onChange={(file) => {
-                setFileLocal(file)
-              }}
-            />
-
-            <div>
-              <div
-                className={`mt-4 ${errors.avatar?.message ? 'text-red-500 animate-shake' : 'text-gray-400'}`}
-              >
-                Dung lượng file tối đa 1 MB
               </div>
-              <div className=' text-gray-400'>Định dạng:.JPEG, .PNG, .JPG</div>
+
+              <div className='w-full'>
+                <Button
+                  type='submit'
+                  className='px-6 py-2 bg-orange text-white'
+                  disabled={updateProfileMutation.isPending}
+                  isLoading={updateProfileMutation.isPending}
+                >
+                  Lưu
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
 
+          <div className='w-[280px] flex justify-center border-l border-gray-200 ml-[50px]'>
+            <div className='mx-auto'>
+              <div className=' my-5'>
+                <label htmlFor='avatarUpload' className='sr-only'>
+                  Ảnh đại diện
+                </label>
+                {avatar || previewImage ? (
+                  <img
+                    src={previewImage || (avatar && getAvatarUrl(avatar))}
+                    alt={user?.name}
+                    className={`w-[100px] h-[100px] rounded-full object-cover mx-auto ${errors.avatar?.message ? 'animate-shake border border-red-600' : ''}`}
+                  />
+                ) : (
+                  <div className='w-[100px] h-[100px] rounded-full bg-gray-100 flex items-center justify-center mx-auto'>
+                    <svg
+                      enableBackground='new 0 0 15 15'
+                      viewBox='0 0 15 15'
+                      x={0}
+                      y={0}
+                      className='stroke-[#c6c6c6] w-[80px] h-[80px] rounded-full'
+                    >
+                      <g>
+                        <circle
+                          cx='7.5'
+                          cy='4.5'
+                          fill='none'
+                          r='3.8'
+                          strokeMiterlimit={10}
+                        />
+                        <path
+                          d='m1.5 14.2c0-3.3 2.7-6 6-6s6 2.7 6 6'
+                          fill='none'
+                          strokeLinecap='round'
+                          strokeMiterlimit={10}
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <InputFile
+                setError={setError}
+                onChange={(file) => {
+                  setFileLocal(file)
+                }}
+              />
+
+              <div>
+                <div
+                  className={`mt-4 ${errors.avatar?.message ? 'text-red-500 animate-shake' : 'text-gray-400'}`}
+                >
+                  Dung lượng file tối đa 1 MB
+                </div>
+                <div className=' text-gray-400'>
+                  Định dạng:.JPEG, .PNG, .JPG
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </FormProvider>
       {isUpdateSuccess && <CustomToast message='Cập nhật thành công' />}
     </>
   )
