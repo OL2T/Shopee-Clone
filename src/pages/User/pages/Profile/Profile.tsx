@@ -136,9 +136,7 @@ export default function Profile() {
     resolver: yupResolver(profileSchema)
   })
   const {
-    register,
     watch,
-    control,
     formState: { errors },
     setValue,
     setError,
