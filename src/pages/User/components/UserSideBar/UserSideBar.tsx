@@ -1,7 +1,10 @@
+import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import path from 'src/constant/path'
+import { AppContext } from 'src/Contexts/app.context'
 
 export default function UserSideBar() {
+  const { user } = useContext(AppContext)
   return (
     <aside className='w-[180px] py-4'>
       <div className='flex mb-6 pb-5 border-b border-gray-200'>
@@ -10,15 +13,45 @@ export default function UserSideBar() {
           to={path.profile}
         >
           <div className='shopee-avatar'>
-            <img
-              className='w-[50px] h-[50px] rounded-full'
-              alt='tntilm880'
-              src='https://down-vn.img.susercontent.com/file/vn-11134226-7ra0g-m7m83ajnwame54_tn'
-            />
+            {user?.avatar ? (
+              <img
+                src={user?.avatar}
+                alt={user?.name}
+                className='w-[50px] h-[50px] rounded-full object-cover'
+              />
+            ) : (
+              <div className='w-[50px] h-[50px] rounded-full bg-white flex items-center justify-center mr-2'>
+                <svg
+                  enableBackground='new 0 0 15 15'
+                  viewBox='0 0 15 15'
+                  x={0}
+                  y={0}
+                  className='stroke-[#c6c6c6] w-12 h-12 rounded-full'
+                >
+                  <g>
+                    <circle
+                      cx='7.5'
+                      cy='4.5'
+                      fill='none'
+                      r='3.8'
+                      strokeMiterlimit={10}
+                    />
+                    <path
+                      d='m1.5 14.2c0-3.3 2.7-6 6-6s6 2.7 6 6'
+                      fill='none'
+                      strokeLinecap='round'
+                      strokeMiterlimit={10}
+                    />
+                  </g>
+                </svg>
+              </div>
+            )}
           </div>
         </NavLink>
         <div className='w-full pl-4'>
-          <div className='text-sm font-medium mb-[5px]'>tntilm880</div>
+          <div className='text-sm font-medium mb-[5px]'>
+            {user?.name ? user.name : user?.email}
+          </div>
           <div className='text-sm text-[#888]'>
             <NavLink className='flex w-full items-center' to={path.profile}>
               <svg

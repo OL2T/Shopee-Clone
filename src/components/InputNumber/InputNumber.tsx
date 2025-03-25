@@ -15,7 +15,7 @@ const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
       type,
       errors,
       className,
-      classNameError,
+      classNameError = 'mt-1 text-sm text-red-600',
       classNameInput,
       value = '',
       onChange,
