@@ -17,7 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
 import purchaseApi from 'src/apis/purchase.api'
 import { purchaseStatus } from 'src/constant/purchase'
-import { formatCurrency, generateNameId } from 'src/utils/utils'
+import { formatCurrency, generateNameId, getAvatarUrl } from 'src/utils/utils'
 
 type FormData = Pick<Schema, 'name'>
 
@@ -297,9 +297,9 @@ export default function Header() {
                   <div className='flex items-center'>
                     {user?.avatar ? (
                       <img
-                        src={user?.avatar}
+                        src={getAvatarUrl(user?.avatar)}
                         alt={user?.name}
-                        className='w-6 h-6 rounded-full object-cover'
+                        className='w-6 h-6 rounded-full object-cover mr-2'
                       />
                     ) : (
                       <div className='w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center mr-2'>

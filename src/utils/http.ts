@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import { toast } from 'react-toastify'
+import config from 'src/constant/config'
 import HttpStatusCode from 'src/constant/httpStatusCode.enum'
 import path from 'src/constant/path'
 import {
@@ -14,7 +15,7 @@ class Http {
   instance: AxiosInstance
   private accessToken: string | null = null
   constructor() {
-    const baseURL = import.meta.env.PROD ? import.meta.env.VITE_API_URL : '/api'
+    const baseURL = config.baseURL
     // Get access token from RAM
     this.accessToken = getAccessTokenFromLocalStorage()
     this.instance = axios.create({
