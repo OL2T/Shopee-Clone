@@ -80,6 +80,7 @@ export default function QuantityController({
         </button>
         <InputNumber
           classNameInput={classNameInput}
+          classNameError='hidden'
           value={value || localValue}
           onChange={handleChange}
           onBlur={handleBlur}
