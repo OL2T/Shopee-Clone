@@ -126,7 +126,17 @@ export default function RatingStars({ queryConfig }: Props) {
                     </svg>
                   )
                 })}
-              {index !== 0 && <span>Trở lên</span>}
+              {index !== 0 && (
+                <span
+                  className={`${
+                    5 - index === Number(queryConfig.rating_filter)
+                      ? 'text-orange'
+                      : ''
+                  }`}
+                >
+                  Trở lên
+                </span>
+              )}
             </div>
           </li>
         ))}

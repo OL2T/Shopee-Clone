@@ -27,7 +27,6 @@ const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const navigate = useNavigate()
-  const { category } = queryConfig
   const {
     control,
     trigger,
@@ -101,12 +100,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         Bộ lọc tìm kiếm
       </div>
       <div>
-        <Link
-          to={path.home}
-          className={`flex items-center font-bold ${
-            !category ? 'text-orange' : ''
-          }`}
-        >
+        <Link to={path.home} className='flex items-center font-bold '>
           <span className='text-sm'> Theo danh mục</span>
         </Link>
         <div className='my-4 h-[1px] bg-gray-300' />
@@ -114,7 +108,12 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
           {categories.map((categoryItem) => {
             const isActive = queryConfig.category === categoryItem._id
             return (
-              <li className='py-2 pl-2' key={categoryItem._id}>
+              <li className='flex items-center py-2' key={categoryItem._id}>
+                <input
+                  type='checkbox'
+                  className='w-3 h-3 accent-orange'
+                  checked={isActive}
+                />
                 <Link
                   to={{
                     pathname: path.home,
@@ -123,28 +122,14 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                       category: categoryItem._id
                     }).toString()
                   }}
-                  className={`relative px-2 ${isActive ? 'text-orange font-semibold' : ''}`}
+                  className='text-sm relative px-2'
                 >
-                  {isActive && (
-                    <svg
-                      viewBox='0 0 4 7'
-                      className='absolute top-1 left-[-10px] h-2 w-2 fill-orange'
-                    >
-                      <polygon points='4 3.5 0 0 0 7' />
-                    </svg>
-                  )}
                   {categoryItem.name}
                 </Link>
               </li>
             )
           })}
         </ul>
-        <Link
-          to={path.home}
-          className='mt-4 flex items-center font-bold uppercase'
-        >
-          {/* {t('aside filter.filter search')} */}
-        </Link>
         <div className='my-4 h-[1px] bg-gray-300' />
         <div className='my-5'>
           <div className='text-sm font-semibold text-gray-700 mb-4'>

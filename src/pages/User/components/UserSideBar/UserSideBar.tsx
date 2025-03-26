@@ -77,7 +77,7 @@ export default function UserSideBar() {
       <nav>
         <ul className='space-y-4 text-sm'>
           <li>
-            <NavLink to={''} className='flex'>
+            <NavLink to={'#'} className='flex'>
               <div className='flex items-start mr-2'>
                 <img
                   className='w-5 h-5'
@@ -91,7 +91,7 @@ export default function UserSideBar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to={''} className='flex'>
+            <NavLink to={'#'} className='flex'>
               <div className='flex items-center mr-2'>
                 <img
                   className='w-5 h-5'
