@@ -85,7 +85,6 @@ function Info() {
     </>
   )
 }
-
 type FormData = Pick<
   UserSchema,
   'name' | 'phone' | 'address' | 'date_of_birth' | 'avatar'

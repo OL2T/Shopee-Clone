@@ -66,6 +66,15 @@ import * as yup from 'yup'
 //   }
 // }
 
+const yupHandleConfirmPassword = (refString: string) => {
+  return yup
+    .string()
+    .required('Confirm Password không được để trống')
+    .min(6, 'Password phải từ 6 ký tự trở lên')
+    .max(160, 'Password có tối đa 160 ký tự')
+    .oneOf([yup.ref(refString)], 'Passwords không trùng khớp')
+}
+
 export const schema = yup.object({
   email: yup
     .string()
@@ -79,12 +88,7 @@ export const schema = yup.object({
     .min(6, 'Password phải từ 6 ký tự trở lên')
     .max(160, 'Password có tối đa 160 ký tự'),
 
-  confirm_password: yup
-    .string()
-    .required('Confirm Password không được để trống')
-    .min(6, 'Password phải từ 6 ký tự trở lên')
-    .max(160, 'Password có tối đa 160 ký tự')
-    .oneOf([yup.ref('password')], 'Passwords không trùng khớp'),
+  confirm_password: yupHandleConfirmPassword('password'),
 
   price_min: yup.string().test({
     name: 'price-not-allowed',
@@ -119,7 +123,7 @@ export const userSchema = yup.object({
   avatar: yup.string().max(1000, 'Avatar có tối đa 1000 ký tự'),
   password: schema.fields['password'],
   new_password: schema.fields['password'],
-  confirm_password: schema.fields['confirm_password']
+  confirm_password: yupHandleConfirmPassword('new_password')
 })
 
 export type UserSchema = yup.InferType<typeof userSchema>
