@@ -209,7 +209,7 @@ export default function Profile() {
   })
 
   return (
-    <>
+    <div className='flex-1 bg-white rounded shadow p-6'>
       <div className='border-b border-gray-200 pb-4 mb-5'>
         <h1 className='text-xl font-medium mb-2'>Hồ Sơ Của Tôi</h1>
         <div className='text-sm text-gray-500'>
@@ -306,6 +306,6 @@ export default function Profile() {
         </form>
       </FormProvider>
       {isUpdateSuccess && <CustomToast message='Cập nhật thành công' />}
-    </>
+    </div>
   )
 }
