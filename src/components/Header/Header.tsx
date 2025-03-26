@@ -96,7 +96,7 @@ export default function Header() {
   }
   return (
     <header
-      className={`sticky ${isPageCart ? 'bg-white' : 'bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'} `}
+      className={`${location.pathname === path.home && 'sticky'} ${isPageCart ? 'bg-white' : 'bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'} `}
     >
       <div
         className={`${!isPageCart ? 'bg-inherit pt-[5px]' : 'bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'} nav-top  flex text-white text-[13px] font-light py-[5px]`}
@@ -280,7 +280,7 @@ export default function Header() {
                         Tài khoản của tôi
                       </Link>
                       <Link
-                        to={path.cart}
+                        to={path.purchase}
                         className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                       >
                         Đơn mua

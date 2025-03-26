@@ -73,7 +73,7 @@ export default function ChangePassword() {
   })
 
   return (
-    <>
+    <div className='flex-1 bg-white rounded shadow p-6'>
       <div className='border-b border-gray-200 pb-4 mb-5'>
         <h1 className='text-xl font-medium mb-2'>Đổi mật khẩu</h1>
       </div>
@@ -144,6 +144,6 @@ export default function ChangePassword() {
       </form>
 
       {isUpdateSuccess && <CustomToast message='Cập nhật thành công' />}
-    </>
+    </div>
   )
 }
