@@ -53,10 +53,10 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
   }
 
   return (
-    <div className='bg-gray-300/40 py-4 px-3'>
+    <div className='bg-black/[0.03] py-4 px-3'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex flex-wrap items-center gap-2'>
-          <div>Sắp xếp theo</div>
+          <div className='text-sm'>Sắp xếp theo</div>
           <button
             className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.view)}`}
             onClick={() => handleSortBy(sortBy.view)}
@@ -96,7 +96,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
           </select>
         </div>
 
-        <div className='flex items-center'>
+        <div className='flex items-center text-sm'>
           <div>
             <span className='text-orange'>{page}</span>
             <span>/{pageSize}</span>

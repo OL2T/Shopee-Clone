@@ -113,6 +113,15 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                   type='checkbox'
                   className='w-3 h-3 accent-orange'
                   checked={isActive}
+                  onChange={() => {
+                    navigate({
+                      pathname: path.home,
+                      search: createSearchParams({
+                        ...queryConfig,
+                        category: categoryItem._id
+                      }).toString()
+                    })
+                  }}
                 />
                 <Link
                   to={{

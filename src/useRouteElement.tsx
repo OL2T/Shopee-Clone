@@ -13,6 +13,7 @@ import UserLayout from './pages/User/layouts/UserLayout/UserLayout'
 import Profile from './pages/User/pages/Profile/Profile'
 import ChangePassword from './pages/User/pages/ChangePassword/ChangePassword'
 import Purchase from './pages/User/pages/Purchase/Purchase'
+import Page404 from './pages/Page404/Page404'
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
@@ -99,6 +100,10 @@ export default function useRouteElement() {
           <ProductDetail />
         </Home>
       )
+    },
+    {
+      path: '*',
+      element: <Page404 />
     }
   ])
   return routeElements
