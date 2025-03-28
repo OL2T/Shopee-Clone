@@ -1,19 +1,23 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
-import ProductList from './pages/ProductList'
-import Login from './pages/Login'
-import Register from './pages/Register'
 import RegisterLayout from './layouts/RegisterLayout'
 import Home from './pages/Home'
 import { AppContext } from './Contexts/app.context'
-import { useContext } from 'react'
+import { useContext, lazy, Suspense } from 'react'
 import path from './constant/path'
-import ProductDetail from './pages/ProductDetail/ProductDetail'
-import Cart from './pages/Cart/Cart'
 import UserLayout from './pages/User/layouts/UserLayout/UserLayout'
-import Profile from './pages/User/pages/Profile/Profile'
-import ChangePassword from './pages/User/pages/ChangePassword/ChangePassword'
-import Purchase from './pages/User/pages/Purchase/Purchase'
-import Page404 from './pages/Page404/Page404'
+import Loading from './components/Loading/Loading'
+
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const ProductList = lazy(() => import('./pages/ProductList'))
+const ProductDetail = lazy(() => import('./pages/ProductDetail/ProductDetail'))
+const Cart = lazy(() => import('./pages/Cart/Cart'))
+const Page404 = lazy(() => import('./pages/Page404/Page404'))
+const ChangePassword = lazy(
+  () => import('./pages/User/pages/ChangePassword/ChangePassword')
+)
+const Purchase = lazy(() => import('./pages/User/pages/Purchase/Purchase'))
+const Profile = lazy(() => import('./pages/User/pages/Profile/Profile'))
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
@@ -34,7 +38,9 @@ export default function useRouteElement() {
           path: path.login,
           element: (
             <RegisterLayout>
-              <Login />
+              <Suspense fallback={<Loading />}>
+                <Login />
+              </Suspense>
             </RegisterLayout>
           )
         },
@@ -42,7 +48,9 @@ export default function useRouteElement() {
           path: path.register,
           element: (
             <RegisterLayout>
-              <Register />
+              <Suspense fallback={<Loading />}>
+                <Register />
+              </Suspense>
             </RegisterLayout>
           )
         }
@@ -62,15 +70,27 @@ export default function useRouteElement() {
           children: [
             {
               path: path.profile,
-              element: <Profile />
+              element: (
+                <Suspense>
+                  <Profile />
+                </Suspense>
+              )
             },
             {
               path: path.changePassword,
-              element: <ChangePassword />
+              element: (
+                <Suspense>
+                  <ChangePassword />
+                </Suspense>
+              )
             },
             {
               path: path.purchase,
-              element: <Purchase />
+              element: (
+                <Suspense>
+                  <Purchase />
+                </Suspense>
+              )
             }
           ]
         },
@@ -78,7 +98,9 @@ export default function useRouteElement() {
           path: path.cart,
           element: (
             <Home>
-              <Cart />
+              <Suspense>
+                <Cart />
+              </Suspense>
             </Home>
           )
         }
@@ -89,7 +111,9 @@ export default function useRouteElement() {
       index: true,
       element: (
         <Home>
-          <ProductList />
+          <Suspense>
+            <ProductList />
+          </Suspense>
         </Home>
       )
     },
@@ -97,13 +121,19 @@ export default function useRouteElement() {
       path: path.productPk,
       element: (
         <Home>
-          <ProductDetail />
+          <Suspense>
+            <ProductDetail />
+          </Suspense>
         </Home>
       )
     },
     {
       path: '*',
-      element: <Page404 />
+      element: (
+        <Suspense>
+          <Page404 />
+        </Suspense>
+      )
     }
   ])
   return routeElements
