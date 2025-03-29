@@ -11,6 +11,7 @@ import { Fragment } from 'react/jsx-runtime'
 import Loading from 'src/components/Loading/Loading'
 import delivering from 'src/assets/images/icon-shipping.svg'
 import { useTranslation } from 'react-i18next'
+import { Helmet } from 'react-helmet-async'
 
 const RATE = 4.5
 export default function Purchase() {
@@ -47,6 +48,13 @@ export default function Purchase() {
 
   return (
     <div className='w-full relative  pl-6 mb-3'>
+      <Helmet>
+        <title>Đơn mua | Shopee Clone</title>
+        <meta
+          name='description'
+          content='Trang đơn hàng của tôi dự án Shopee Clone'
+        />
+      </Helmet>
       <div className='sticky top-0 bg-white rounded-t-[2px] w-full z-50'>
         <div className='flex items-center'>
           {purchaseTabs.map((tab) => (

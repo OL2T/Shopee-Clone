@@ -30,6 +30,8 @@ import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import { useTranslation } from 'react-i18next'
+import { convert } from 'html-to-text'
+import { Helmet } from 'react-helmet-async'
 export default function ProductDetail() {
   const { t } = useTranslation(['productDetail'])
   const { isAuthenticated } = useContext(AppContext)
@@ -330,6 +332,17 @@ export default function ProductDetail() {
         <Loading />
       ) : (
         <>
+          <Helmet>
+            <title>{productDataPk?.name} | Shopee Clone</title>
+            <meta
+              name='description'
+              content={convert(productDataPk?.description || '', {
+                limits: {
+                  maxInputLength: 160
+                }
+              })}
+            />
+          </Helmet>
           <div className='bg-white rounded-sm mb-4'>
             {valueData && (
               <div className='mx-auto'>

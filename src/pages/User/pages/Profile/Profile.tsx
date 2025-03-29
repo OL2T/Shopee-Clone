@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 import {
   Controller,
   FormProvider,
@@ -219,6 +220,13 @@ export default function Profile() {
 
   return (
     <div className='flex-1 bg-white rounded shadow p-6'>
+      <Helmet>
+        <title>Hồ sơ của tôi | Shopee Clone</title>
+        <meta
+          name='description'
+          content='Trang hồ sơ của tôi dự án Shopee Clone'
+        />
+      </Helmet>
       <div className='border-b border-gray-200 pb-4 mb-5'>
         <h1 className='text-xl font-medium mb-2'>{t('profile.my profile')}</h1>
         <div className='text-sm text-gray-500'>

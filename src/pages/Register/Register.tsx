@@ -15,6 +15,7 @@ import { Schema, schema } from 'src/utils/rules'
 import { isUnprocessableEntityError } from 'src/utils/utils'
 import heroBannerNormalDay from 'src/assets/images/hero-register-normal-day.png'
 import heroBannerSaleDay from 'src/assets/images/hero-register.png'
+import { Helmet } from 'react-helmet-async'
 
 type FormData = NotUndefinedField<
   Pick<Schema, 'email' | 'password' | 'confirm_password'>
@@ -94,10 +95,13 @@ export default function Register() {
         className={`w-full max-w-[1024px] bg-no-repeat h-600 mx-auto relative`}
       >
         <div className='absolute -translate-y-[50%] top-[50%] w-full right-0'>
-          {/* <Helmet>
-          <title>Đăng nhập | Shopee Clone</title>
-          <meta name='description' content='Đăng nhập vào dự án Shopee Clone' />
-        </Helmet> */}
+          <Helmet>
+            <title>Đăng ký | Shopee Clone</title>
+            <meta
+              name='description'
+              content='Đăng ký tài khoản vào dự án Shopee Clone'
+            />
+          </Helmet>
           <div className='container'>
             <div className='grid grid-cols-1 py-12 xl:px-0 lg:grid-cols-5'>
               <div className='lg:col-span-2 lg:col-start-4'>
