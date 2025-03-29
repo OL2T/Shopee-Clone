@@ -1,5 +1,6 @@
 import range from 'lodash/range'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface DateSelectProps {
   errors?: string
@@ -12,6 +13,7 @@ export default function DateSelect({
   onChange,
   errors
 }: DateSelectProps) {
+  const { t } = useTranslation('user')
   const currentYear = new Date().getFullYear()
   const [date, setDate] = useState({
     date: value?.getDate() || 1,
@@ -44,7 +46,9 @@ export default function DateSelect({
   return (
     <div className=''>
       <div className='flex items-center'>
-        <div className='text-right mr-5 w-1/4 text-gray-600'>Ngày sinh</div>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>
+          {t('profile.dob')}
+        </div>
         <div className='w-full flex justify-between gap-x-4'>
           <select
             name='date'
@@ -52,7 +56,7 @@ export default function DateSelect({
             value={value?.getDate() || date.date}
             className='w-1/3 bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 cursor-pointer  focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm hover:border-orange'
           >
-            <option value=''>Ngày</option>
+            <option value=''>{t('profile.day')}</option>
             {range(1, 32).map((day) => (
               <option key={day} value={day}>
                 {day}
@@ -65,7 +69,7 @@ export default function DateSelect({
             value={value?.getMonth() || date.month}
             className='w-1/3 bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 cursor-pointer  focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm hover:border-orange'
           >
-            <option value=''>Tháng</option>
+            <option value=''>{t('profile.month')}</option>
             {range(0, 12).map((month) => (
               <option key={month} value={month}>
                 Tháng {month + 1}
@@ -78,7 +82,7 @@ export default function DateSelect({
             value={value?.getFullYear() || date.year}
             className='w-1/3 bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 cursor-pointer  focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm hover:border-orange'
           >
-            <option value=''>Năm</option>
+            <option value=''>{t('profile.year')}</option>
             {range(currentYear, 1909).map((year) => (
               <option key={year} value={year}>
                 {year}

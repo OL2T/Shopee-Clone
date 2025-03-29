@@ -29,7 +29,9 @@ import { purchaseStatus } from 'src/constant/purchase'
 import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
 import CustomToast from 'src/components/CustomToast/CustomToast'
+import { useTranslation } from 'react-i18next'
 export default function ProductDetail() {
+  const { t } = useTranslation(['productDetail'])
   const { isAuthenticated } = useContext(AppContext)
   const navigate = useNavigate()
   const [productQuantity, setProductQuantity] = useState(1)
@@ -89,7 +91,7 @@ export default function ProductDetail() {
   const valueData = {
     ...productDataPk,
     description: productDataPk?.description || '',
-    shipping: 'Nhận vào ngày mai, phí giao ₫0',
+    shipping: t('productDetail:product.freeShipping'),
     quantity: productDataPk?.quantity || 0
   }
 
@@ -205,7 +207,7 @@ export default function ProductDetail() {
 
   const dataGeneral = [
     {
-      title: 'Vận chuyển',
+      title: t('productDetail:product.shipping'),
       align: 'start' as ListItem['align'],
       value: () => (
         <>
@@ -219,13 +221,13 @@ export default function ProductDetail() {
             <span className='text-gray-900'> {valueData.shipping}</span>
           </span>
           <div className='text-xs text-gray-500'>
-            Tặng Voucher ₫15.000 nếu đơn giao sau thời gian trên.
+            {t('productDetail:product.freeShippingGift')}
           </div>
         </>
       )
     },
     {
-      title: 'An tâm mua sắm cùng Shopee',
+      title: t('productDetail:product.shoppingGuarantee'),
       value: () => (
         <div className='flex items-center gap-x-1'>
           <img
@@ -238,7 +240,7 @@ export default function ProductDetail() {
             popoverContent={
               <div className='text-sm text-gray-600 p-5 border border-neutral-100 rounded-sm max-w-[515px]'>
                 <div className='font-bold text-gray-900 pb-3 border-b border-gray-300'>
-                  An tâm mua sắm cùng Shopee
+                  {t('productDetail:product.shoppingGuarantee')}
                 </div>
                 <div className='flex gap-x-3 pt-5'>
                   <img
@@ -248,13 +250,10 @@ export default function ProductDetail() {
                   />
                   <div className=''>
                     <div className='font-bold text-gray-900 mb-1'>
-                      Trả hàng miễn phí 15 ngày
+                      {t('productDetail:product.15daysReturn')}
                     </div>
                     <div className='text-xs'>
-                      Miễn phí Trả hàng trong 15 ngày để đảm bảo bạn hoàn toàn
-                      có thể yên tâm khi mua hàng ở Shopee. Ngoài ra, tại thời
-                      điểm nhận hàng, bạn có thể đồng kiểm và được trả hàng miễn
-                      phí.
+                      {t('productDetail:product.15daysReturnDesc')}
                     </div>
                   </div>
                 </div>
@@ -262,7 +261,7 @@ export default function ProductDetail() {
             }
           >
             <div className='flex items-center gap-x-1'>
-              <span>Trả hàng miễn phí 15 ngày</span>
+              <span>{t('productDetail:product.15daysReturn')}</span>
               <svg
                 viewBox='0 0 12 12'
                 fill='none'
@@ -285,7 +284,7 @@ export default function ProductDetail() {
       )
     },
     {
-      title: 'Số lượng',
+      title: t('productDetail:product.quantity'),
       value: () => (
         <QuantityController
           value={productQuantity}
@@ -305,19 +304,22 @@ export default function ProductDetail() {
 
   const dataDetail = [
     {
-      title: 'Danh mục',
+      title: t('productDetail:product.category'),
       value: () => valueData.category?.name
     },
     {
-      title: 'Số sản phẩm còn lại',
+      title: t('productDetail:product.productRemaining'),
       value: () => valueData.quantity
     },
     ...(valueData?.category?._id !== clothesId
       ? [
-          { title: 'Hạn bảo hành', value: () => '12 tháng' },
           {
-            title: 'Loại bảo hành',
-            value: () => 'Bảo hành nhà sản xuất'
+            title: t('productDetail:product.warranty'),
+            value: () => t('productDetail:product.12monthsWarranty')
+          },
+          {
+            title: t('productDetail:product.typeWarranty'),
+            value: () => t('productDetail:product.ManufacturerWarranty')
           }
         ]
       : [])
@@ -397,7 +399,7 @@ export default function ProductDetail() {
                         <div>
                           {isFavorite && (
                             <div className='text-xs bg-orange text-white rounded-sm px-1 py-[3px] mr-2.5 inline-block  -translate-y-[2px]'>
-                              Yêu thích+
+                              {t('productDetail:product.preferred')}
                             </div>
                           )}
                           <span>{valueData.name}</span>
@@ -415,7 +417,7 @@ export default function ProductDetail() {
                             {formatNumberToSocialStyle(valueData.view || 0)}
                           </span>
                           <span className='text-sm text-gray-600'>
-                            Lượt xem
+                            {t('productDetail:product.view')}
                           </span>
                         </span>
                         <span className=''>
@@ -451,7 +453,7 @@ export default function ProductDetail() {
                             alt='icon-cart'
                             className='w-5 h-5'
                           />
-                          <span>Thêm vào giỏ hàng</span>
+                          <span>{t('productDetail:product.addToCart')}</span>
                         </button>
                         <Button
                           className='bg-orange px-5 py-3 h-[48px] text-white min-w-[180px] max-w-[250px] hover:bg-opacity-90 rounded-sm'
@@ -459,7 +461,7 @@ export default function ProductDetail() {
                           isLoading={buyNowMutation.isPending}
                           disabled={buyNowMutation.isPending}
                         >
-                          Mua ngay
+                          {t('productDetail:product.buyNow')}
                         </Button>
                       </div>
                     </div>
@@ -471,14 +473,14 @@ export default function ProductDetail() {
           <div className='bg-white rounded-sm p-2.5'>
             <div className='p-4'>
               <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
-                Chi tiết sản phẩm
+                {t('productDetail:product.productDetails')}
               </div>
               <div className='mx-4'>
                 <XListView dataView={dataDetail}></XListView>
               </div>
               <div className=''>
                 <div className='bg-neutral-50 text-xl uppercase mb-4 p-4 rounded-sm'>
-                  Mô tả sản phẩm
+                  {t('productDetail:product.productDescription')}
                 </div>
                 {readDescription(valueData?.description || '')}
               </div>
@@ -486,7 +488,7 @@ export default function ProductDetail() {
           </div>
           <div className='mt-10'>
             <div className='uppercase text-black text-opacity-[0.54] font-medium'>
-              Các sản phẩm bạn có thể thích
+              {t('productDetail:product.youMayAlsoLike')}
             </div>
             {!productDataByCategory ? (
               <Loading />

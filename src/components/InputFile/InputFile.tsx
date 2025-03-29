@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import Button from '../Button/Button'
 import config from 'src/constant/config'
 import { UseFormSetError } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface InputFileProps {
   setError: UseFormSetError<Record<string, unknown>>
@@ -9,6 +10,7 @@ interface InputFileProps {
 }
 
 export default function InputFile({ setError, onChange }: InputFileProps) {
+  const { t } = useTranslation('user')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const handleUploadAvatar = () => {
     fileInputRef.current?.click()
@@ -50,7 +52,7 @@ export default function InputFile({ setError, onChange }: InputFileProps) {
         className='flex justify-center mx-auto px-3 py-2 border border-gray-300 bg-black bg-opacity-[0.02] text-gray-700'
         onClick={handleUploadAvatar}
       >
-        Chọn Ảnh
+        {t('profile.Select Image')}
       </Button>
     </>
   )

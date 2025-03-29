@@ -7,6 +7,7 @@ import {
   useForm,
   useFormContext
 } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import userAPI from 'src/apis/user.api'
 import Button from 'src/components/Button/Button'
 import CustomToast from 'src/components/CustomToast/CustomToast'
@@ -21,6 +22,7 @@ import { userSchema, UserSchema } from 'src/utils/rules'
 import { getAvatarUrl, isUnprocessableEntityError } from 'src/utils/utils'
 
 function Info() {
+  const { t } = useTranslation('user')
   const {
     register,
     control,
@@ -29,7 +31,9 @@ function Info() {
   return (
     <>
       <div className='flex items-center'>
-        <div className='text-right mr-5 w-1/4 text-gray-600'>Tên</div>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>
+          {t('profile.name')}
+        </div>
         <Input
           name='name'
           type='text'
@@ -42,7 +46,9 @@ function Info() {
       </div>
 
       <div className='flex items-center'>
-        <div className='text-right mr-5 w-1/4 text-gray-600'>Số điện thoại</div>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>
+          {t('profile.phone')}
+        </div>
         <Controller
           control={control}
           name='phone'
@@ -60,7 +66,9 @@ function Info() {
         />
       </div>
       <div className='flex items-center'>
-        <div className='text-right mr-5 w-1/4 text-gray-600'>Địa chỉ</div>
+        <div className='text-right mr-5 w-1/4 text-gray-600'>
+          {t('profile.address')}
+        </div>
         <Input
           name='address'
           type='text'
@@ -102,6 +110,7 @@ const profileSchema = userSchema.pick([
 ])
 
 export default function Profile() {
+  const { t } = useTranslation('user')
   const { setUser, user } = useContext(AppContext)
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(false)
   const [fileLocal, setFileLocal] = useState<File>()
@@ -211,9 +220,9 @@ export default function Profile() {
   return (
     <div className='flex-1 bg-white rounded shadow p-6'>
       <div className='border-b border-gray-200 pb-4 mb-5'>
-        <h1 className='text-xl font-medium mb-2'>Hồ Sơ Của Tôi</h1>
+        <h1 className='text-xl font-medium mb-2'>{t('profile.my profile')}</h1>
         <div className='text-sm text-gray-500'>
-          Quản lý thông tin hồ sơ để bảo mật tài khoản
+          {t('profile.Manage and protect your account')}
         </div>
       </div>
       <FormProvider {...methods}>
@@ -238,7 +247,7 @@ export default function Profile() {
                   disabled={updateProfileMutation.isPending}
                   isLoading={updateProfileMutation.isPending}
                 >
-                  Lưu
+                  {t('profile.save')}
                 </Button>
               </div>
             </div>
@@ -295,17 +304,19 @@ export default function Profile() {
                 <div
                   className={`mt-4 ${errors.avatar?.message ? 'text-red-500 animate-shake' : 'text-gray-400'}`}
                 >
-                  Dung lượng file tối đa 1 MB
+                  {t('profile.FileSizeMaximum1MB')}
                 </div>
                 <div className=' text-gray-400'>
-                  Định dạng:.JPEG, .PNG, .JPG
+                  {t('profile.FileExtension.JPEG,.PNG')}
                 </div>
               </div>
             </div>
           </div>
         </form>
       </FormProvider>
-      {isUpdateSuccess && <CustomToast message='Cập nhật thành công' />}
+      {isUpdateSuccess && (
+        <CustomToast message={t('message.updateProfileSuccess')} />
+      )}
     </div>
   )
 }

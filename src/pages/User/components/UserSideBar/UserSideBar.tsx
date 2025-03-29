@@ -1,10 +1,12 @@
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import path from 'src/constant/path'
 import { AppContext } from 'src/Contexts/app.context'
 import { getAvatarUrl } from 'src/utils/utils'
 
 export default function UserSideBar() {
+  const { t } = useTranslation('user')
   const { user } = useContext(AppContext)
   return (
     <aside className='w-[180px] py-4'>
@@ -68,7 +70,7 @@ export default function UserSideBar() {
                   fillRule='evenodd'
                 />
               </svg>
-              <span>Sửa hồ sơ</span>
+              <span>{t('sidebar.editProfile')}</span>
             </NavLink>
           </div>
         </div>
@@ -76,7 +78,7 @@ export default function UserSideBar() {
 
       <nav>
         <ul className='space-y-4 text-sm'>
-          <li>
+          {/* <li>
             <NavLink to={'#'} className='flex'>
               <div className='flex items-start mr-2'>
                 <img
@@ -89,7 +91,7 @@ export default function UserSideBar() {
                 <span className='font-medium'>Ưu đãi dành riêng cho bạn</span>
               </div>
             </NavLink>
-          </li>
+          </li> */}
           <li>
             <NavLink to={'#'} className='flex'>
               <div className='flex items-center mr-2'>
@@ -100,7 +102,7 @@ export default function UserSideBar() {
                 />
               </div>
               <div className='flex-shrink-0 flex-1'>
-                <span className='font-medium'>Thông báo</span>
+                <span className='font-medium'>{t('sidebar.notification')}</span>
               </div>
             </NavLink>
           </li>
@@ -113,7 +115,7 @@ export default function UserSideBar() {
                   src='https://down-vn.img.susercontent.com/file/ba61750a46794d8847c3f463c5e71cc4'
                 />
               </div>
-              <span className='font-medium'>Tài khoản của tôi</span>
+              <span className='font-medium'>{t('sidebar.my profile')}</span>
             </div>
             <div className='pl-[34px]'>
               <div className='space-y-3'>
@@ -131,7 +133,7 @@ export default function UserSideBar() {
                     `flex items-center w-full ${isActive ? 'text-orange' : ''}`
                   }
                 >
-                  Đổi mật khẩu
+                  {t('sidebar.change password')}
                 </NavLink>
               </div>
             </div>
@@ -151,7 +153,7 @@ export default function UserSideBar() {
                 />
               </div>
               <div className='mY8KSl'>
-                <span className='font-medium'>Đơn mua</span>
+                <span className='font-medium'>{t('sidebar.order')}</span>
               </div>
             </NavLink>
           </li>

@@ -4,12 +4,14 @@ import { sortBy, order as orderConstant } from 'src/constant/product'
 import { ProductListConfig } from 'src/types/product.type'
 import omit from 'lodash/omit'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   queryConfig: QueryConfig
   pageSize: number
 }
 export default function SortProductList({ queryConfig, pageSize }: Props) {
+  const { t } = useTranslation(['home'])
   const navigate = useNavigate()
   const page = Number(queryConfig.page)
   const { sort_by = sortBy.createdAt, order } = queryConfig
@@ -56,24 +58,24 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
     <div className='bg-black/[0.03] py-4 px-3'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
         <div className='flex flex-wrap items-center gap-2'>
-          <div className='text-sm'>Sắp xếp theo</div>
+          <div className='text-sm'>{t('home:sort.sortBy')}</div>
           <button
             className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.view)}`}
             onClick={() => handleSortBy(sortBy.view)}
           >
-            Phổ biến
+            {t('home:sort.popular')}
           </button>
           <button
             className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.createdAt)}`}
             onClick={() => handleSortBy(sortBy.createdAt)}
           >
-            Mới nhất
+            {t('home:sort.newest')}
           </button>
           <button
             className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.sold)}`}
             onClick={() => handleSortBy(sortBy.sold)}
           >
-            Bán chạy
+            {t('home:sort.bestSeller')}
           </button>
           <select
             className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.price)}`}
@@ -85,13 +87,13 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
             }
           >
             <option value='' disabled className='bg-white text-black'>
-              Giá
+              {t('home:sort.price')}
             </option>
             <option value={orderConstant.asc} className='bg-white text-black'>
-              Giá: Thấp đến cao
+              {t('home:sort.priceLowToHigh')}
             </option>
             <option value={orderConstant.desc} className='bg-white text-black'>
-              Giá: Cao đến thấp
+              {t('home:sort.priceHighToLow')}
             </option>
           </select>
         </div>

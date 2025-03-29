@@ -1,0 +1,26 @@
+{
+  "product": {
+    "sold": "Sold",
+    "view": "View",
+    "shipping": "Shipping",
+    "freeShipping": "Get it by tomorrow, shipping fee ₫0",
+    "freeShippingGift": "Get a voucher of ₫15,000 if the order is delivered after the above time.",
+    "15daysReturn": "Free return within 15 days",
+    "15daysReturnDesc": "Free return within 15 days to ensure you can shop with peace of mind at Shopee. In addition, at the time of receipt, you can check together and get free return.",
+    "shoppingGuarantee": "Shopping Guarantee",
+    "quantity": "Quantity",
+    "addToCart": "Add to cart",
+    "buyNow": "Buy now",
+    "category": "Category",
+    "productRemaining": "Product remaining",
+    "warranty": "Warranty period",
+    "typeWarranty": "Warranty type",
+    "ManufacturerWarranty": "Manufacturer warranty",
+    "productDetails": "Product details",
+    "productDescription": "Product description",
+    "youMayAlsoLike": "You may also like",
+    "preferred": "Preferred",
+    "piecesAvailable": "pieces available",
+    "12monthsWarranty": "12 months"
+  }
+}

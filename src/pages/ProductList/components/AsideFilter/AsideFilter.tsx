@@ -10,6 +10,7 @@ import RatingStars from '../RatingStar/RatingStar'
 import omit from 'lodash/omit'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
 import InputV2 from 'src/components/InputV2/InputV2'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   queryConfig: QueryConfig
@@ -26,6 +27,7 @@ type FormData = Pick<Schema, 'price_min' | 'price_max'>
 const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
+  const { t } = useTranslation(['home'])
   const navigate = useNavigate()
   const {
     control,
@@ -97,11 +99,11 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             />
           </g>
         </svg>
-        Bộ lọc tìm kiếm
+        {t('asideFilter.searchFilter')}
       </div>
       <div>
         <Link to={path.home} className='flex items-center font-bold '>
-          <span className='text-sm'> Theo danh mục</span>
+          <span className='text-sm'> {t('asideFilter.byCategory')}</span>
         </Link>
         <div className='my-4 h-[1px] bg-gray-300' />
         <ul>
@@ -142,7 +144,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div className='my-4 h-[1px] bg-gray-300' />
         <div className='my-5'>
           <div className='text-sm font-semibold text-gray-700 mb-4'>
-            Khoảng giá
+            {t('asideFilter.priceRange')}
           </div>
           <form className='mt-2' onSubmit={onSubmit}>
             <div
@@ -173,7 +175,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                 control={control}
                 name='price_min'
                 className='grow'
-                placeholder='₫ TỪ'
+                placeholder={t('asideFilter.minPlaceholder')}
                 classNameError='hidden'
                 classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
                 onChange={() => {
@@ -189,7 +191,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                     <InputNumber
                       type='number'
                       className='grow'
-                      placeholder='₫ ĐẾN'
+                      placeholder={t('asideFilter.maxPlaceholder')}
                       classNameError='hidden'
                       {...field}
                       classNameInput='bg-white px-4 py-2 border placeholder-gray-400 border-gray-300 w-full focus:outline-none focus:ring-1 focus:ring-gray-900 placeholder:text-sm'
@@ -208,19 +210,21 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               {errors.price_min?.message}
             </div>
             <Button className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'>
-              Áp dụng
+              {t('asideFilter.apply')}
             </Button>
           </form>
         </div>
         <div className='my-4 h-[1px] bg-gray-300' />
-        <div className='text-sm font-semibold text-gray-700 mb-4'>Đánh giá</div>
+        <div className='text-sm font-semibold text-gray-700 mb-4'>
+          {t('asideFilter.rating')}
+        </div>
         <RatingStars queryConfig={queryConfig} />
         <div className='my-4 h-[1px] bg-gray-300' />
         <Button
           onClick={handleRemoveAll}
           className='flex w-full items-center justify-center bg-orange p-2 text-sm uppercase text-white hover:bg-orange/80'
         >
-          Xóa tất cả
+          {t('asideFilter.clearAll')}
         </Button>
       </div>
     </div>

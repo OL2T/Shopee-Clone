@@ -1,0 +1,29 @@
+{
+  "asideFilter": {
+    "searchFilter": "Search filter",
+    "byCategory": "By category",
+    "priceRange": "Price range",
+    "rating": "Rating",
+    "ratingUp": "& Up",
+    "clearAll": "Clear all",
+    "apply": "Apply",
+    "minPlaceholder": "₫ MIN",
+    "maxPlaceholder": "₫ MAX"
+  },
+  "sort": {
+    "sortBy": "Sort by",
+    "popular": "Popular",
+    "price": "Price",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "bestSeller": "Best Seller",
+    "newest": "Newest"
+  },
+  "product": {
+    "sold": "Sold",
+    "view": "View",
+    "15daysReturnDesc": "Shop with confidence on Shopee with our 15-day Free Returns of receiving your orders. Additionally, upon receipt of the order, you have the option to co-check it and benefit from Free Return.",
+    "review": "Review",
+    "addToCart": "Add to cart"
+  }
+}
