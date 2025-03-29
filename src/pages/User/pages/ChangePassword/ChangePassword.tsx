@@ -10,6 +10,7 @@ import { ErrorResponseAPI } from 'src/types/utils.type'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Helmet } from 'react-helmet-async'
 
 type FormData = Pick<
   UserSchema,
@@ -76,6 +77,13 @@ export default function ChangePassword() {
 
   return (
     <div className='flex-1 bg-white rounded shadow p-6'>
+      <Helmet>
+        <title>Đổi mật khẩu | Shopee Clone</title>
+        <meta
+          name='description'
+          content='Trang đổi mật khẩu dự án Shopee Clone'
+        />
+      </Helmet>
       <div className='border-b border-gray-200 pb-4 mb-5'>
         <h1 className='text-xl font-medium mb-2'>
           {t('changePassword.Change Password')}

@@ -20,6 +20,7 @@ import './styles.scss'
 import XDialog from 'src/components/XDialog/XDialog'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import { useTranslation } from 'react-i18next'
+import { Helmet } from 'react-helmet-async'
 
 const LIMIT = 12
 export default function Cart() {
@@ -243,6 +244,13 @@ export default function Cart() {
     <>
       {inCartData && inCartData.length > 0 ? (
         <>
+          <Helmet>
+            <title>Giỏ hàng | Shopee Clone</title>
+            <meta
+              name='description'
+              content='Trang giỏ hàng dự án Shopee Clone'
+            />
+          </Helmet>
           <div className='bg-white px-5 h-[55px] flex items-center justify-between mb-3'>
             <div className='flex items-center flex-1'>
               <input
