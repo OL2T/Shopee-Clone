@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import InputNumber, { InputNumberProps } from '../InputNumber/InputNumber'
+import { useTranslation } from 'react-i18next'
 
 interface Props extends InputNumberProps {
   max?: number
@@ -24,6 +25,7 @@ export default function QuantityController({
   disabled,
   ...rest
 }: Props) {
+  const { t } = useTranslation(['productDetail'])
   const [localValue, setLocalValue] = useState<number>(Number(value) || 1)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(e.target.value)
@@ -102,7 +104,10 @@ export default function QuantityController({
           </svg>
         </button>
       </div>
-      <div className={classNameQuantity}> {max} sản phẩm có sẵn</div>
+      <div className={classNameQuantity}>
+        {' '}
+        {max} {t('product.piecesAvailable')}
+      </div>
     </div>
   )
 }

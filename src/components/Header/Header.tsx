@@ -18,12 +18,16 @@ import omit from 'lodash/omit'
 import purchaseApi from 'src/apis/purchase.api'
 import { purchaseStatus } from 'src/constant/purchase'
 import { formatCurrency, generateNameId, getAvatarUrl } from 'src/utils/utils'
+import { useTranslation } from 'react-i18next'
+import { locales } from 'src/i18n/i18n'
 
 type FormData = Pick<Schema, 'name'>
 
 const inputSearch = schema.pick(['name'])
 
 export default function Header() {
+  const { i18n, t } = useTranslation(['header', 'cart', 'home', 'user'])
+  const currentLanguage = locales[i18n.language as keyof typeof locales]
   const navigate = useNavigate()
   const location = useLocation()
   const isPageCart = location.pathname === path.cart
@@ -91,6 +95,10 @@ export default function Header() {
     })
   })
 
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang)
+  }
+
   const handleLogout = () => {
     logoutMutation.mutate()
   }
@@ -109,15 +117,15 @@ export default function Header() {
               rel='noopener noreferrer'
               className='j8v5Hs aCUiG5'
             >
-              Kênh Người Bán
+              {t('sellerCentre')}
             </a>
-            <a
+            {/* <a
               href='/seller/signup'
               className='flex j8v5Hs aCUiG5'
               title='Trở thành Người bán Shopee'
             >
               Trở thành Người bán Shopee
-            </a>
+            </a> */}
             <div className='shopee-drawer aCUiG5' id='pc-drawer-id-0'>
               <a
                 className='j8v5Hs'
@@ -126,10 +134,10 @@ export default function Header() {
                 rel='noopener noreferrer'
                 id='temporaryId'
               >
-                Tải ứng dụng
+                {t('downloadApp')}
               </a>
             </div>
-            <div className='flex j8v5Hs aCUiG5 Iw67fo'>Kết nối</div>
+            <div className='flex j8v5Hs aCUiG5 Iw67fo'>{t('followUs')}</div>
             <div className='flex j8v5Hs zLaik4'>
               <a
                 className='L8d8QY header-navbar-background header-navbar-facebook-png'
@@ -160,7 +168,7 @@ export default function Header() {
                         <path d='m17 15.6-.6-1.2-.6-1.2v-7.3c0-.2 0-.4-.1-.6-.3-1.2-1.4-2.2-2.7-2.2h-1c-.3-.7-1.1-1.2-2.1-1.2s-1.8.5-2.1 1.3h-.8c-1.5 0-2.8 1.2-2.8 2.7v7.2l-1.2 2.5-.2.4h14.4zm-12.2-.8.1-.2.5-1v-.1-7.6c0-.8.7-1.5 1.5-1.5h6.1c.8 0 1.5.7 1.5 1.5v7.5.1l.6 1.2h-10.3z' />
                         <path d='m10 18c1 0 1.9-.6 2.3-1.4h-4.6c.4.9 1.3 1.4 2.3 1.4z' />
                       </svg>
-                      <span className='AfkgIX'>Thông báo</span>
+                      <span className='AfkgIX'>{t('notification')}</span>
                     </div>
                   </div>
                 </div>
@@ -194,7 +202,7 @@ export default function Header() {
                     </svg>
                   </div>
                   <span className='navbar__link-text navbar__link--tappable navbar__link--hoverable'>
-                    Hỗ Trợ
+                    {t('help')}
                   </span>
                 </a>
               </li>
@@ -203,11 +211,17 @@ export default function Header() {
                 className='flex items-center'
                 popoverContent={
                   <>
-                    <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
+                    <button
+                      className='block p-[10px] text-sm w-full hover:text-orange text-left'
+                      onClick={() => changeLanguage('vi')}
+                    >
                       Tiếng Việt
                     </button>
-                    <button className='block p-[10px] text-sm w-full hover:text-orange text-left'>
-                      Tiếng Anh
+                    <button
+                      className='block p-[10px] text-sm w-full hover:text-orange text-left'
+                      onClick={() => changeLanguage('en')}
+                    >
+                      English
                     </button>
                   </>
                 }
@@ -241,7 +255,7 @@ export default function Header() {
                     />
                   </svg>
 
-                  <span className=''>Tiếng Việt</span>
+                  <span>{currentLanguage}</span>
                   <svg
                     viewBox='0 0 12 12'
                     fill='none'
@@ -277,19 +291,19 @@ export default function Header() {
                         to={path.profile}
                         className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                       >
-                        Tài khoản của tôi
+                        {t('user:profile.my profile')}
                       </Link>
                       <Link
                         to={path.purchase}
                         className='block p-[10px] text-sm w-full hover:text-[#00bfa5]'
                       >
-                        Đơn mua
+                        {t('user:sidebar.order')}
                       </Link>
                       <button
                         className='block p-[10px] text-sm w-full text-left hover:text-[#00bfa5]'
                         onClick={handleLogout}
                       >
-                        Đăng xuất
+                        {t('header:logout')}
                       </button>
                     </div>
                   }
@@ -425,7 +439,7 @@ export default function Header() {
                           {inCartData?.length ? (
                             <>
                               <div className='capitalize text-gray-300 px-[10px] h-[40px] align-middle flex items-center'>
-                                Sản phẩm mới thêm
+                                {t('recentAddedProduct')}
                               </div>
                               <div className='product-list-card flex flex-col mt-2'>
                                 {inCartData.slice(0, limitCart).map((item) => (
@@ -468,7 +482,7 @@ export default function Header() {
                                   to={'/cart'}
                                   className='bg-orange p-2 rounded-sm text-white hover:bg-opacity-90'
                                 >
-                                  Xem giỏ hàng
+                                  {t('cart:viewCart')}
                                 </Link>
                               </div>
                             </>
@@ -479,7 +493,7 @@ export default function Header() {
                                 src='../assets/images/empty-cart.png'
                                 alt='empty-cart'
                               />
-                              <div className='text-sm'>Chưa có sản phẩm</div>
+                              <div className='text-sm'>{t('emptyCart')}</div>
                             </div>
                           )}
                         </div>

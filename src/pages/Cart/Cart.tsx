@@ -19,9 +19,11 @@ import Popover from 'src/components/Popover'
 import './styles.scss'
 import XDialog from 'src/components/XDialog/XDialog'
 import CustomToast from 'src/components/CustomToast/CustomToast'
+import { useTranslation } from 'react-i18next'
 
 const LIMIT = 12
 export default function Cart() {
+  const { t } = useTranslation('cart')
   const { extendedPurchase, setExtendedPurchase } = useContext(AppContext)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDialogProductRow, setIsDialogProductRow] = useState(false)
@@ -249,13 +251,21 @@ export default function Cart() {
                 checked={isCheckedAll}
                 onChange={handleCheckedAll}
               />
-              <span className='text-gray-500 text-sm'>Sản Phẩm</span>
+              <span className='text-gray-500 text-sm'>{t('product')}</span>
             </div>
             <div className='flex items-center justify-between w-[55%] text-center'>
-              <span className='text-gray-500 text-sm w-1/4'>Đơn giá</span>
-              <span className='text-gray-500 text-sm w-1/4'>Số lượng</span>
-              <span className='text-gray-500 text-sm w-1/4'>Số tiền</span>
-              <span className='text-gray-500 text-sm w-1/4'>Thao tác</span>
+              <span className='text-gray-500 text-sm w-1/4'>
+                {t('UnitPrice')}
+              </span>
+              <span className='text-gray-500 text-sm w-1/4'>
+                {t('Quantity')}
+              </span>
+              <span className='text-gray-500 text-sm w-1/4'>
+                {t('TotalPrice')}
+              </span>
+              <span className='text-gray-500 text-sm w-1/4'>
+                {t('Actions')}
+              </span>
             </div>
           </div>
           {extendedPurchase?.map((purchase) => {
@@ -289,7 +299,8 @@ export default function Cart() {
                             {purchase.product.name}
                           </span>
                           <span className='text-sm text-gray-500'>
-                            Phân loại: {purchase.product.category.name}
+                            {t('byType')}
+                            {purchase.product.category.name}
                           </span>
                         </div>
                       </Link>
@@ -360,19 +371,21 @@ export default function Cart() {
                         className='w-1/4 first:text-gray-500 hover:text-orange'
                         onClick={() => setIsDialogProductRow(true)}
                       >
-                        Xoá
+                        {t('Delete')}
                       </button>
                     </div>
                   </div>
                 </div>
                 <XDialog
                   isOpen={isDialogProductRow}
-                  title='Xoá sản phẩm'
-                  message={`Bạn có chắc chắn muốn xoá sản phẩm "${purchase.product.name}" khỏi giỏ hàng không?`}
+                  title={t('deleteProduct')}
+                  message={t('deleteProductConfirm', {
+                    name: purchase.product.name
+                  })}
                   onCancel={handleCancel}
                   onConfirm={() => handleDelete(purchase._id)}
-                  onCancelText='Trở lại'
-                  onConfirmText='Có'
+                  onCancelText={t('back')}
+                  onConfirmText={t('yes')}
                 />
               </div>
             )
@@ -388,14 +401,14 @@ export default function Cart() {
                   onChange={handleCheckedAll}
                 />
                 <button onClick={handleCheckedAll}>
-                  Chọn tất cả ({extendedPurchase.length})
+                  {t('selectAll')} ({extendedPurchase.length})
                 </button>
                 <Button
                   className='ml-8'
                   onClick={handleDeleteManyPurchases}
                   disabled={checkedPurchase.length === 0}
                 >
-                  Xoá
+                  {t('Delete')}
                 </Button>
               </div>
               <Popover
@@ -404,33 +417,35 @@ export default function Cart() {
                   checkedPurchase.length > 0 ? (
                     <div className='px-[30px] w-[550px] divide-y-0.5 divide-gray-200'>
                       <div className='text-xl py-6 font-medium '>
-                        Chi tiết khuyến mãi
+                        {t('discountDetail')}
                       </div>
                       <div className='text-sm'>
                         <div className='flex items-center justify-between py-[15px]'>
-                          <span className='vxKt8Q'>Tổng tiền hàng</span>
+                          <span className='vxKt8Q'>{t('subtotal')}</span>
                           <span>{totalPurchase}</span>
                         </div>
                       </div>
                       <div className='py-[15px] text-sm'>
                         <div className='flex items-center justify-between'>
-                          <span className='vxKt8Q'>Giảm giá sản phẩm</span>
+                          <span className='vxKt8Q'>{t('discountProduct')}</span>
                           <span className=''>-{discountPurchase}</span>
                         </div>
                       </div>
                       <div className='py-[15px] text-sm'>
                         <div className='flex items-center justify-between mb-2 font-medium'>
-                          <span>Tiết kiệm</span>
+                          <span>{t('saved')}</span>
                           <span className='text-orange'>
                             -{discountPurchase}
                           </span>
                         </div>
                         <div className='flex items-center justify-between'>
-                          <span className='font-medium'>Tổng số tiền</span>
+                          <span className='font-medium'>
+                            {t('totalAmount')}
+                          </span>
                           <span className='font-medium'>{totalPurchase}</span>
                         </div>
                         <div className='text-gray-400 text-xs flex justify-end mt-2'>
-                          Số tiền cuối cùng thanh toán
+                          {t('* Final price shown at checkout')}
                         </div>
                       </div>
                     </div>
@@ -442,8 +457,8 @@ export default function Cart() {
                 <div className='group'>
                   <div className='flex items-center'>
                     <span className='text-gray-700 mr-4'>
-                      <span>Tổng thanh toán</span> ({checkedPurchase.length}
-                      <span> Sản phẩm</span>):
+                      <span>{t('total')}</span> ({checkedPurchase.length}
+                      <span> {t('product')}</span>):
                     </span>
                     <span className='flex items-center text-2xl text-orange ml-1'>
                       <span>{totalPurchase}</span>
@@ -469,7 +484,7 @@ export default function Cart() {
                   </div>
                   {extendedPurchase.some((purchase) => purchase.checked) && (
                     <div className='text-sm flex justify-end mt-2'>
-                      Tiết kiệm
+                      {t('saved')}
                       <span className='text-orange pl-2.5'>
                         {discountPurchase}
                       </span>
@@ -486,18 +501,18 @@ export default function Cart() {
                   buyProductsMutation.isPending || checkedPurchase.length === 0
                 }
               >
-                Mua Hàng
+                {t('checkout')}
               </Button>
             </div>
           </div>
           <XDialog
             isOpen={isDialogOpen}
-            title='Xoá sản phẩm đã chọn'
-            message='Bạn có chắc chắn muốn xoá tất cả sản phẩm đã chọn khỏi giỏ hàng không?'
+            title={t('deleteProduct')}
+            message={t('deleteAllConfirm')}
             onCancel={handleCancelAllProducts}
             onConfirm={handleConfirm}
           />
-          {isBuyProduct && <CustomToast message='Mua sản phẩm thành công' />}
+          {isBuyProduct && <CustomToast message={t('buySuccess')} />}
         </>
       ) : (
         !isBuyProduct && (
@@ -509,13 +524,13 @@ export default function Cart() {
                 alt='empty-cart'
               />
               <div className='text-sm text-gray-400 font-medium my-4'>
-                Giỏ hàng của bạn còn trống
+                {t('Your cart is empty')}
               </div>
               <Link
                 to={path.home}
                 className='bg-orange uppercase font-light text-white px-10 py-2'
               >
-                Mua ngay
+                {t('buyNow')}
               </Link>
             </div>
             {isFetching ? (
@@ -525,7 +540,7 @@ export default function Cart() {
             ) : productsData.length > 0 ? (
               <>
                 <div className='uppercase text-black text-opacity-[0.54] font-medium'>
-                  Có thể bạn cũng thích
+                  {t('youMayAlsoLike')}
                 </div>
                 <div className='mt-6 mb-12 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
                   {productsData.map((product) => (

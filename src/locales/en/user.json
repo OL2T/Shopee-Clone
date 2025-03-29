@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "editProfile": "Edit Profile",
+    "notification": "Notification",
+    "my profile": "My Profile",
+    "profile": "Profile",
+    "change password": "Change Password",
+    "order": "My Purchase "
+  },
+  "profile": {
+    "my profile": "My Profile",
+    "Manage and protect your account": "Manage and protect your account",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "dob": "Date of Birth",
+    "save": "Save",
+    "Select Image": "Select Image",
+    "FileSizeMaximum1MB": "File size: maximum 1 MB",
+    "FileExtension.JPEG,.PNG": "File extension: .JPEG, .PNG, .JPG",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year"
+  },
+  "changePassword": {
+    "Change Password": "Change Password",
+    "Current Password": "Current Password",
+    "New Password": "New Password",
+    "Confirm New Password": "Confirm New Password",
+    "Password must be at least 6 characters long": "",
+    "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character": ""
+  },
+  "purchase": {
+    "all": "All",
+    "pendingPayment": "Pending Payment",
+    "pendingDelivery": "Pending Delivery",
+    "delivering": "Delivering",
+    "delivered": "Delivered",
+    "canceled": "Canceled",
+    "preferred": "Preferred +",
+    "byType": "By Type: ",
+    "total": "Total",
+    "checkout": "Checkout",
+    "deliverySuccess": "Delivery Success",
+    "buyAgain": "Buy Again",
+    "empty": "Empty"
+  },
+  "message": {
+    "updateProfileSuccess": "Update profile successfully",
+    "updateProfileError": "Update profile error",
+    "updatePasswordSuccess": "Update password successfully",
+    "updatePasswordError": "Update password error",
+    "updatePasswordNotMatch": "New password and confirm password do not match",
+    "updatePasswordInvalid": "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+  }
+}

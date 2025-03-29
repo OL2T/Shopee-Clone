@@ -10,21 +10,32 @@ import { formatCurrency, generateNameId } from 'src/utils/utils'
 import { Fragment } from 'react/jsx-runtime'
 import Loading from 'src/components/Loading/Loading'
 import delivering from 'src/assets/images/icon-shipping.svg'
+import { useTranslation } from 'react-i18next'
 
-const purchaseTabs = [
-  { status: purchaseStatus.allProducts, name: 'Tất cả' },
-  { status: purchaseStatus.inCart, name: 'Chờ thanh toán' },
-  { status: purchaseStatus.waitForGettingPack, name: 'Vận chuyển' },
-  { status: purchaseStatus.waitForDelivery, name: 'Chờ giao hàng' },
-  { status: purchaseStatus.waitForConfirmation, name: 'Hoàn thành' },
-  { status: purchaseStatus.canceled, name: 'Đã huỷ' }
-]
 const RATE = 4.5
 export default function Purchase() {
+  const { t } = useTranslation('user')
   const queryParams: { status?: string } = useQueryParams()
   const status = queryParams.status
     ? Number(queryParams.status)
     : purchaseStatus.allProducts
+  const purchaseTabs = [
+    { status: purchaseStatus.allProducts, name: t('purchase.all') },
+    { status: purchaseStatus.inCart, name: t('purchase.pendingPayment') },
+    {
+      status: purchaseStatus.waitForGettingPack,
+      name: t('purchase.delivering')
+    },
+    {
+      status: purchaseStatus.waitForDelivery,
+      name: t('purchase.pendingDelivery')
+    },
+    {
+      status: purchaseStatus.waitForConfirmation,
+      name: t('purchase.delivered')
+    },
+    { status: purchaseStatus.canceled, name: t('purchase.canceled') }
+  ]
 
   const { data: cartData, isLoading } = useQuery({
     queryKey: ['purchases', { status }],
@@ -35,7 +46,7 @@ export default function Purchase() {
   const purchaseData = cartData?.data.data
 
   return (
-    <div className='w-full relative  pl-6'>
+    <div className='w-full relative  pl-6 mb-3'>
       <div className='sticky top-0 bg-white rounded-t-[2px] w-full z-50'>
         <div className='flex items-center'>
           {purchaseTabs.map((tab) => (
@@ -58,7 +69,7 @@ export default function Purchase() {
           ))}
         </div>
       </div>
-      <div className='flex items-center bg-[#eaeaea] py-3  my-3'>
+      {/* <div className='flex items-center bg-[#eaeaea] py-3  my-3'>
         <svg
           width='19px'
           height='19px'
@@ -90,7 +101,7 @@ export default function Purchase() {
           name='search'
           placeholder='Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm'
         />
-      </div>
+      </div> */}
       {isLoading ? (
         <Loading />
       ) : purchaseData?.length ? (
@@ -105,7 +116,7 @@ export default function Purchase() {
                     <div className='flex items-center'>
                       {purchase.product.rating > RATE ? (
                         <div className='text-xs bg-orange text-white rounded-sm px-1 py-[3px] mr-2.5 inline-block '>
-                          Yêu thích+
+                          {t('purchase.preferred')}
                         </div>
                       ) : (
                         <svg
@@ -137,22 +148,22 @@ export default function Purchase() {
                             className='w-5 h-5 mr-2'
                             src={delivering}
                           />
-                          <span>Giao hàng thành công</span>
+                          <span>{t('purchase.deliverySuccess')}</span>
                         </div>
                       )}
                       <div
                         className={`${isComplete ? 'border-l border-gray-200 pl-2 ml-2' : ''} text-orange text-sm uppercase`}
                       >
                         {purchase.status === purchaseStatus.inCart
-                          ? 'Chờ thanh toán'
+                          ? t('purchase.pendingPayment')
                           : purchase.status ===
                               purchaseStatus.waitForGettingPack
-                            ? 'Vận chuyển'
+                            ? t('purchase.delivering')
                             : purchase.status === purchaseStatus.waitForDelivery
-                              ? 'Chờ giao hàng'
+                              ? t('purchase.pendingDelivery')
                               : isComplete
-                                ? 'Hoàn thành'
-                                : 'Đã huỷ'}
+                                ? t('purchase.delivered')
+                                : t('purchase.canceled')}
                       </div>
                     </div>
                   </div>
@@ -176,7 +187,8 @@ export default function Purchase() {
                               {purchase.product.name}
                             </span>
                             <span className='text-sm text-gray-500'>
-                              Phân loại: {purchase.product.category.name}
+                              {t('purchase.byType')}{' '}
+                              {purchase.product.category.name}
                             </span>
                             <span className='text-sm text-gray-600'>
                               x{purchase.buy_count}
@@ -201,7 +213,7 @@ export default function Purchase() {
                 <div className='bg-[#fffefb] p-6 mb-3 rounded-t-md'>
                   <div className='flex items-center justify-end'>
                     <div className='text-sm text-gray-600 mr-2'>
-                      Thành tiền:{' '}
+                      {t('purchase.total')}{' '}
                     </div>
                     <div className='text-orange text-2xl'>
                       {formatCurrency(purchase.price * purchase.buy_count)}
@@ -212,7 +224,9 @@ export default function Purchase() {
                       to={`${isComplete ? path.home + generateNameId({ name: purchase.product.name, id: purchase.product._id }) : path.cart}`}
                       className='inline-flex items-center justify-center rounded-sm bg-orange text-white text-sm text-center min-w-[150px] min-h-10 py-2 px2.5'
                     >
-                      {isComplete ? 'Mua lại' : 'Thanh toán'}
+                      {isComplete
+                        ? t('purchase.buyAgain')
+                        : t('purchase.checkout')}
                     </Link>
                   </div>
                 </div>
@@ -228,7 +242,9 @@ export default function Purchase() {
               alt={EmptyPurchase}
               className='w-[100px] h-[100px]'
             />
-            <p className='text-center text-[#888] mt-5'>Chưa có đơn hàng</p>
+            <p className='text-center text-[#888] mt-5'>
+              {t('purchase.empty')}
+            </p>
           </div>
         </div>
       )}

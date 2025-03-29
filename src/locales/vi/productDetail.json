@@ -1,0 +1,26 @@
+{
+  "product": {
+    "sold": "Đã bán",
+    "view": "Lượt xem",
+    "shipping": "Vận chuyển",
+    "freeShipping": "Nhận vào ngày mai, phí giao ₫0",
+    "freeShippingGift": "Tặng Voucher ₫15.000 nếu đơn giao sau thời gian trên.",
+    "15daysReturn": "Trả hàng miễn phí 15 ngày",
+    "15daysReturnDesc": "Miễn phí Trả hàng trong 15 ngày để đảm bảo bạn hoàn toàn có thể yên tâm khi mua hàng ở Shopee. Ngoài ra, tại thời điểm nhận hàng, bạn có thể đồng kiểm và được trả hàng miễn phí.",
+    "shoppingGuarantee": "An tâm mua sắm cùng Shopee",
+    "quantity": "Số lượng",
+    "addToCart": "Thêm vào giỏ hàng",
+    "buyNow": "Mua ngay",
+    "category": "Danh mục",
+    "productRemaining": "Số sản phẩm còn lại",
+    "warranty": "Hạn bảo hành",
+    "typeWarranty": "Loại bảo hành",
+    "ManufacturerWarranty": "Bảo hành nhà sản xuất",
+    "productDetails": "Chi tiết sản phẩm",
+    "productDescription": "Mô tả sản phẩm",
+    "youMayAlsoLike": "Các sản phẩm bạn có thể thích",
+    "preferred": "Yêu thích +",
+    "piecesAvailable": "Sản phẩm có sẵn",
+    "12monthsWarranty": "12 tháng"
+  }
+}

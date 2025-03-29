@@ -1,0 +1,57 @@
+{
+  "sidebar": {
+    "editProfile": "Sửa hồ sơ",
+    "notification": "Thông báo",
+    "my profile": "Hồ sơ của tôi",
+    "profile": "Hồ sơ",
+    "change password": "Đổi mật khẩu",
+    "order": "Đơn mua"
+  },
+  "profile": {
+    "my profile": "Hồ sơ của tôi",
+    "Manage and protect your account": "Quản lý và bảo vệ tài khoản của bạn",
+    "name": "Tên",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ",
+    "dob": "Ngày sinh",
+    "save": "Lưu",
+    "Select Image": "Chọn hình ảnh",
+    "FileSizeMaximum1MB": "Dung lượng file tối đa 1 MB",
+    "FileExtension.JPEG,.PNG": "Định dạng: .JPEG, .PNG, .JPG",
+    "day": "Ngày",
+    "month": "Tháng",
+    "year": "Năm"
+  },
+  "changePassword": {
+    "Change Password": "Đổi mật khẩu",
+    "Current Password": "Nhập mật khẩu cũ",
+    "New Password": "Nhập Mật khẩu mới",
+    "Confirm New Password": "Xác nhận mật khẩu mới",
+    "Password must be at least 6 characters long": "Mật khẩu phải có ít nhất 6 ký tự",
+    "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character": "Mật khẩu phải chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt"
+  },
+  "purchase": {
+    "all": "Tất cả",
+    "pendingPayment": "Chờ thanh toán",
+    "pendingDelivery": "Chờ giao hàng",
+    "delivering": "Đang giao hàng",
+    "delivered": "Hoàn thành",
+    "canceled": "Đã hủy",
+    "preferred": "Yêu thích +",
+    "byType": "Phân loại: ",
+    "total": "Thành tiền",
+    "checkout": "Thanh toán",
+    "deliverySuccess": "Giao hàng thành công",
+    "buyAgain": "Mua lại",
+    "empty": "Chưa có đơn hàng"
+  },
+  "message": {
+    "updateProfileSuccess": "Cập nhật hồ sơ thành công",
+    "updateProfileError": "Cập nhật hồ sơ thất bại",
+    "updatePasswordSuccess": "Đổi mật khẩu thành công",
+    "updatePasswordError": "Đổi mật khẩu thất bại",
+    "updatePasswordNotMatch": "Mật khẩu mới và xác nhận mật khẩu không khớp",
+    "updatePasswordInvalid": "Mật khẩu phải có ít nhất 6 ký tự, chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt"
+  }
+}
