@@ -56,9 +56,6 @@ import * as yup from 'yup'
 //       message: 'Password có tối đa 160 ký tự'
 //     },
 //     validate: (value, context) => {
-//       // Log the value and context to the console
-//       // console.log('Confirm Password Value:', value)
-//       // console.log('Form Context:', context)
 
 //       // Perform the validation check
 //       return value === context.password || 'Passwords không trùng khớp'

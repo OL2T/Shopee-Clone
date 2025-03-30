@@ -28,7 +28,7 @@ export default function ProductList() {
     staleTime: 3 * 60 * 1000
   })
 
-  const categoriesData = useQuery({
+  const { data: categoriesData, isFetching: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => {
       return categoriesAPI.getCategories()
@@ -49,7 +49,8 @@ export default function ProductList() {
           <div className='col-span-3'>
             <AsideFilter
               queryConfig={queryConfig}
-              categories={categoriesData?.data?.data.data || []}
+              categories={categoriesData?.data?.data || []}
+              isLoading={categoriesLoading}
             />
           </div>
           <div className='col-span-9'>
