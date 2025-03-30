@@ -1,31 +1,26 @@
-# React + TypeScript + Vite
+<h2 style="display: flex; align-items: center; gap: 10px;">
+  <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/icon_favicon_1_96.wI1aMs.png" width="50" height="50">
+  <span style='margin-top: 10px'>Shopee Clone</span>
+</h2>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a project to clone the user page of the e-commerce platform [Shopee](https://shopee.com).
 
-Currently, two official plugins are available:
+**Technologies used**: REST API, ReactJs, Typescript, Tailwindcss, React Router, React Hook Form, Yup, React Query, Vite, ESLint, Prettier, React Helmet
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Functions include**:
 
-## Expanding the ESLint configuration
+- Manage authentication with JWT (automatic token refresh applied)
+- Use the Yup and React Hook Form to validate the form.
+- Smart Pagination, Filter, and Product Search
+- Incorporate state into the URL to easily share results across devices.
+- Asynchronous state management with React Query
+- Code Splitting
+- Improve performance by optimizing build file size analysis.
+- SEO with React Helmet
+- Separate the private and public routes.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+**🔗Webiste**: [shopee-lamtai.vercel.app](https://shopee-lamtai.vercel.app/)
 
-- Configure the top-level `parserOptions` property like this:
+**🔐Account for testing**: `admin-shopee@gmail.com` / `admin1`
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-# Shopee-Clone
+**🔗Github**: [github.com/OL2T/Shopee-Clone](https://github.com/OL2T/Shopee-Clone)
