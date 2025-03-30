@@ -71,7 +71,7 @@ export default function useRouteElement() {
             {
               path: path.profile,
               element: (
-                <Suspense>
+                <Suspense fallback={<Loading />}>
                   <Profile />
                 </Suspense>
               )
@@ -79,7 +79,7 @@ export default function useRouteElement() {
             {
               path: path.changePassword,
               element: (
-                <Suspense>
+                <Suspense fallback={<Loading />}>
                   <ChangePassword />
                 </Suspense>
               )
@@ -87,7 +87,7 @@ export default function useRouteElement() {
             {
               path: path.purchase,
               element: (
-                <Suspense>
+                <Suspense fallback={<Loading />}>
                   <Purchase />
                 </Suspense>
               )
@@ -98,7 +98,7 @@ export default function useRouteElement() {
           path: path.cart,
           element: (
             <Home>
-              <Suspense>
+              <Suspense fallback={<Loading />}>
                 <Cart />
               </Suspense>
             </Home>
@@ -111,7 +111,7 @@ export default function useRouteElement() {
       index: true,
       element: (
         <Home>
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <ProductList />
           </Suspense>
         </Home>
@@ -121,7 +121,7 @@ export default function useRouteElement() {
       path: path.productPk,
       element: (
         <Home>
-          <Suspense>
+          <Suspense fallback={<Loading />}>
             <ProductDetail />
           </Suspense>
         </Home>

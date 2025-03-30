@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next'
 interface Props {
   queryConfig: QueryConfig
   categories: Category[]
+  isLoading?: boolean
 }
 /**
  * Rule validate
@@ -26,7 +27,11 @@ type FormData = Pick<Schema, 'price_min' | 'price_max'>
 
 const priceSchema = schema.pick(['price_min', 'price_max'])
 
-export default function AsideFilter({ queryConfig, categories }: Props) {
+export default function AsideFilter({
+  queryConfig,
+  categories,
+  isLoading
+}: Props) {
   const { t } = useTranslation(['home'])
   const navigate = useNavigate()
   const {
@@ -99,51 +104,70 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             />
           </g>
         </svg>
-        {t('asideFilter.searchFilter')}
+        <span className='text-black/80'>{t('asideFilter.searchFilter')}</span>
       </div>
       <div>
         <Link to={path.home} className='flex items-center font-bold '>
-          <span className='text-sm'> {t('asideFilter.byCategory')}</span>
+          <span className='text-sm text-black/80'>
+            {' '}
+            {t('asideFilter.byCategory')}
+          </span>
         </Link>
         <div className='my-4 h-[1px] bg-gray-300' />
         <ul>
-          {categories.map((categoryItem) => {
-            const isActive = queryConfig.category === categoryItem._id
-            return (
-              <li className='flex items-center py-2' key={categoryItem._id}>
-                <input
-                  type='checkbox'
-                  className='w-3 h-3 accent-orange'
-                  checked={isActive}
-                  onChange={() => {
-                    navigate({
-                      pathname: path.home,
-                      search: createSearchParams({
-                        ...queryConfig,
-                        category: categoryItem._id
-                      }).toString()
-                    })
-                  }}
-                />
-                <Link
-                  to={{
-                    pathname: path.home,
-                    search: createSearchParams({
-                      ...queryConfig,
-                      category: categoryItem._id
-                    }).toString()
-                  }}
-                  className='text-sm relative px-2'
+          {isLoading ? (
+            <>
+              {Array.from({ length: 3 }, (_, index) => (
+                <li
+                  key={index}
+                  className='flex items-center gap-x-2 py-2 animate-pulse'
                 >
-                  {categoryItem.name}
-                </Link>
-              </li>
-            )
-          })}
+                  <div className='w-5 h-5 bg-gray-300' />
+                  <div className='text-sm relative px-2 bg-gray-300 rounded-sm w-[70%] h-5' />
+                </li>
+              ))}
+            </>
+          ) : (
+            <>
+              {categories.map((categoryItem) => {
+                const isActive = queryConfig.category === categoryItem._id
+                return (
+                  <li className='flex items-center py-2' key={categoryItem._id}>
+                    <input
+                      type='checkbox'
+                      className='w-3 h-3 accent-orange'
+                      checked={isActive}
+                      onChange={() => {
+                        navigate({
+                          pathname: path.home,
+                          search: createSearchParams({
+                            ...queryConfig,
+                            category: categoryItem._id
+                          }).toString()
+                        })
+                      }}
+                    />
+                    <Link
+                      to={{
+                        pathname: path.home,
+                        search: createSearchParams({
+                          ...queryConfig,
+                          category: categoryItem._id
+                        }).toString()
+                      }}
+                      className='text-sm relative px-2'
+                    >
+                      {categoryItem.name}
+                    </Link>
+                  </li>
+                )
+              })}
+            </>
+          )}
         </ul>
         <div className='my-4 h-[1px] bg-gray-300' />
         <div className='my-5'>
-          <div className='text-sm font-semibold text-gray-700 mb-4'>
+          <div className='text-sm font-semibold text-black/80 mb-4'>
             {t('asideFilter.priceRange')}
           </div>
           <form className='mt-2' onSubmit={onSubmit}>
@@ -215,7 +239,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
           </form>
         </div>
         <div className='my-4 h-[1px] bg-gray-300' />
-        <div className='text-sm font-semibold text-gray-700 mb-4'>
+        <div className='text-sm font-semibold text-black/80 mb-4'>
           {t('asideFilter.rating')}
         </div>
         <RatingStars queryConfig={queryConfig} />
