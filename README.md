@@ -19,8 +19,4 @@ This is a project to clone the user page of the e-commerce platform [Shopee](htt
 - SEO with React Helmet
 - Separate the private and public routes.
 
-**🔗Webiste**: [shopee-lamtai.vercel.app](https://shopee-lamtai.vercel.app/)
-
 **🔐Account for testing**: `admin-shopee@gmail.com` / `admin1`
-
-**🔗Github**: [github.com/OL2T/Shopee-Clone](https://github.com/OL2T/Shopee-Clone)
