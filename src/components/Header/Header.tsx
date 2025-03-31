@@ -110,7 +110,7 @@ export default function Header() {
         className={`${!isPageCart ? 'bg-inherit pt-[5px]' : 'bg-gradient-to-b from-[#f53d2d] to-[#f63] transition-transform top-0 left-0 right-0 z-50'} nav-top  flex text-white text-[13px] font-light py-[5px]`}
       >
         <nav className='flex container justify-between w-full'>
-          <div className='flex gap-4 items-center'>
+          <div className=' gap-4 items-center hidden lg:flex'>
             <a
               href='//banhang.shopee.vn'
               target='_blank'
@@ -155,9 +155,9 @@ export default function Header() {
               />
             </div>
           </div>
-          <div className='flex'>
+          <div className='flex justify-end ml-auto'>
             <ul className='flex gap-4 items-center'>
-              <li className='navbar__link--notification navbar__link navbar__link--hoverable navbar__link--tappable'>
+              <li className='hidden md:flex navbar__link--notification navbar__link navbar__link--hoverable navbar__link--tappable'>
                 <div className='stardust-popover' id='stardust-popover1'>
                   <div role='button' className='stardust-popover__target'>
                     <div className='flex items-center fill-current gap-1'>
@@ -173,7 +173,7 @@ export default function Header() {
                   </div>
                 </div>
               </li>
-              <li className='navbar__link--help'>
+              <li className='hidden md:flex navbar__link--help'>
                 <a
                   className='flex items-center gap-1'
                   href='https://help.shopee.vn/vn/s'
@@ -354,7 +354,7 @@ export default function Header() {
       <div className='container text-white py-4'>
         <div className='flex items-center flex-wrap justify-between'>
           <Link
-            className={`${isPageCart ? 'text-orange' : ''} logo pr-10`}
+            className={`${isPageCart ? 'text-orange' : ''} logo md:pr-4 lg:pr-10`}
             to={path.home}
           >
             <div className='flex items-end'>
@@ -428,7 +428,7 @@ export default function Header() {
             <div className='recent-search'></div>
           </div>
           {!isPageCart && (
-            <div className='cart'>
+            <div className='cart ml-4'>
               <div className='stardust-popover' id='cart_drawer_target_id'>
                 <div role='button' className='stardust-popover__target'>
                   <div className='cart-drawer-container'>

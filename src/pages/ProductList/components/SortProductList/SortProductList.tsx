@@ -5,6 +5,7 @@ import { ProductListConfig } from 'src/types/product.type'
 import omit from 'lodash/omit'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
 import { useTranslation } from 'react-i18next'
+import './styles.scss'
 
 interface Props {
   queryConfig: QueryConfig
@@ -20,8 +21,8 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
     sortByValue: Exclude<ProductListConfig['sort_by'], undefined>
   ) => {
     return sort_by === sortByValue
-      ? 'bg-orange text-white hover:bg-orange/80'
-      : 'bg-white text-black hover:bg-slate-100'
+      ? 'text-orange border-b border-orange md:bg-orange md:text-white md:hover:bg-orange/80'
+      : 'md:bg-white text-black md:hover:bg-slate-100'
   }
 
   const handleSortBy = (
@@ -55,30 +56,30 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
   }
 
   return (
-    <div className='bg-black/[0.03] py-4 px-3'>
-      <div className='flex flex-wrap items-center justify-between gap-2'>
-        <div className='flex flex-wrap items-center gap-2'>
-          <div className='text-sm'>{t('home:sort.sortBy')}</div>
+    <div className='sort-list bg-black/[0.03] py-4 px-3'>
+      <div className='sort-list-container flex flex-wrap items-center justify-between gap-2'>
+        <div className='sort-list-container--inner flex md:flex-wrap items-center md:gap-2'>
+          <div className='sort-list-title text-sm'>{t('home:sort.sortBy')}</div>
           <button
-            className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.view)}`}
+            className={`sort-list-item md:h-8 px-2 md:px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.view)}`}
             onClick={() => handleSortBy(sortBy.view)}
           >
             {t('home:sort.popular')}
           </button>
           <button
-            className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.createdAt)}`}
+            className={`sort-list-item md:h-8 px-2 md:px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.createdAt)}`}
             onClick={() => handleSortBy(sortBy.createdAt)}
           >
             {t('home:sort.newest')}
           </button>
           <button
-            className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.sold)}`}
+            className={`sort-list-item md:h-8 px-2 md:px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.sold)}`}
             onClick={() => handleSortBy(sortBy.sold)}
           >
             {t('home:sort.bestSeller')}
           </button>
           <select
-            className={`h-8 px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.price)}`}
+            className={`sort-list-item md:h-8 px-2 md:px-4 text-center text-sm capitalize ${handleIsActiveSortBy(sortBy.price)}`}
             value={order || ''}
             onChange={(e) =>
               handlePriceOrder(
@@ -98,7 +99,7 @@ export default function SortProductList({ queryConfig, pageSize }: Props) {
           </select>
         </div>
 
-        <div className='flex items-center text-sm'>
+        <div className='sort-pagination flex items-center text-sm'>
           <div>
             <span className='text-orange'>{page}</span>
             <span>/{pageSize}</span>

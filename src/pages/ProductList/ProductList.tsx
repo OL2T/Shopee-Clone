@@ -40,20 +40,20 @@ export default function ProductList() {
 
   return (
     <>
-      <div className='container'>
+      <div>
         <Helmet>
           <title>Trang chủ | Shopee Clone</title>
           <meta name='description' content='Trang chủ dự án Shopee Clone' />
         </Helmet>
-        <div className='grid grid-cols-12 gap-6'>
-          <div className='col-span-3'>
+        <div className='flex gap-x-5'>
+          <div className='flex-[190px] max-w-[190px] hidden lg:block'>
             <AsideFilter
               queryConfig={queryConfig}
               categories={categoriesData?.data?.data || []}
               isLoading={categoriesLoading}
             />
           </div>
-          <div className='col-span-9'>
+          <div className='flex-1'>
             <SortProductList
               queryConfig={queryConfig}
               pageSize={paginationData?.page_size || 1}
