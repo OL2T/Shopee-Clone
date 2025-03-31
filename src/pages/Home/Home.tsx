@@ -9,7 +9,7 @@ export default function Home({ children }: Props) {
   return (
     <>
       <Header />
-      <main className='py-6 container'>{children}</main>
+      <main className='md:py-6 container'>{children}</main>
       <Footer />
     </>
   )

@@ -93,7 +93,7 @@ export default function Pagination({ queryConfig, pageSize, disabled }: Props) {
   }
 
   return (
-    <div className='flex mt-12 mb-[60px] justify-center text-[20px]'>
+    <div className='flex flex-wrap mt-12 mb-[60px] justify-center text-[20px]'>
       {currentPage === 1 || disabled ? (
         <span className=' w-[40px] h-[30px] mx-[15px] flex justify-center items-center  text-center text-black text-opacity-40 not-allowed cursor-not-allowed'>
           <svg
