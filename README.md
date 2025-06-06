@@ -1,5 +1,5 @@
 <h2 style="display: flex; align-items: center; gap: 10px;">
-  <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/icon_favicon_1_96.wI1aMs.png" width="50" height="50">
+  <!-- <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/icon_favicon_1_96.wI1aMs.png" width="50" height="50"> -->
   <span style='margin-top: 10px'>Shopee Clone</span>
 </h2>
 
@@ -20,3 +20,5 @@ This is a project to clone the user page of the e-commerce platform [Shopee](htt
 - Separate the private and public routes.
 
 **🔐Account for testing**: `admin-shopee@gmail.com` / `admin1`
+
+This project is neither affiliated with nor endorsed by Shopee. All trademarks belong to their respective owners
