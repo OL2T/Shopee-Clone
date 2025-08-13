@@ -1,5 +1,8 @@
+import { useTranslation } from 'react-i18next'
+
 export default function FooterBellow() {
   const currentYears = new Date().getFullYear()
+  const { t } = useTranslation('home')
   return (
     <div>
       <div className='flex items-center flex-wrap xl:flex-nowrap gap-2 justify-between py-10 border-t border-t-black/10'>
@@ -144,6 +147,7 @@ export default function FooterBellow() {
             © 2015 - Bản quyền thuộc về Công ty TNHH Shopee
           </div>
         </div>
+        <div className='mt-4'>{t('general.disclaimer')}</div>
       </div>
     </div>
   )

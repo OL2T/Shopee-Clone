@@ -21,5 +21,8 @@
   },
   "product": {
     "sold": "Đã bán"
+  },
+  "general": {
+    "disclaimer": "KHUYẾN CÁO: TRANG NÀY ĐƯỢC TẠO RA NHƯ MỘT DỰ ÁN GIÁO DỤC CÁ NHÂN. Đây KHÔNG PHẢI là trang web chính thức của công ty hoặc thương hiệu được nêu trên trang. Người tạo ra trang này KHÔNG liên kết với công ty hoặc thương hiệu dưới bất kỳ hình thức nào. Trang này là một dự án cá nhân được tạo ra liên quan đến một bài tập giáo dục."
   }
 }
