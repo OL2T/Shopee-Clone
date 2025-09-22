@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios'
-import config from 'src/constant/config'
 import HttpStatusCode from 'src/constant/httpStatusCode.enum'
 import { ErrorResponseAPI } from 'src/types/utils.type'
 
