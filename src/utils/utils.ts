@@ -78,5 +78,5 @@ export const getIdFromNameId = (nameId: string) => {
 }
 
 export const getAvatarUrl = (avatarName: string) => {
-  return `${config.baseURL}/images/${avatarName}`
+  return `${avatarName}`
 }
