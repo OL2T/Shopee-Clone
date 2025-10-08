@@ -7,8 +7,6 @@ import {
 import Popover from '../Popover/Popover'
 import authApi from 'src/apis/auth.api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useContext } from 'react'
-import { AppContext } from 'src/Contexts/app.context'
 import path from 'src/constant/path'
 import useQueryConfig from 'src/hooks/useQueryConfig'
 import { useForm } from 'react-hook-form'
@@ -20,6 +18,7 @@ import { purchaseStatus } from 'src/constant/purchase'
 import { formatCurrency, generateNameId, getAvatarUrl } from 'src/utils/utils'
 import { useTranslation } from 'react-i18next'
 import { locales } from 'src/i18n/i18n'
+import { useReset, useIsAuthenticated, useUser } from 'src/stores'
 
 type FormData = Pick<Schema, 'name'>
 
@@ -31,8 +30,9 @@ export default function Header() {
   const navigate = useNavigate()
   const location = useLocation()
   const isPageCart = location.pathname === path.cart
-  const { isAuthenticated, setIsAuthenticated, setUser, user } =
-    useContext(AppContext)
+  const isAuthenticated = useIsAuthenticated()
+  const user = useUser()
+  const reset = useReset()
   const limitCart = 5
   const queryConfig = useQueryConfig()
   const queryClient = useQueryClient()
@@ -46,8 +46,7 @@ export default function Header() {
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logoutAccount(),
     onSuccess: () => {
-      setIsAuthenticated(false)
-      setUser(null)
+      reset()
       queryClient.removeQueries({
         queryKey: ['purchases', { status: purchaseStatus.inCart }]
       })

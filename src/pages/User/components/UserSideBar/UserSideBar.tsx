@@ -1,13 +1,12 @@
-import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import path from 'src/constant/path'
-import { AppContext } from 'src/Contexts/app.context'
 import { getAvatarUrl } from 'src/utils/utils'
+import { useUser } from 'src/stores'
 
 export default function UserSideBar() {
   const { t } = useTranslation('user')
-  const { user } = useContext(AppContext)
+  const user = useUser()
   return (
     <aside className='w-[180px] py-4'>
       <div className='flex mb-6 pb-5 border-b border-gray-200'>

@@ -17,7 +17,7 @@ import DOMPurify from 'dompurify'
 import XListView, { ListItem } from 'src/components/XListView/XListView'
 import Popover from 'src/components/Popover'
 import 'src/pages/ProductDetail/styles.scss'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Loading from 'src/components/Loading/Loading'
 import { ProductListConfig } from 'src/types/product.type'
 import Product from '../ProductList/components/Product/Product'
@@ -27,14 +27,14 @@ import QuantityController from 'src/components/QuantityController/QuantityContro
 import purchaseApi from 'src/apis/purchase.api'
 import { purchaseStatus } from 'src/constant/purchase'
 import path from 'src/constant/path'
-import { AppContext } from 'src/Contexts/app.context'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import { useTranslation } from 'react-i18next'
 import { convert } from 'html-to-text'
 import { Helmet } from 'react-helmet-async'
+import { useIsAuthenticated } from 'src/stores'
 export default function ProductDetail() {
   const { t } = useTranslation(['productDetail'])
-  const { isAuthenticated } = useContext(AppContext)
+  const isAuthenticated = useIsAuthenticated()
   const navigate = useNavigate()
   const [productQuantity, setProductQuantity] = useState(1)
   const [showToast, setShowToast] = useState(false)

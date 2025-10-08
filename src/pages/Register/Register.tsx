@@ -1,14 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import omit from 'lodash/omit'
-import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import authApi from 'src/apis/auth.api'
 import Button from 'src/components/Button/Button'
 import Input from 'src/components/Input'
 import path from 'src/constant/path'
-import { AppContext } from 'src/Contexts/app.context'
 import { ErrorResponseAPI, NotUndefinedField } from 'src/types/utils.type'
 import { currentDayWithoutYear, salesDay } from 'src/utils/daytime'
 import { Schema, schema } from 'src/utils/rules'
@@ -16,6 +14,7 @@ import { isUnprocessableEntityError } from 'src/utils/utils'
 import heroBannerNormalDay from 'src/assets/images/hero-register-normal-day.png'
 import heroBannerSaleDay from 'src/assets/images/hero-register.png'
 import { Helmet } from 'react-helmet-async'
+import { useSetIsAuthenticated, useSetUser } from 'src/stores'
 
 type FormData = NotUndefinedField<
   Pick<Schema, 'email' | 'password' | 'confirm_password'>
@@ -23,7 +22,8 @@ type FormData = NotUndefinedField<
 const registerSchema = schema.pick(['email', 'password', 'confirm_password'])
 
 export default function Register() {
-  const { setIsAuthenticated, setUser } = useContext(AppContext)
+  const setIsAuthenticated = useSetIsAuthenticated()
+  const setUser = useSetUser()
   const navigate = useNavigate()
   const {
     register,

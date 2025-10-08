@@ -5,7 +5,7 @@ import QuantityController from 'src/components/QuantityController/QuantityContro
 import path from 'src/constant/path'
 import { purchaseStatus } from 'src/constant/purchase'
 import { formatCurrency, generateNameId } from 'src/utils/utils'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { produce } from 'immer'
 import keyBy from 'lodash/keyBy'
 import Button from 'src/components/Button/Button'
@@ -14,18 +14,19 @@ import productAPI from 'src/apis/product.api'
 import ProductListSkeleton from '../ProductList/ProductListSkeleton'
 import Product from '../ProductList/components/Product/Product'
 import Loading from 'src/components/Loading/Loading'
-import { AppContext } from 'src/Contexts/app.context'
 import Popover from 'src/components/Popover'
 import './styles.scss'
 import XDialog from 'src/components/XDialog/XDialog'
 import CustomToast from 'src/components/CustomToast/CustomToast'
 import { useTranslation } from 'react-i18next'
 import { Helmet } from 'react-helmet-async'
+import { useExtendedPurchase, useSetExtendedPurchase } from 'src/stores'
 
 const LIMIT = 12
 export default function Cart() {
   const { t } = useTranslation('cart')
-  const { extendedPurchase, setExtendedPurchase } = useContext(AppContext)
+  const extendedPurchase = useExtendedPurchase()
+  const setExtendedPurchase = useSetExtendedPurchase()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDialogProductRow, setIsDialogProductRow] = useState(false)
   const [isBuyProduct, setIsBuyProduct] = useState(false)

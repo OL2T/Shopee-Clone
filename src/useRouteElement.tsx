@@ -1,11 +1,11 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import RegisterLayout from './layouts/RegisterLayout'
 import Home from './pages/Home'
-import { AppContext } from './Contexts/app.context'
-import { useContext, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import path from './constant/path'
 import UserLayout from './pages/User/layouts/UserLayout/UserLayout'
 import Loading from './components/Loading/Loading'
+import { useIsAuthenticated } from './stores'
 
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
@@ -20,11 +20,11 @@ const Purchase = lazy(() => import('./pages/User/pages/Purchase/Purchase'))
 const Profile = lazy(() => import('./pages/User/pages/Profile/Profile'))
 
 function ProtectedRoute() {
-  const { isAuthenticated } = useContext(AppContext)
+  const isAuthenticated = useIsAuthenticated()
   return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
 }
 function RejectedRoute() {
-  const { isAuthenticated } = useContext(AppContext)
+  const isAuthenticated = useIsAuthenticated()
   return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
 }
 

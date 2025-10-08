@@ -1,12 +1,12 @@
 import { ToastContainer } from 'react-toastify'
 import useRouteElement from './useRouteElement'
 import 'react-toastify/dist/ReactToastify.css'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { localStorageEventTarget } from './types/auth'
-import { AppContext } from './Contexts/app.context'
+import { useReset } from './stores'
 
 function App() {
-  const { reset } = useContext(AppContext)
+  const reset = useReset()
   const routeElements = useRouteElement()
 
   useEffect(() => {

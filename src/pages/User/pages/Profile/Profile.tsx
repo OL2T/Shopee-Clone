@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import {
   Controller,
@@ -16,11 +16,11 @@ import DateSelect from 'src/components/DateSelect/DateSelect'
 import Input from 'src/components/Input'
 import InputFile from 'src/components/InputFile/InputFile'
 import InputNumber from 'src/components/InputNumber/InputNumber'
-import { AppContext } from 'src/Contexts/app.context'
 import { setUserToLocalStorage } from 'src/types/auth'
 import { ErrorResponseAPI } from 'src/types/utils.type'
 import { userSchema, UserSchema } from 'src/utils/rules'
 import { getAvatarUrl, isUnprocessableEntityError } from 'src/utils/utils'
+import { useUser, useSetUser } from 'src/stores'
 
 function Info() {
   const { t } = useTranslation('user')
@@ -112,7 +112,8 @@ const profileSchema = userSchema.pick([
 
 export default function Profile() {
   const { t } = useTranslation('user')
-  const { setUser, user } = useContext(AppContext)
+  const user = useUser()
+  const setUser = useSetUser()
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(false)
   const [fileLocal, setFileLocal] = useState<File>()
 
